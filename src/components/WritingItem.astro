@@ -1,0 +1,114 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  summary?: string;
+  href?: string;
+}
+
+const { title, date, summary, href } = Astro.props;
+
+const isPublished = !!href;
+
+const formattedDate = date.toLocaleDateString('en-GB', {
+  year: 'numeric',
+  month: 'short',
+  day: '2-digit',
+});
+
+const comingLabel = date.toLocaleDateString('en-GB', {
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<li class:list={['writing-item', { 'writing-item--upcoming': !isPublished }]}>
+  {isPublished ? (
+    <a
+      href={href}
+      class="writing-link"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <time class="writing-date" datetime={date.toISOString()}>{formattedDate}</time>
+      <div class="writing-body">
+        <span class="writing-title">{title}</span>
+        {summary && <span class="writing-summary">{summary}</span>}
+      </div>
+    </a>
+  ) : (
+    <div class="writing-link">
+      <span class="writing-date writing-date--coming">Coming {comingLabel}</span>
+      <div class="writing-body">
+        <span class="writing-title">{title}</span>
+        {summary && <span class="writing-summary">{summary}</span>}
+      </div>
+    </div>
+  )}
+</li>
+
+<style>
+  .writing-item {
+    border-bottom: 1px solid var(--color-border);
+    list-style: none;
+  }
+
+  .writing-item--upcoming {
+    opacity: 0.5;
+  }
+
+  .writing-link {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: var(--space-6);
+    align-items: baseline;
+    padding-block: var(--space-5);
+    text-decoration: none;
+    transition: background var(--dur) var(--ease);
+  }
+
+  a.writing-link:hover .writing-title {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .writing-link {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+      padding-block: var(--space-4);
+    }
+  }
+
+  .writing-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+
+  .writing-date--coming {
+    color: var(--color-text-subtle);
+    font-style: italic;
+  }
+
+  .writing-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .writing-title {
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--color-text);
+    transition: color var(--dur) var(--ease);
+    line-height: 1.4;
+  }
+
+  .writing-summary {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+</style>

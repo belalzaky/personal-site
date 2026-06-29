@@ -1,0 +1,254 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  tags: string[];
+  href: string;
+  github?: string;
+  link?: string;
+  result?: string;
+  image?: string;
+}
+
+const { title, summary, tags, href, github, link, result, image } = Astro.props;
+---
+
+<article class="featured">
+  <div class="featured-inner">
+
+    <div class="featured-content">
+      <ul class="featured-tags" role="list">
+        {tags.map(t => <li class="tag" role="listitem">{t}</li>)}
+      </ul>
+
+      <h3 class="featured-title">
+        <a href={href} class="featured-link">{title}</a>
+      </h3>
+
+      {result && (
+        <p class="featured-result">{result}</p>
+      )}
+
+      <p class="featured-summary">{summary}</p>
+
+      <div class="featured-actions">
+        <a href={href} class="featured-cta">
+          View project <span aria-hidden="true">→</span>
+        </a>
+        {link && (
+          <a
+            href={link}
+            class="featured-ext"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Live ↗</a>
+        )}
+        {github && (
+          <a
+            href={github}
+            class="featured-ext"
+            target="_blank"
+            rel="noopener noreferrer"
+          >GitHub</a>
+        )}
+      </div>
+    </div>
+
+    <div class="featured-image-wrap">
+      {image
+        ? (
+          <img
+            src={image}
+            alt={title}
+            class="featured-img"
+            width="520"
+            height="320"
+            loading="lazy"
+          />
+        )
+        : (
+          <div class="featured-img-placeholder" aria-hidden="true">
+            <span>Add project image</span>
+          </div>
+        )
+      }
+    </div>
+
+  </div>
+</article>
+
+<style>
+  .featured {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .featured:hover {
+    border-color: var(--color-accent);
+  }
+
+  .featured-inner {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    min-height: 300px;
+  }
+
+  @media (max-width: 900px) {
+    .featured-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .featured-image-wrap {
+      order: -1;
+      height: 220px;
+    }
+  }
+
+  /* Content */
+  .featured-content {
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  .featured-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    font-weight: 500;
+  }
+
+  .featured-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .featured-link {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .featured-link:hover {
+    color: var(--color-accent);
+  }
+
+  .featured-result {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text);
+    background: var(--color-accent-soft);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: var(--space-2) var(--space-3);
+    line-height: 1.5;
+    max-width: 50ch;
+  }
+
+  .featured-summary {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    max-width: 52ch;
+  }
+
+  .featured-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+    padding-top: var(--space-2);
+  }
+
+  .featured-cta {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .featured-cta:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .featured-ext {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .featured-ext:hover {
+    color: var(--color-text);
+  }
+
+  /* Image */
+  .featured-image-wrap {
+    background: var(--color-bg);
+    border-left: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  @media (max-width: 900px) {
+    .featured-image-wrap {
+      border-left: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
+  .featured-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 300ms var(--ease);
+  }
+
+  .featured:hover .featured-img {
+    transform: scale(1.02);
+  }
+
+  .featured-img-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--color-surface),
+      var(--color-surface) 5px,
+      var(--color-bg) 5px,
+      var(--color-bg) 14px
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .featured-img-placeholder span {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    background: var(--color-surface);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+  }
+</style>

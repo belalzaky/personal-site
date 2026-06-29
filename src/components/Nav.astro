@@ -1,0 +1,208 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const navLinks = [
+  { href: '/projects', label: 'Projects' },
+  { href: '/writing', label: 'Writing' },
+  { href: '/about', label: 'About' },
+];
+
+const pathname = Astro.url.pathname;
+---
+
+<header id="site-nav" class="nav">
+  <div class="nav-inner container">
+    <a href="/" class="nav-brand" aria-label="Belal — home">belal</a>
+
+    <nav aria-label="Main navigation">
+      <ul class="nav-links" role="list">
+        {navLinks.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class:list={['nav-link', { 'nav-link--active': pathname.startsWith(href) }]}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="nav-right">
+      <ThemeToggle />
+      <button
+        class="nav-burger js-only"
+        id="nav-burger"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="nav-mobile-menu"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <rect y="3" width="20" height="2" rx="1" fill="currentColor"/>
+          <rect y="9" width="20" height="2" rx="1" fill="currentColor"/>
+          <rect y="15" width="20" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav
+    class="nav-mobile-menu"
+    id="nav-mobile-menu"
+    aria-label="Mobile navigation"
+    aria-hidden="true"
+  >
+    <ul role="list">
+      {navLinks.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class:list={['nav-mobile-link', { 'nav-link--active': pathname.startsWith(href) }]}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+      background var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+
+  .nav.scrolled {
+    background: var(--color-bg);
+    border-bottom-color: var(--color-border);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    height: 60px;
+  }
+
+  .nav-brand {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .nav-brand:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    list-style: none;
+    margin-left: auto;
+  }
+
+  .nav-link {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .nav-link:hover,
+  .nav-link--active {
+    color: var(--color-text);
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: var(--space-4);
+  }
+
+  .nav-burger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .nav-burger:hover {
+    color: var(--color-text);
+  }
+
+  .nav-mobile-menu {
+    display: none;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg);
+    padding: var(--space-4) 0;
+  }
+
+  .nav-mobile-menu.open {
+    display: block;
+  }
+
+  .nav-mobile-link {
+    display: block;
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    padding: var(--space-3) var(--space-6);
+    transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+  }
+
+  .nav-mobile-link:hover,
+  .nav-mobile-link.nav-link--active {
+    color: var(--color-text);
+    background: var(--color-surface);
+  }
+
+  /* Without JS: hide burger, always show links */
+  html:not(.js) .nav-burger { display: none !important; }
+  html:not(.js) .nav-mobile-menu { display: none !important; }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav-right { margin-left: auto; }
+    .nav-burger { display: flex; }
+  }
+</style>
+
+<script>
+  const nav = document.getElementById('site-nav');
+  const burger = document.getElementById('nav-burger');
+  const mobileMenu = document.getElementById('nav-mobile-menu');
+
+  // Scroll → solid
+  window.addEventListener('scroll', () => {
+    if (nav) {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    }
+  }, { passive: true });
+
+  // Mobile menu toggle
+  if (burger && mobileMenu) {
+    burger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      burger.setAttribute('aria-expanded', String(isOpen));
+      mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+    });
+  }
+</script>

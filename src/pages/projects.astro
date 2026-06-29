@@ -1,0 +1,83 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+const sorted = projects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base title="Projects — Belal Zaky" description="Pharmacovigilance and health data science projects: FAERS analysis, signal detection, EHR data, and machine learning.">
+  <div class="page container">
+    <header class="page-header container--prose">
+      <p class="page-eyebrow">Work</p>
+      <h1 class="page-title">Projects</h1>
+      <p class="page-intro">
+        Pharmacovigilance tools and health data exercises built while learning Python
+        and SQL alongside a pharmacology degree.
+      </p>
+    </header>
+
+    <div class="projects-grid">
+      {sorted.map(project => (
+        <ProjectCard
+          title={project.data.title}
+          summary={project.data.summary}
+          tags={project.data.tags}
+          href={`/projects/${project.slug}`}
+          github={project.data.github}
+          link={project.data.link}
+          result={project.data.result}
+          image={project.data.image}
+        />
+      ))}
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-24);
+  }
+
+  .page-header {
+    margin-bottom: var(--space-12);
+  }
+
+  .page-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    max-width: none;
+  }
+
+  .page-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+
+  .page-intro {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 640px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

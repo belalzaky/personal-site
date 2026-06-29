@@ -1,0 +1,468 @@
+---
+import Base from '../layouts/Base.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import Photography from '../components/Photography.astro';
+---
+
+<Base
+  title="About — Belal Zaky"
+  description="Pharmacology student at King's College London, originally from Dubai — building data projects and writing about them in public."
+>
+  <div class="page">
+
+    <!-- Page header -->
+    <div class="container container--prose">
+      <header class="page-header">
+        <p class="page-eyebrow">Background</p>
+        <h1 class="page-title">About</h1>
+      </header>
+    </div>
+
+    <!-- Photo + bio band -->
+    <section class="about-band container" aria-label="Person behind the work">
+      <div class="about-photo-wrap">
+        <img
+          src="/headshot.jpg"
+          srcset="/headshot.jpg 1x, /headshot@2x.jpg 2x"
+          alt="Belal Zaky"
+          class="about-photo"
+          width="280"
+          height="350"
+          loading="lazy"
+        />
+      </div>
+      <div class="about-bio">
+        <p class="about-bio-text">
+          I'm Belal — a pharmacology student at King's College London, originally from Dubai.
+          I started out fascinated by how drugs work in the body, then kept drifting toward a
+          different question: what the data around medicines can, and can't, actually tell us.
+          So I began building small projects to find out, and writing about them as I go.
+          Away from the screen I'm a keen public speaker, I split my time between London and
+          Dubai, and I work in English and Arabic.
+        </p>
+      </div>
+    </section>
+
+    <!-- Journey timeline, skills, education, contact -->
+    <div class="about-body container container--prose">
+
+      <!-- Timeline -->
+      <section class="about-section">
+        <h2 class="about-section-title">The journey so far</h2>
+        <p class="about-section-tagline">describe → query → structure → measure → predict</p>
+
+        <ol class="timeline" role="list">
+          <li class="timeline-item">
+            <span class="timeline-date">Jun 2026</span>
+            <div class="timeline-content">
+              <span class="timeline-tag">describe</span>
+              <a href="/projects/faers-explorer" class="timeline-project">FAERS Explorer</a>
+              <p class="timeline-desc">An interactive dashboard over FDA adverse-event data.</p>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-date">Jun 2026</span>
+            <div class="timeline-content">
+              <span class="timeline-tag">query</span>
+              <a href="/projects/faers-sql" class="timeline-project">FAERS in SQL</a>
+              <p class="timeline-desc">The same data in a database, queried with SQL.</p>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-date">Jul 2026</span>
+            <div class="timeline-content">
+              <span class="timeline-tag">structure</span>
+              <a href="/projects/synthea-ehr" class="timeline-project">Synthea EHR</a>
+              <p class="timeline-desc">Learning how patient-record data is structured.</p>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-date">Jul 2026</span>
+            <div class="timeline-content">
+              <span class="timeline-tag">measure</span>
+              <a href="/projects/faers-signal" class="timeline-project">FAERS Signal Detection</a>
+              <p class="timeline-desc">A pharmacovigilance disproportionality method.</p>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-date">Aug 2026</span>
+            <div class="timeline-content">
+              <span class="timeline-tag">predict</span>
+              <a href="/projects/ehr-ml" class="timeline-project">EHR ML Risk Model</a>
+              <p class="timeline-desc">My first machine-learning model.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Skills & tools -->
+      <section class="about-section">
+        <h2 class="about-section-title">Skills &amp; tools</h2>
+        <p class="about-note">Self-taught alongside my degree — still learning.</p>
+
+        <dl class="skills-list">
+          <div class="skills-row">
+            <dt class="skills-label">Data</dt>
+            <dd class="skills-value">Python, pandas, SQL, SQLite, scikit-learn, matplotlib</dd>
+          </div>
+          <div class="skills-row">
+            <dt class="skills-label">Tools</dt>
+            <dd class="skills-value">Git &amp; GitHub, Streamlit, openFDA API</dd>
+          </div>
+          <div class="skills-row">
+            <dt class="skills-label">Domain</dt>
+            <dd class="skills-value">Pharmacology, pharmacovigilance, real-world-evidence basics</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Education & activities -->
+      <section class="about-section">
+        <h2 class="about-section-title">Education &amp; activities</h2>
+
+        <ul class="edu-list" role="list">
+          <li class="edu-item">
+            <span class="edu-name">BSc Pharmacology (Hons), King's College London</span>
+            <span class="edu-detail">Expected 2028</span>
+          </li>
+          <li class="edu-item">
+            <span class="edu-name">Toastmasters International</span>
+            <span class="edu-detail">Member &amp; Sergeant at Arms</span>
+          </li>
+          <li class="edu-item">
+            <span class="edu-name">King's100 Leadership &amp; Employability Programme</span>
+          </li>
+          <li class="edu-item">
+            <span class="edu-name">Student Representative, BSc Pharmacology</span>
+          </li>
+          <li class="edu-item">
+            <span class="edu-name">Model United Nations</span>
+            <span class="edu-detail">Delegate</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Beyond the work -->
+      <section class="about-section">
+        <h2 class="about-section-title">Beyond the work</h2>
+        <p class="about-beyond">
+          Public speaking, languages (English &amp; Arabic), and splitting time between London and Dubai.
+        </p>
+      </section>
+
+    </div>
+
+    <!-- Photography strip — full width -->
+    <section class="lens-section" aria-label="Through the lens">
+      <div class="container container--prose">
+        <h2 class="lens-heading">Through the lens</h2>
+      </div>
+      <Photography />
+    </section>
+
+    <!-- Contact -->
+    <div class="about-contact container container--prose">
+      <ContactBlock />
+    </div>
+
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-24);
+  }
+
+  /* Page header */
+  .page-header {
+    margin-bottom: var(--space-12);
+  }
+
+  .page-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    max-width: none;
+  }
+
+  .page-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-3xl);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: var(--text-2xl);
+    }
+  }
+
+  /* Photo + bio band */
+  .about-band {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: var(--space-12);
+    align-items: start;
+    padding-bottom: var(--space-16);
+  }
+
+  @media (max-width: 720px) {
+    .about-band {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+  }
+
+  .about-photo-wrap {
+    position: sticky;
+    top: 80px;
+  }
+
+  @media (max-width: 720px) {
+    .about-photo-wrap {
+      position: static;
+      max-width: 200px;
+    }
+  }
+
+  .about-photo {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    display: block;
+  }
+
+  .about-bio-text {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    line-height: 1.75;
+    max-width: 56ch;
+  }
+
+  /* Body sections */
+  .about-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+
+  .about-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .about-section-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+  }
+
+  .about-section-tagline {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.04em;
+    max-width: none;
+  }
+
+  .about-note {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .about-beyond {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  .about-contact {
+    padding-top: var(--space-4);
+  }
+
+  /* Timeline */
+  .timeline {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-left: 1px solid var(--color-border);
+    margin-left: var(--space-4);
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: var(--space-6);
+    padding: var(--space-4) 0 var(--space-4) var(--space-6);
+    position: relative;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: calc(var(--space-4) + 6px);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-border);
+  }
+
+  @media (max-width: 540px) {
+    .timeline-item {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+
+  .timeline-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    letter-spacing: 0.02em;
+    padding-top: 2px;
+    white-space: nowrap;
+  }
+
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .timeline-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+    padding: 1px 7px;
+    border-radius: var(--radius-sm);
+    width: fit-content;
+    font-weight: 500;
+  }
+
+  .timeline-project {
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+    line-height: 1.4;
+  }
+
+  .timeline-project:hover {
+    color: var(--color-accent);
+  }
+
+  .timeline-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    max-width: 48ch;
+  }
+
+  /* Skills */
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+  }
+
+  .skills-row {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: var(--space-6);
+    align-items: baseline;
+  }
+
+  @media (max-width: 480px) {
+    .skills-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+
+  .skills-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .skills-value {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    line-height: 1.6;
+  }
+
+  /* Education */
+  .edu-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+  }
+
+  .edu-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .edu-name {
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+
+  .edu-detail {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* Photography strip */
+  .lens-section {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-12);
+  }
+
+  .lens-heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    margin-bottom: var(--space-6);
+  }
+
+  .about-contact {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-8);
+  }
+</style>

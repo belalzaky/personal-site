@@ -1,0 +1,86 @@
+---
+import { Image } from 'astro:assets';
+
+const rawModules = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/photography/*.{jpg,jpeg,png,webp}',
+  { eager: true }
+);
+const images = Object.values(rawModules).map(m => m.default);
+---
+
+{images.length > 0 && (
+  <div class="strip-outer" role="region" aria-label="Photography by Belal Zaky">
+    <div class="track">
+      {images.map(img => (
+        <Image
+          src={img}
+          alt="Photograph by Belal Zaky"
+          height={400}
+          class="photo"
+          loading="lazy"
+          decoding="async"
+        />
+      ))}
+      {/* Duplicate set for seamless loop — hidden from assistive tech */}
+      {images.map(img => (
+        <Image
+          src={img}
+          alt=""
+          aria-hidden="true"
+          height={400}
+          class="photo photo--dupe"
+          loading="lazy"
+          decoding="async"
+        />
+      ))}
+    </div>
+  </div>
+)}
+
+<style>
+  .strip-outer {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+
+  .track {
+    display: flex;
+    gap: var(--space-3);
+    width: max-content;
+    animation: marquee 55s linear infinite;
+    will-change: transform;
+  }
+
+  .track:hover {
+    animation-play-state: paused;
+  }
+
+  .photo {
+    height: 200px;
+    width: auto;
+    border-radius: var(--radius);
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  /* Reduced motion: stop animation, let user scroll */
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+      overflow-x: auto;
+    }
+
+    .strip-outer {
+      overflow-x: auto;
+    }
+
+    .photo--dupe {
+      display: none;
+    }
+  }
+</style>

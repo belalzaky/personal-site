@@ -1,0 +1,163 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import FeaturedProject from '../components/FeaturedProject.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import WritingItem from '../components/WritingItem.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+const allFeatured = allProjects
+  .filter(p => p.data.featured)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const heroProject = allFeatured.find(p => p.slug === 'faers-signal') ?? allFeatured[0];
+const gridProjects = allFeatured.filter(p => p.slug !== heroProject?.slug);
+
+const SUBSTACK_HOME = 'https://belalzaky.substack.com';
+const isPublished = (url?: string) => !!url && url.replace(/\/$/, '') !== SUBSTACK_HOME;
+
+const allPosts = await getCollection('posts');
+const latestPost = allPosts
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .filter(p => isPublished(p.data.url))
+  .slice(0, 1);
+---
+
+<Base title="Belal Zaky" description="Pharmacology student at King's College London — building data projects in public.">
+  <Hero />
+
+  <section class="section container">
+    <header class="section-header">
+      <div class="section-heading">
+        <p class="section-eyebrow">01</p>
+        <h2 class="section-title">Projects</h2>
+      </div>
+      <a href="/projects" class="section-more">All projects →</a>
+    </header>
+
+    {heroProject && (
+      <FeaturedProject
+        title={heroProject.data.title}
+        summary={heroProject.data.summary}
+        tags={heroProject.data.tags}
+        href={`/projects/${heroProject.slug}`}
+        github={heroProject.data.github}
+        link={heroProject.data.link}
+        result={heroProject.data.result}
+        image={heroProject.data.image}
+      />
+    )}
+
+    <div class="projects-grid">
+      {gridProjects.map(project => (
+        <ProjectCard
+          title={project.data.title}
+          summary={project.data.summary}
+          tags={project.data.tags}
+          href={`/projects/${project.slug}`}
+          github={project.data.github}
+          link={project.data.link}
+          result={project.data.result}
+          image={project.data.image}
+        />
+      ))}
+    </div>
+  </section>
+
+  {latestPost.length > 0 && (
+    <section class="section container container--prose">
+      <header class="section-header">
+        <div class="section-heading">
+          <p class="section-eyebrow">02</p>
+          <h2 class="section-title">Latest writing</h2>
+        </div>
+        <a href="/writing" class="section-more">All posts →</a>
+      </header>
+      <ul role="list" class="writing-list">
+        {latestPost.map(post => (
+          <WritingItem
+            title={post.data.title}
+            date={post.data.date}
+            summary={post.data.summary}
+            href={post.data.url}
+          />
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section class="section container container--prose">
+    <ContactBlock />
+  </section>
+</Base>
+
+<style>
+  .section {
+    padding-bottom: var(--space-24);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: var(--space-8);
+    gap: var(--space-4);
+  }
+
+  .section-heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    letter-spacing: 0.1em;
+    max-width: none;
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--color-text);
+  }
+
+  .section-more {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+    white-space: nowrap;
+    padding-bottom: var(--space-1);
+  }
+
+  .section-more:hover {
+    color: var(--color-accent);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+  }
+
+  @media (max-width: 640px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .writing-list {
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+</style>

@@ -1,0 +1,236 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  tags: string[];
+  href: string;
+  github?: string;
+  link?: string;
+  result?: string;
+  image?: string;
+}
+
+const { title, summary, tags, href, github, link, result, image } = Astro.props;
+---
+
+<article class="card">
+
+  <div class="card-image-wrap">
+    {image
+      ? (
+        <img
+          src={image}
+          alt={title}
+          class="card-img"
+          width="400"
+          height="220"
+          loading="lazy"
+        />
+      )
+      : (
+        <div class="card-img-placeholder" aria-hidden="true" />
+      )
+    }
+  </div>
+
+  <div class="card-inner">
+    <div class="card-tags" role="list" aria-label="Technologies">
+      {tags.map(tag => (
+        <span class="tag" role="listitem">{tag}</span>
+      ))}
+    </div>
+
+    <h3 class="card-title">
+      <a href={href} class="card-link">{title}</a>
+    </h3>
+
+    {result && (
+      <p class="card-result">{result}</p>
+    )}
+
+    <p class="card-summary">{summary}</p>
+
+    <div class="card-footer">
+      <a href={href} class="card-cta" aria-label={`Read more about ${title}`}>
+        View project <span aria-hidden="true">→</span>
+      </a>
+      <div class="card-external">
+        {link && (
+          <a
+            href={link}
+            class="card-ext-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Live demo for ${title}`}
+          >Live ↗</a>
+        )}
+        {github && (
+          <a
+            href={github}
+            class="card-ext-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`GitHub repository for ${title}`}
+          >GitHub</a>
+        )}
+      </div>
+    </div>
+  </div>
+
+</article>
+
+<style>
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition:
+      border-color var(--dur) var(--ease),
+      transform var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme="dark"] .card:hover {
+    box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Image */
+  .card-image-wrap {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 300ms var(--ease);
+  }
+
+  .card:hover .card-img {
+    transform: scale(1.03);
+  }
+
+  .card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--color-surface),
+      var(--color-surface) 4px,
+      var(--color-bg) 4px,
+      var(--color-bg) 12px
+    );
+  }
+
+  /* Content */
+  .card-inner {
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    font-weight: 500;
+  }
+
+  .card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .card-link {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .card-link:hover {
+    color: var(--color-accent);
+  }
+
+  .card-result {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text);
+    background: var(--color-accent-soft);
+    border-left: 2px solid var(--color-accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: var(--space-2) var(--space-3);
+    line-height: 1.45;
+  }
+
+  .card-summary {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-2);
+  }
+
+  .card-cta {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .card-cta:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .card-external {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .card-ext-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .card-ext-link:hover {
+    color: var(--color-text);
+  }
+</style>
