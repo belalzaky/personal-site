@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import FeaturedProject from '../components/FeaturedProject.astro';
+import SignalThreshold from '../components/viz/SignalThreshold.astro';
 import ProjectItem from '../components/ProjectItem.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
@@ -65,7 +66,9 @@ const latestPost = allPosts
         link={heroProject.data.link}
         result={heroProject.data.result}
         image={heroProject.data.image}
-      />
+      >
+        {heroProject.slug === 'faers-signal' && <SignalThreshold slot="chart" />}
+      </FeaturedProject>
     )}
 
     <ul role="list" class="project-list">
