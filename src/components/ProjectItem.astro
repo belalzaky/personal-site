@@ -2,17 +2,22 @@
 interface Props {
   title: string;
   summary: string;
-  tags: string[];
+  date: Date;
   href: string;
 }
 
-const { title, summary, tags, href } = Astro.props;
-const stack = tags.join(' · ');
+const { title, summary, date, href } = Astro.props;
+
+const formattedDate = date.toLocaleDateString('en-GB', {
+  year: 'numeric',
+  month: 'short',
+  day: '2-digit',
+});
 ---
 
 <li class="project-item">
   <a href={href} class="project-link">
-    <span class="project-stack">{stack}</span>
+    <time class="project-date" datetime={date.toISOString()}>{formattedDate}</time>
     <div class="project-body">
       <span class="project-title">{title}</span>
       <span class="project-summary">{summary}</span>
@@ -48,7 +53,7 @@ const stack = tags.join(' · ');
     }
   }
 
-  .project-stack {
+  .project-date {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
