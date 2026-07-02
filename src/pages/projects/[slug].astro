@@ -20,6 +20,8 @@ const { Content } = await entry.render();
   dek={entry.data.summary}
   description={entry.data.summary}
   tags={entry.data.tags}
+  image={entry.data.image}
+  chartEmbed={entry.slug === 'faers-signal' ? '/charts/faers-signal.html' : undefined}
 >
   <Content />
 </Article>
