@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://belalzaky.uk/sitemap-index.xml

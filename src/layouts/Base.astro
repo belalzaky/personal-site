@@ -12,7 +12,7 @@ interface Props {
 const {
   title,
   description = 'Pharmacology student at King\'s College London — building data projects in public.',
-  ogImage = '/og-image.svg',
+  ogImage = '/og-image.png',
 } = Astro.props;
 
 const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://belal.dev').toString();
@@ -48,6 +48,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://belal.de
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+
+    <slot name="head" />
 
     <!-- Prevent flash of wrong theme -->
     <script is:inline>

@@ -5,10 +5,11 @@ interface Props {
   title: string;
   date: Date;
   dek?: string;
+  description?: string;
   tags?: string[];
 }
 
-const { title, date, dek, tags = [] } = Astro.props;
+const { title, date, dek, description, tags = [] } = Astro.props;
 
 const formattedDate = date.toLocaleDateString('en-GB', {
   year: 'numeric',
@@ -17,7 +18,7 @@ const formattedDate = date.toLocaleDateString('en-GB', {
 });
 ---
 
-<Base title={`${title} — Belal`}>
+<Base title={`${title} · Belal Zaky`} description={description}>
   <article class="article container container--prose">
     <header class="article-header">
       <div class="article-meta">

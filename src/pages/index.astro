@@ -25,7 +25,25 @@ const latestPost = allPosts
   .slice(0, 1);
 ---
 
-<Base title="Belal Zaky" description="Pharmacology student at King's College London — building data projects in public.">
+<Base title="Belal Zaky — Pharmacovigilance & Health Data Projects" description="Pharmacology student at King's College London building pharmacovigilance and health data science projects in Python, SQL, and machine learning.">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Belal Zaky",
+      "jobTitle": "Pharmacology student",
+      "url": "https://belalzaky.uk",
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "King's College London"
+      },
+      "sameAs": [
+        "https://linkedin.com/in/belalzaky",
+        "https://github.com/belalzaky",
+        "https://belalzaky.substack.com"
+      ]
+    })} />
+  </Fragment>
   <Hero />
 
   <section class="section container">
