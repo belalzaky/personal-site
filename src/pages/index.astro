@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import FeaturedProject from '../components/FeaturedProject.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import ProjectItem from '../components/ProjectItem.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import { getCollection } from 'astro:content';
@@ -68,20 +68,16 @@ const latestPost = allPosts
       />
     )}
 
-    <div class="projects-grid">
+    <ul role="list" class="project-list">
       {gridProjects.map(project => (
-        <ProjectCard
+        <ProjectItem
           title={project.data.title}
           summary={project.data.summary}
           tags={project.data.tags}
           href={`/projects/${project.slug}`}
-          github={project.data.github}
-          link={project.data.link}
-          result={project.data.result}
-          image={project.data.image}
         />
       ))}
-    </div>
+    </ul>
   </section>
 
   {latestPost.length > 0 && (
@@ -161,17 +157,10 @@ const latestPost = allPosts
     color: var(--color-accent);
   }
 
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-6);
+  .project-list {
+    list-style: none;
+    border-top: 1px solid var(--color-border);
     margin-top: var(--space-6);
-  }
-
-  @media (max-width: 640px) {
-    .projects-grid {
-      grid-template-columns: 1fr;
-    }
   }
 
   .writing-list {
