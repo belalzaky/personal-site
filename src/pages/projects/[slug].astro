@@ -4,6 +4,7 @@ import SignalThreshold from '../../components/viz/SignalThreshold.astro';
 import EHRThreshold from '../../components/viz/EHRThreshold.astro';
 import SqlSampling from '../../components/viz/SqlSampling.astro';
 import SyntheaCohorts from '../../components/viz/SyntheaCohorts.astro';
+import ZantacTrend from '../../components/viz/ZantacTrend.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -30,5 +31,6 @@ const { Content } = await entry.render();
   {entry.slug === 'ehr-ml' && <EHRThreshold slot="chart" />}
   {entry.slug === 'faers-sql' && <SqlSampling slot="chart" />}
   {entry.slug === 'synthea-ehr' && <SyntheaCohorts slot="chart" />}
+  {entry.slug === 'faers-explorer' && <ZantacTrend slot="chart" />}
   <Content />
 </Article>

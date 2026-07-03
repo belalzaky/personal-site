@@ -1,0 +1,109 @@
+---
+import trend from "../../data/zantac-trend.json";
+---
+<div class="zx js-zantac-trend" role="group" aria-label="Interactive Zantac reports-per-year timeline">
+  <p class="zx-sr">Scrub the timeline of Zantac adverse-event reports per year; the post-2019 spike is driven by an FDA recall and litigation, not new harm.</p>
+  <div class="zx-eyebrow">FAERS · REPORT TRENDS</div>
+  <h3 class="zx-title">A spike isn't always a safety signal.</h3>
+  <p class="zx-sub">{trend.label} adverse-event reports per year. Drag along the timeline and watch what happens after 2019.</p>
+
+  <div class="zx-readout"><span class="zx-year">–</span><span class="zx-val"><b>–</b> reports</span></div>
+  <div class="zx-chartwrap"><svg class="zx-svg" viewBox="0 0 620 240" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Zantac reports per year"></svg></div>
+
+  <div class="zx-slidewrap"><span class="zx-cap zx-lo">–</span><input class="zx-slider" type="range" min="0" max="1" step="1" value="0" aria-label="Year"><span class="zx-cap zx-hi">–</span></div>
+
+  <div class="zx-event"><span class="zx-flag">⚑</span><span class="zx-etext"></span></div>
+  <p class="zx-foot">Report counts measure attention, not harm. The first question for any spike is "what else happened that year?"</p>
+
+  <script type="application/json" class="zx-data" set:html={JSON.stringify(trend)}></script>
+</div>
+
+<style>
+  .zx{ --dim:#c9cfdd; --warn:#c0492f; font-family:var(--font-sans); color:var(--color-text);
+    background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
+  :global([data-theme="dark"]) .zx{ --dim:#454951; --warn:#dd7a63; }
+  .zx *{ box-sizing:border-box; }
+  .zx-sr{ position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0); }
+  .zx-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
+  .zx-title{ font-size:23px; font-weight:700; letter-spacing:-.02em; margin:0 0 6px; }
+  .zx-sub{ font-size:13.5px; line-height:1.6; color:var(--color-text-muted); margin:0 0 16px; max-width:60ch; }
+  .zx-readout{ display:flex; align-items:baseline; gap:12px; margin-bottom:8px; }
+  .zx-year{ font-family:var(--font-mono); font-size:26px; font-weight:600; color:var(--color-accent); }
+  .zx-val{ font-size:15px; color:var(--color-text-muted); }
+  .zx-val b{ font-family:var(--font-mono); font-size:20px; color:var(--color-text); font-weight:700; }
+  .zx-chartwrap{ width:100%; margin-bottom:10px; }
+  .zx-svg{ width:100%; height:auto; display:block; overflow:visible; }
+  :global(.zx-grid){ stroke:var(--color-border); stroke-width:1; }
+  :global(.zx-line){ fill:none; stroke:var(--dim); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
+  :global(.zx-lineact){ fill:none; stroke:var(--color-accent); stroke-width:2.75; stroke-linejoin:round; stroke-linecap:round; }
+  :global(.zx-dot){ fill:var(--dim); }
+  :global(.zx-dotact){ fill:var(--color-accent); }
+  :global(.zx-head){ fill:var(--color-bg); stroke:var(--color-accent); stroke-width:2.5; }
+  :global(.zx-playline){ stroke:var(--color-accent); stroke-width:1; stroke-dasharray:3 3; }
+  :global(.zx-xlab){ font-family:var(--font-mono); font-size:10px; fill:var(--color-text-subtle); text-anchor:middle; }
+  :global(.zx-ylab){ font-family:var(--font-mono); font-size:10px; fill:var(--color-text-subtle); text-anchor:end; }
+  :global(.zx-mkline){ stroke:var(--warn); stroke-width:1.5; stroke-dasharray:4 3; opacity:0; transition:opacity .3s; }
+  :global(.zx-mklab){ font-family:var(--font-mono); font-size:10px; font-weight:600; fill:var(--warn); opacity:0; transition:opacity .3s; }
+  .zx-slidewrap{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .zx-cap{ font-family:var(--font-mono); font-size:11px; color:var(--color-text-subtle); }
+  .zx-slider{ flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:4px; background:var(--color-border); outline:none; }
+  .zx-slider::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--color-bg); border:2px solid var(--color-accent); cursor:pointer; }
+  .zx-slider::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; background:var(--color-bg); border:2px solid var(--color-accent); cursor:pointer; }
+  .zx-event{ display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border-radius:8px; background:var(--color-bg); font-size:13px; line-height:1.55; color:var(--color-text-muted); margin-bottom:12px; min-height:44px; transition:opacity .3s; }
+  .zx-event.hide{ opacity:0; }
+  .zx-event b{ color:var(--color-text); }
+  .zx-flag{ color:var(--warn); font-size:14px; flex:none; }
+  .zx-foot{ font-size:12.5px; color:var(--color-text-subtle); margin:0; font-style:italic; }
+</style>
+
+<script is:inline>
+  (function(){
+    const NS="http://www.w3.org/2000/svg";
+    function init(root){
+      if(root.dataset.init) return; root.dataset.init="1";
+      const trend=JSON.parse(root.querySelector('.zx-data').textContent);
+      const data=trend.data; const n=data.length;
+      const counts=data.map(d=>d[1]); const max=Math.max(...counts);
+      const top=Math.max(1,Math.ceil(max*1.05/20000)*20000);
+      const svg=root.querySelector('.zx-svg');
+      const L=52,R=606,T=16,B=205;
+      const x=i=>L+i/(n-1)*(R-L);
+      const y=v=>B-v/top*(B-T);
+      const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+      [0,.25,.5,.75,1].forEach(f=>{const v=Math.round(top*f);svg.appendChild(el('line',{class:'zx-grid',x1:L,y1:y(v),x2:R,y2:y(v)}));const lb=el('text',{class:'zx-ylab',x:L-8,y:y(v)+3});lb.textContent=v>=1000?(v/1000)+'k':v;svg.appendChild(lb);});
+      data.forEach((d,i)=>{const t=el('text',{class:'zx-xlab',x:x(i),y:B+18});t.textContent="'"+String(d[0]).slice(2);svg.appendChild(t);});
+      const mi=data.findIndex(d=>d[0]===2019); const hasMk=mi>=0;
+      let mkline,mklab;
+      if(hasMk){ mkline=el('line',{class:'zx-mkline',x1:x(mi),y1:T,x2:x(mi),y2:B});svg.appendChild(mkline);
+        mklab=el('text',{class:'zx-mklab',x:x(mi)+5,y:T+8});mklab.textContent='2019 · NDMA warning';svg.appendChild(mklab); }
+      const full='M'+data.map((p,i)=>x(i)+' '+y(p[1])).join(' L');
+      svg.appendChild(el('path',{class:'zx-line',d:full}));
+      const act=el('path',{class:'zx-lineact',d:full});svg.appendChild(act);
+      data.forEach((p,i)=>svg.appendChild(el('circle',{class:'zx-dot','data-i':i,cx:x(i),cy:y(p[1]),r:2.5})));
+      const start=hasMk?mi:Math.floor((n-1)/2);
+      const playline=el('line',{class:'zx-playline',x1:x(start),y1:T,x2:x(start),y2:B});svg.appendChild(playline);
+      const head=el('circle',{class:'zx-head',cx:x(start),cy:y(data[start][1]),r:5});svg.appendChild(head);
+      const slider=root.querySelector('.zx-slider'); slider.max=n-1; slider.value=start;
+      root.querySelector('.zx-lo').textContent=data[0][0]; root.querySelector('.zx-hi').textContent=data[n-1][0];
+      const yearEl=root.querySelector('.zx-year'), valEl=root.querySelector('.zx-val b');
+      const event=root.querySelector('.zx-event'), etext=root.querySelector('.zx-etext');
+      function upd(idx){
+        const p=data[idx];
+        yearEl.textContent=p[0]; valEl.textContent=p[1].toLocaleString();
+        act.setAttribute('d','M'+data.slice(0,idx+1).map((q,i)=>x(i)+' '+y(q[1])).join(' L'));
+        head.setAttribute('cx',x(idx)); head.setAttribute('cy',y(p[1]));
+        playline.setAttribute('x1',x(idx)); playline.setAttribute('x2',x(idx));
+        svg.querySelectorAll('.zx-dot').forEach(c=>c.setAttribute('class', +c.getAttribute('data-i')<=idx?'zx-dot zx-dotact':'zx-dot'));
+        const on=p[0]>=2019;
+        if(hasMk){ mkline.style.opacity=on?1:0; mklab.style.opacity=on?1:0; }
+        if(on){ event.classList.remove('hide'); etext.innerHTML='<b>Sept 2019</b> — the FDA found <b>NDMA</b> (a probable carcinogen) contaminating ranitidine → recall → <b>mass litigation</b>. The surge is claims generating reports, not new harm.'; }
+        else { event.classList.add('hide'); etext.innerHTML='Before 2019: flat and unremarkable — a few thousand reports a year.'; }
+        const pct=idx/(n-1)*100; slider.style.background='linear-gradient(90deg,var(--color-accent) 0%,var(--color-accent) '+pct+'%,var(--color-border) '+pct+'%)';
+      }
+      slider.addEventListener('input',e=>upd(+e.target.value));
+      upd(start);
+    }
+    function boot(){ document.querySelectorAll('.js-zantac-trend').forEach(init); }
+    if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+  })();
+</script>
