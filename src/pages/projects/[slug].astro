@@ -1,6 +1,7 @@
 ---
 import Article from '../../layouts/Article.astro';
 import SignalThreshold from '../../components/viz/SignalThreshold.astro';
+import EHRThreshold from '../../components/viz/EHRThreshold.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -24,5 +25,6 @@ const { Content } = await entry.render();
   image={entry.data.image}
 >
   {entry.slug === 'faers-signal' && <SignalThreshold slot="chart" />}
+  {entry.slug === 'ehr-ml' && <EHRThreshold slot="chart" />}
   <Content />
 </Article>

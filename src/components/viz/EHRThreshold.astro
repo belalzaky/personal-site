@@ -1,0 +1,110 @@
+---
+import preds from "../../data/ehr-ml-predictions.json";
+const POS = preds.filter(d => d.y === 1).length;
+---
+<div class="mlx js-ehr-threshold" role="group" aria-label="Interactive classification threshold explorer">
+  <p class="mlx-sr">Drag the threshold to see how many true hypertension cases the model catches versus how many healthy patients it falsely flags.</p>
+  <div class="mlx-eyebrow">EHR ML · CLASSIFICATION THRESHOLD</div>
+  <h3 class="mlx-title">Where do you draw the line?</h3>
+  <p class="mlx-sub">The model gives every patient a <b>probability</b> of hypertension. You choose the cut-off for calling it "positive." That choice isn't maths — it's clinical. Drag it.</p>
+
+  <div class="mlx-readout">
+    <span>Flag if probability ≥ <b class="mlx-th">0.50</b></span>
+    <span class="mlx-mode">only flagging near-certain cases</span>
+  </div>
+
+  <div class="mlx-stats">
+    <div class="mlx-stat"><div class="mlx-k">RECALL</div><div class="mlx-v"><span class="mlx-recall">–</span>%</div><div class="mlx-d">of real cases caught</div></div>
+    <div class="mlx-stat"><div class="mlx-k">PRECISION</div><div class="mlx-v"><span class="mlx-prec">–</span>%</div><div class="mlx-d">of flags are correct</div></div>
+    <div class="mlx-stat"><div class="mlx-k">FALSE ALARMS</div><div class="mlx-v mlx-fp">–</div><div class="mlx-d">healthy, flagged</div></div>
+  </div>
+
+  <div class="mlx-gridcap">Of <b>{POS}</b> patients who truly have hypertension — <span class="mlx-caught">–</span> caught, <span class="mlx-missed">–</span> missed</div>
+  <div class="mlx-grid"></div>
+
+  <div class="mlx-control">
+    <span class="mlx-cap">screen aggressively</span>
+    <input class="mlx-slider" type="range" min="0.1" max="0.9" step="0.01" value="0.5" aria-label="Classification threshold">
+    <span class="mlx-cap">only if certain</span>
+  </div>
+
+  <script type="application/json" class="mlx-data" set:html={JSON.stringify(preds)}></script>
+</div>
+
+<style>
+  .mlx{ --off:#dcdee4; font-family:var(--font-sans); color:var(--color-text);
+    background:var(--color-surface); border:1px solid var(--color-border);
+    border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
+  :global([data-theme="dark"]) .mlx{ --off:#3a3a3d; }
+  .mlx *{ box-sizing:border-box; }
+  .mlx-sr{ position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0); }
+  .mlx-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
+  .mlx-title{ font-size:24px; font-weight:700; letter-spacing:-.02em; margin:0 0 6px; }
+  .mlx-sub{ font-size:13.5px; line-height:1.6; color:var(--color-text-muted); margin:0 0 18px; max-width:58ch; }
+  .mlx-sub b{ color:var(--color-text); font-weight:600; }
+  .mlx-readout{ display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:13px; color:var(--color-text-muted); margin-bottom:16px; flex-wrap:wrap; }
+  .mlx-readout b{ color:var(--color-text); font-family:var(--font-mono); }
+  .mlx-mode{ font-family:var(--font-mono); font-size:11px; color:var(--color-text-subtle); background:var(--color-bg); padding:4px 10px; border-radius:5px; transition:all .3s; }
+  .mlx-stats{ display:flex; gap:10px; margin-bottom:20px; }
+  .mlx-stat{ flex:1; border:1px solid var(--color-border); border-radius:8px; padding:12px 14px; background:var(--color-bg); }
+  .mlx-k{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; color:var(--color-text-subtle); }
+  .mlx-v{ font-size:30px; font-weight:700; letter-spacing:-.02em; margin:2px 0; line-height:1; }
+  .mlx-recall{ color:var(--color-accent); }
+  .mlx-d{ font-size:11px; color:var(--color-text-muted); }
+  .mlx-gridcap{ font-size:12.5px; color:var(--color-text-muted); margin-bottom:10px; }
+  .mlx-gridcap b{ color:var(--color-text); }
+  .mlx-caught{ color:var(--color-accent); font-weight:600; }
+  .mlx-missed{ color:var(--color-text); font-weight:600; }
+  .mlx-grid{ display:grid; grid-template-columns:repeat(19,1fr); gap:5px; margin-bottom:22px; }
+  .mlx-dot{ aspect-ratio:1; border-radius:50%; background:var(--color-bg); border:1.5px solid var(--off); transition:background-color .25s,border-color .25s,transform .3s; transform:scale(0); }
+  .mlx-dot.on{ transform:scale(1); }
+  .mlx-dot.caught{ background:var(--color-accent); border-color:var(--color-accent); }
+  .mlx-control{ display:flex; align-items:center; gap:12px; padding-top:16px; border-top:1px solid var(--color-border); }
+  .mlx-cap{ font-family:var(--font-mono); font-size:10px; color:var(--color-text-muted); white-space:nowrap; }
+  .mlx-slider{ flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:4px; background:var(--color-border); outline:none; }
+  .mlx-slider::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--color-bg); border:2px solid var(--color-accent); cursor:pointer; transition:transform .15s; }
+  .mlx-slider::-webkit-slider-thumb:hover{ transform:scale(1.15); }
+  .mlx-slider::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; background:var(--color-bg); border:2px solid var(--color-accent); cursor:pointer; }
+</style>
+
+<script is:inline>
+  (function(){
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function init(root){
+      if(root.dataset.init) return; root.dataset.init="1";
+      const data = JSON.parse(root.querySelector('.mlx-data').textContent);
+      const pos = data.filter(d=>d.y===1).map(d=>d.p).sort((a,b)=>b-a);
+      const neg = data.filter(d=>d.y===0).map(d=>d.p);
+      const POS = pos.length;
+      const grid = root.querySelector('.mlx-grid');
+      const slider = root.querySelector('.mlx-slider');
+      const dots = pos.map(()=>{ const d=document.createElement('div'); d.className='mlx-dot'; grid.appendChild(d); return d; });
+
+      function mode(t){ return t<=0.25?'screening aggressively':t>=0.5?'only flagging near-certain cases':'balancing catch vs. cost'; }
+      function apply(t){
+        const TP = pos.filter(p=>p>=t).length;
+        const FN = POS - TP;
+        const FP = neg.filter(p=>p>=t).length;
+        const recall = POS? TP/POS : 0;
+        const precision = (TP+FP)? TP/(TP+FP) : 0;
+        root.querySelector('.mlx-th').textContent=t.toFixed(2);
+        root.querySelector('.mlx-mode').textContent=mode(t);
+        root.querySelector('.mlx-recall').textContent=Math.round(recall*100);
+        root.querySelector('.mlx-prec').textContent=Math.round(precision*100);
+        root.querySelector('.mlx-fp').textContent=FP;
+        root.querySelector('.mlx-caught').textContent=TP;
+        root.querySelector('.mlx-missed').textContent=FN;
+        dots.forEach((d,i)=>d.classList.toggle('caught', i<TP));
+        const p=(t-0.1)/0.8*100;
+        slider.style.background='linear-gradient(90deg,var(--color-accent) 0%,var(--color-accent) '+p+'%,var(--color-border) '+p+'%)';
+      }
+      function reveal(){ dots.forEach((d,i)=> reduce ? d.classList.add('on') : setTimeout(()=>d.classList.add('on'), i*14)); }
+      slider.addEventListener('input',e=>apply(parseFloat(e.target.value)));
+      apply(0.5);
+      if(reduce) reveal();
+      else { const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ reveal(); io.disconnect(); } }),{threshold:.25}); io.observe(root); }
+    }
+    function boot(){ document.querySelectorAll('.js-ehr-threshold').forEach(init); }
+    if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+  })();
+</script>
