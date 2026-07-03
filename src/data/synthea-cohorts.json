@@ -1,0 +1,40 @@
+{
+  "cohorts": [
+    {
+      "key": "htn",
+      "label": "Hypertension",
+      "size": 302,
+      "meds": [
+        ["Acetaminophen 325 MG Oral Tablet", 131],
+        ["Hydrochlorothiazide 25 MG Oral Tablet", 121],
+        ["Atenolol 50 MG / Chlorthalidone 25 MG Oral Tablet", 96],
+        ["Naproxen sodium 220 MG Oral Tablet", 75],
+        ["amLODIPine 5 MG / Hydrochlorothiazide 12.5 MG / Olmesartan medoxomil 20 MG Oral Tablet", 72]
+      ]
+    },
+    {
+      "key": "dm2",
+      "label": "Type 2 diabetes",
+      "size": 76,
+      "meds": [
+        ["24 HR Metformin hydrochloride 500 MG Extended Release Oral Tablet", 47],
+        ["Insulin Human Isophane 70 UNT/ML / Regular Insulin Human 30 UNT/ML Injectable Suspension [Humulin]", 36],
+        ["Acetaminophen 325 MG Oral Tablet", 29],
+        ["Simvastatin 10 MG Oral Tablet", 21],
+        ["Naproxen sodium 220 MG Oral Tablet", 18]
+      ]
+    },
+    {
+      "key": "hld",
+      "label": "Hyperlipidaemia",
+      "size": 136,
+      "meds": [
+        ["Simvastatin 10 MG Oral Tablet", 136],
+        ["Acetaminophen 325 MG Oral Tablet", 71],
+        ["Naproxen sodium 220 MG Oral Tablet", 40],
+        ["Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet", 26],
+        ["Ibuprofen 200 MG Oral Tablet", 25]
+      ]
+    }
+  ]
+}
