@@ -55,10 +55,7 @@ const POS = preds.filter(d => d.y === 1).length;
   .mlx-gridcap b{ color:var(--color-text); }
   .mlx-caught{ color:var(--color-accent); font-weight:600; }
   .mlx-missed{ color:var(--color-text); font-weight:600; }
-  .mlx-grid{ display:grid; grid-template-columns:repeat(19,1fr); gap:5px; margin-bottom:22px; }
-  .mlx-dot{ aspect-ratio:1; border-radius:50%; background:var(--color-bg); border:1.5px solid var(--off); transition:background-color .25s,border-color .25s,transform .3s; transform:scale(0); }
-  .mlx-dot.on{ transform:scale(1); }
-  .mlx-dot.caught{ background:var(--color-accent); border-color:var(--color-accent); }
+  .mlx-grid{ display:grid; grid-template-columns:repeat(auto-fill,16px); gap:6px; justify-content:start; margin-bottom:22px; }
   .mlx-control{ display:flex; align-items:center; gap:12px; padding-top:16px; border-top:1px solid var(--color-border); }
   .mlx-cap{ font-family:var(--font-mono); font-size:10px; color:var(--color-text-muted); white-space:nowrap; }
   .mlx-slider{ flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:4px; background:var(--color-border); outline:none; }
@@ -78,7 +75,9 @@ const POS = preds.filter(d => d.y === 1).length;
       const POS = pos.length;
       const grid = root.querySelector('.mlx-grid');
       const slider = root.querySelector('.mlx-slider');
-      const dots = pos.map(()=>{ const d=document.createElement('div'); d.className='mlx-dot'; grid.appendChild(d); return d; });
+      const dots = pos.map(()=>{ const d=document.createElement('div');
+        d.style.cssText='width:16px;height:16px;border-radius:50%;border:1.5px solid var(--off,#dcdee4);background:var(--color-bg,#fff);transform:scale(0);transition:background-color .25s,border-color .25s,transform .3s;';
+        grid.appendChild(d); return d; });
 
       function mode(t){ return t<=0.25?'screening aggressively':t>=0.5?'only flagging near-certain cases':'balancing catch vs. cost'; }
       function apply(t){
@@ -94,11 +93,11 @@ const POS = preds.filter(d => d.y === 1).length;
         root.querySelector('.mlx-fp').textContent=FP;
         root.querySelector('.mlx-caught').textContent=TP;
         root.querySelector('.mlx-missed').textContent=FN;
-        dots.forEach((d,i)=>d.classList.toggle('caught', i<TP));
+        dots.forEach((d,i)=>{ const on=i<TP; d.style.background=on?'var(--color-accent)':'var(--color-bg,#fff)'; d.style.borderColor=on?'var(--color-accent)':'var(--off,#dcdee4)'; });
         const p=(t-0.1)/0.8*100;
         slider.style.background='linear-gradient(90deg,var(--color-accent) 0%,var(--color-accent) '+p+'%,var(--color-border) '+p+'%)';
       }
-      function reveal(){ dots.forEach((d,i)=> reduce ? d.classList.add('on') : setTimeout(()=>d.classList.add('on'), i*14)); }
+      function reveal(){ dots.forEach((d,i)=> reduce ? (d.style.transform='scale(1)') : setTimeout(()=>{ d.style.transform='scale(1)'; }, i*14)); }
       slider.addEventListener('input',e=>apply(parseFloat(e.target.value)));
       apply(0.5);
       if(reduce) reveal();
