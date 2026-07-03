@@ -16,9 +16,9 @@ The queries were standard analytical patterns — `GROUP BY`, `WHERE`, `COUNT(DI
 
 ## The important lesson
 
-The most useful thing I learned had nothing to do with SQL syntax. It was about sampling.
+The lesson wasn't about SQL syntax; it was about sampling.
 
-The openFDA API lets you request a balanced or unbalanced sample. I ran the same queries on both and got different answers. A "balanced" sample (equal records per drug) is not representative of the actual reporting distribution — it flattens out the drugs with few reports and compresses the ones with many. The choice of sampling method changes the conclusions, and it's easy to miss this if you treat the API's default response as ground truth.
+My first reports-per-year chart was a lie: the naive fetch (skip=0,100…, no filter) pulled one consecutive block from openFDA's storage, so almost every report landed in 2014 — a slice, not a sample. I fixed it by taking 300 reports per year — but that made the trend dead flat, hiding the fact that real FAERS volume roughly doubles across the decade. Only counting every report with no cap shows the true rising trend. How you collect the data decides what you're allowed to conclude from it — the query was never the hard part.
 
 ## Stack
 
