@@ -1,0 +1,92 @@
+---
+import samp from "../../data/faers-sql-samplings.json";
+---
+<div class="sql3 js-sql-sampling" role="group" aria-label="Interactive comparison of three FAERS sampling strategies">
+  <p class="sql3-sr">The same reports-per-year query gives three different trends depending on how the data was sampled.</p>
+  <div class="sql3-eyebrow">FAERS · SQL</div>
+  <h3 class="sql3-title">Same query. Three samplings. Three answers.</h3>
+  <p class="sql3-sub">One SQL query — reports per year. The chart it draws depends entirely on how I pulled the data. Only one of these is real.</p>
+
+  <div class="sql3-toggle" role="tablist">
+    <button class="sql3-btn active" data-set="naive" role="tab">Naive block</button>
+    <button class="sql3-btn" data-set="stratified" role="tab">Stratified 300/yr</button>
+    <button class="sql3-btn" data-set="full" role="tab">Full data, no cap</button>
+  </div>
+
+  <div class="sql3-plot"></div>
+  <div class="sql3-xaxis"></div>
+
+  <div class="sql3-verdict"><span class="sql3-mark">✗</span><span class="sql3-text"></span></div>
+  <p class="sql3-foot">The SQL never changed. How you collect the data decides what you're allowed to conclude from it.</p>
+
+  <script type="application/json" class="sql3-data" set:html={JSON.stringify(samp)}></script>
+</div>
+
+<style>
+  .sql3{ --off:#9ba1ad; --warn:#c0492f; font-family:var(--font-sans); color:var(--color-text);
+    background:var(--color-surface); border:1px solid var(--color-border);
+    border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
+  :global([data-theme="dark"]) .sql3{ --off:#5a5d64; --warn:#dd7a63; }
+  .sql3 *{ box-sizing:border-box; }
+  .sql3-sr{ position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0); }
+  .sql3-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
+  .sql3-title{ font-size:23px; font-weight:700; letter-spacing:-.02em; margin:0 0 6px; }
+  .sql3-sub{ font-size:13.5px; line-height:1.6; color:var(--color-text-muted); margin:0 0 18px; max-width:58ch; }
+  .sql3-toggle{ display:inline-flex; flex-wrap:wrap; border:1px solid var(--color-border); border-radius:9px; padding:4px; margin-bottom:22px; background:var(--color-bg); gap:4px; }
+  .sql3-btn{ font-family:var(--font-mono); font-size:12px; font-weight:600; padding:8px 14px; border:0; background:transparent; color:var(--color-text-muted); border-radius:6px; cursor:pointer; transition:all .18s; }
+  .sql3-btn:hover{ color:var(--color-text); }
+  .sql3-btn.active{ background:var(--color-accent); color:#fff; }
+  .sql3-plot{ position:relative; display:flex; gap:6px; align-items:stretch; height:180px; }
+  .sql3-xaxis{ display:flex; gap:6px; padding:8px 0 0; border-top:1px solid var(--color-border); }
+  .sql3-xaxis span{ flex:1; text-align:center; font-family:var(--font-mono); font-size:10px; color:var(--color-text-subtle); }
+  .sql3-verdict{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:8px; background:var(--color-bg); font-size:13px; margin:16px 0 12px; line-height:1.5; color:var(--color-text-muted); }
+  .sql3-verdict b{ color:var(--color-text); }
+  .sql3-mark{ font-family:var(--font-mono); font-weight:700; font-size:15px; width:18px; flex:none; text-align:center; }
+  .sql3-verdict.bad .sql3-mark{ color:var(--warn); }
+  .sql3-verdict.good{ color:var(--color-text); } .sql3-verdict.good .sql3-mark{ color:var(--color-accent); }
+  .sql3-foot{ font-size:12.5px; color:var(--color-text-subtle); margin:0; font-style:italic; }
+</style>
+
+<script is:inline>
+  (function(){
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const PXMAX=160;
+    const texts={
+      naive:{up:false,mark:'✗',t:'Almost every report lands in <b>2014</b> — the fetch grabbed one consecutive block from storage (skip=0,100…). A slice, not a sample.'},
+      stratified:{up:false,mark:'✗',t:'Capping <b>300 reports per year</b> makes it dead flat — balanced ≠ representative. It hides that real FAERS volume grows over time.'},
+      full:{up:true,mark:'✓',t:'Count every report, no cap: volume <b>roughly doubles across the decade</b> (~0.8M → ~1.5M). The real trend.'}
+    };
+    function init(root){
+      if(root.dataset.init) return; root.dataset.init="1";
+      const data = JSON.parse(root.querySelector('.sql3-data').textContent);
+      const years = data.years;
+      const plot = root.querySelector('.sql3-plot');
+      const xaxis = root.querySelector('.sql3-xaxis');
+      const verdict = root.querySelector('.sql3-verdict');
+      const fills = years.map(y=>{
+        const col=document.createElement('div'); col.style.cssText='flex:1;position:relative;';
+        const fill=document.createElement('div');
+        fill.style.cssText='position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:4px 4px 0 0;background:var(--off,#9ba1ad);transition:height .7s cubic-bezier(.2,.7,.2,1),background-color .4s;';
+        col.appendChild(fill); plot.appendChild(col);
+        const s=document.createElement('span'); s.textContent="'"+String(y).slice(2); xaxis.appendChild(s);
+        return fill;
+      });
+      function heights(arr){ const m=Math.max(...arr)||1; return arr.map(v=> v<=0?0:Math.max(3, v/m*PXMAX)); }
+      function draw(key){
+        const arr=data[key]; const hs=heights(arr); const meta=texts[key];
+        fills.forEach((f,i)=>{ f.style.height=hs[i]+'px'; f.style.background=meta.up?'var(--color-accent)':'var(--off,#9ba1ad)'; });
+        verdict.className='sql3-verdict '+(meta.up?'good':'bad');
+        verdict.querySelector('.sql3-mark').textContent=meta.mark;
+        verdict.querySelector('.sql3-text').innerHTML=meta.t;
+      }
+      root.querySelectorAll('.sql3-btn').forEach(b=>b.addEventListener('click',()=>{
+        root.querySelectorAll('.sql3-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active'); draw(b.dataset.set);
+      }));
+      if(reduce){ draw('naive'); }
+      else { const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ draw('naive'); io.disconnect(); } }),{threshold:.25}); io.observe(root); }
+    }
+    function boot(){ document.querySelectorAll('.js-sql-sampling').forEach(init); }
+    if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+  })();
+</script>
