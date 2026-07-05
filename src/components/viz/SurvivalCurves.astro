@@ -63,7 +63,9 @@ import km from "../../data/km-curves.json";
       const verdict=root.querySelector('.sc-text');
       const L=56,R=560,T=22,B=262;
       const series=[data.overall,data.diabetic,data.nondiabetic];
-      const xMax=Math.ceil(Math.max(...series.map(s=>s[s.length-1][0])));
+      function lastChange(s){ for(let i=s.length-1;i>0;i--){ if(s[i][1]!==s[i-1][1]) return s[i][0]; } return s[s.length-1][0]; }
+      const xMax=Math.max(5, Math.ceil(Math.max(...series.map(lastChange))*1.03));
+      function clip(pts){ const o=[]; for(const p of pts){ if(p[0]<=xMax) o.push(p); else break; } const l=o[o.length-1]; if(l&&l[0]<xMax) o.push([xMax,l[1]]); return o; }
       const x=t=>L+t/xMax*(R-L);
       const y=p=>B-p*(B-T);
       const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
@@ -85,10 +87,10 @@ import km from "../../data/km-curves.json";
       function draw(mode){
         legend.innerHTML='';endWrap.innerHTML='';
         if(mode==='all'){
-          anim(pA,data.overall,accent);pB.setAttribute('d','');endLabel(data.overall,accent);
+          anim(pA,clip(data.overall),accent);pB.setAttribute('d','');endLabel(clip(data.overall),accent);
           verdict.innerHTML='Across everyone, most patients stay hypertension-free through follow-up — the curve never falls near the 50% line, so there is <b>no median time-to-event</b>. The event just doesn’t reach most people in the window.';
         } else {
-          anim(pA,data.nondiabetic,slate);anim(pB,data.diabetic,accent);endLabel(data.nondiabetic,slate);endLabel(data.diabetic,accent);
+          anim(pA,clip(data.nondiabetic),slate);anim(pB,clip(data.diabetic),accent);endLabel(clip(data.nondiabetic),slate);endLabel(clip(data.diabetic),accent);
           legend.innerHTML='<span class="sc-lg"><span class="sc-sw" style="background:'+accent+'"></span>Diabetic</span><span class="sc-lg"><span class="sc-sw" style="background:'+slate+'"></span>Non-diabetic</span>';
           verdict.innerHTML='<b>Diabetic patients develop hypertension markedly faster</b> — their curve pulls away from the non-diabetic one almost immediately (log-rank '+pTxt+'). The non-diabetic curve stays high and never reaches 50%.';
         }

@@ -5,6 +5,7 @@ tags: ["R", "survival", "Cox regression", "Synthea"]
 date: 2026-07-06
 featured: true
 github: "https://github.com/belalzaky/ehr-survival-r"
+image: "/projects/ehr-survival-r.png"
 ---
 
 ## What I did
