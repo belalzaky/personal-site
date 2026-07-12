@@ -1,0 +1,156 @@
+---
+// §3 — Social proof: grounded in real pharmacovigilance practice.
+// Soft attribution only, no names.
+const stats = [
+  { value: '6', label: 'projects shipped in public' },
+  { value: '20M+', label: 'FAERS reports analysed' },
+  { value: '1,100+', label: 'patients modelled' },
+  { value: 'R · Py · SQL', label: '+ ML, self-taught' },
+];
+---
+
+<div class="proof">
+  <div class="proof-cards">
+    <figure class="proof-card reveal">
+      <blockquote class="proof-quote">
+        “A litigation flood shows attention; a real safety signal shows a pattern.”
+      </blockquote>
+      <figcaption class="proof-attrib">— a working pharmacovigilance professional.</figcaption>
+      <p class="proof-context">
+        Advice from practitioners in the field shaped the direction this whole portfolio follows.
+      </p>
+    </figure>
+
+    <figure class="proof-card reveal" style="--reveal-delay:80ms">
+      <p class="proof-lead">
+        A working PV coordinator shared his six-part framework for telling signal from noise —
+        so I built it. <span class="proof-arrow" aria-hidden="true">→</span> <a href="/projects/faers-signal" class="proof-inline-link">became FAERS Signal Detection</a>.
+      </p>
+      <p class="proof-context">
+        Validated on warfarin–haemorrhage; the negative controls caught the exact confounders
+        he’d warned about.
+      </p>
+    </figure>
+  </div>
+
+  <dl class="proof-stats reveal" style="--reveal-delay:160ms">
+    {stats.map((s) => (
+      <div class="proof-stat">
+        <dt class="proof-stat-value">{s.value}</dt>
+        <dd class="proof-stat-label">{s.label}</dd>
+      </div>
+    ))}
+  </dl>
+</div>
+
+<style>
+  .proof {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .proof-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 640px) {
+    .proof-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .proof-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .proof-quote {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+  }
+
+  .proof-lead {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+  }
+
+  .proof-arrow {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .proof-inline-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-accent-soft);
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .proof-inline-link:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .proof-attrib {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .proof-context {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  /* Stats strip */
+  .proof-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-6);
+  }
+
+  @media (max-width: 640px) {
+    .proof-stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6);
+    }
+  }
+
+  .proof-stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .proof-stat-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--color-accent);
+    line-height: 1.1;
+  }
+
+  .proof-stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+</style>

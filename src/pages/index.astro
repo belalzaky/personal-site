@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import FeaturedProject from '../components/FeaturedProject.astro';
 import SignalThreshold from '../components/viz/SignalThreshold.astro';
 import ProjectCaseCard from '../components/ProjectCaseCard.astro';
+import SocialProof from '../components/SocialProof.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import { getCollection } from 'astro:content';
@@ -92,11 +93,26 @@ const latestPost = allPosts
     </div>
   </section>
 
+  <section class="section container">
+    <header class="section-header">
+      <div class="section-heading">
+        <p class="section-eyebrow">02 · GROUNDED IN THE FIELD</p>
+        <h2 class="section-title">Not just built in a classroom.</h2>
+      </div>
+    </header>
+    <p class="section-intro reveal">
+      The projects come from real pharmacovigilance practice — practitioners' frameworks and
+      advice, turned into working code — the technical foundation for better drug-safety
+      decisions and policy.
+    </p>
+    <SocialProof />
+  </section>
+
   {latestPost.length > 0 && (
     <section class="section container container--prose">
       <header class="section-header">
         <div class="section-heading">
-          <p class="section-eyebrow">02</p>
+          <p class="section-eyebrow">03</p>
           <h2 class="section-title">Latest writing</h2>
         </div>
         <a href="/writing" class="section-more">All posts →</a>
@@ -167,6 +183,15 @@ const latestPost = allPosts
 
   .section-more:hover {
     color: var(--color-accent);
+  }
+
+  .section-intro {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    max-width: 64ch;
+    margin-top: calc(-1 * var(--space-4));
+    margin-bottom: var(--space-8);
   }
 
   .project-grid {
