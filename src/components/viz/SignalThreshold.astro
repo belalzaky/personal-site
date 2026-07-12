@@ -12,6 +12,10 @@ const DEFAULT_THRESHOLD = 2;
 
 const initOn  = PAIRS.filter(p => p.prr >= DEFAULT_THRESHOLD).length;
 const initOff = PAIRS.length - initOn;
+
+// Unique per-instance id so multiple embeds (e.g. hero + featured card)
+// don't produce duplicate DOM ids / broken label association.
+const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <figure class="st" data-viz="signal-threshold">
@@ -81,10 +85,10 @@ const initOff = PAIRS.length - initOn;
 
   <!-- ── Slider ──────────────────────────────────────────────────── -->
   <div class="st-footer">
-    <label class="st-slider-label" for="st-slider-input">Signal threshold</label>
+    <label class="st-slider-label" for={sliderId}>Signal threshold</label>
     <input
       class="st-slider"
-      id="st-slider-input"
+      id={sliderId}
       type="range"
       min="1"
       max="6"
