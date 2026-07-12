@@ -10,86 +10,91 @@ import Photography from '../components/Photography.astro';
 >
   <div class="page">
 
-    <!-- Page header -->
-    <div class="container container--prose">
-      <header class="page-header">
-        <p class="page-eyebrow">Background</p>
+    <!-- §3 · ABOUT — bio + facts card -->
+    <section class="about-intro container">
+      <header class="about-intro-head reveal">
+        <p class="page-eyebrow">03 · ABOUT</p>
         <h1 class="page-title">About</h1>
       </header>
-    </div>
 
-    <!-- Photo + bio band -->
-    <section class="about-band container" aria-label="Person behind the work">
-      <div class="about-photo-wrap">
-        <img
-          src="/headshot.jpg"
-          srcset="/headshot.jpg 1x, /headshot@2x.jpg 2x"
-          alt="Belal Zaky"
-          class="about-photo"
-          width="280"
-          height="350"
-          loading="lazy"
-        />
-      </div>
-      <div class="about-bio">
-        <p class="about-bio-text">
-          I'm Belal — a pharmacology student at King's College London, originally from Dubai.
-          I started out fascinated by how drugs work in the body, then kept drifting toward a
-          different question: what the data around medicines can, and can't, actually tell us.
-          So I began building small projects to find out, and writing about them as I go.
-          Away from the screen I'm a keen public speaker, I split my time between London and
-          Dubai, and I work in English and Arabic.
-        </p>
+      <div class="about-grid">
+        <div class="about-bio reveal">
+          <p class="about-lead">
+            I'm a first-year pharmacology student at King's — more interested in what
+            medicine's <span class="accent">data</span> can tell us than most of my cohort.
+          </p>
+          <p class="about-bio-text">
+            Most people in drug safety aren't strong on data; most data people don't know
+            drug safety. I'm building toward the rare spot where drug-safety data, AI, and
+            <span class="accent">policy</span> meet — and the decisions that get made there.
+            I teach myself the technical side (R, Python, SQL, ML) and build everything in public.
+          </p>
+        </div>
+
+        <aside class="facts-card reveal" style="--reveal-delay:80ms">
+          <img
+            src="/headshot.jpg"
+            srcset="/headshot.jpg 1x, /headshot@2x.jpg 2x"
+            alt="Belal Zaky"
+            class="facts-photo"
+            width="280"
+            height="350"
+            loading="lazy"
+          />
+          <dl class="facts-list">
+            <div class="facts-row">
+              <dt class="facts-key">Studying</dt>
+              <dd class="facts-val">Pharmacology, King's College London</dd>
+            </div>
+            <div class="facts-row">
+              <dt class="facts-key">Based</dt>
+              <dd class="facts-val">London &amp; Dubai</dd>
+            </div>
+            <div class="facts-row">
+              <dt class="facts-key">Heading</dt>
+              <dd class="facts-val">Health data, AI &amp; policy</dd>
+            </div>
+          </dl>
+        </aside>
       </div>
     </section>
 
-    <!-- Journey timeline, skills, education, contact -->
+    <!-- Journey, skills, education, contact -->
     <div class="about-body container container--prose">
 
-      <!-- Timeline -->
+      <!-- THE JOURNEY -->
       <section class="about-section">
-        <h2 class="about-section-title">The journey so far</h2>
-        <p class="about-section-tagline">describe → query → structure → measure → predict</p>
+        <h2 class="about-section-title">The journey</h2>
 
         <ol class="timeline" role="list">
-          <li class="timeline-item">
-            <span class="timeline-date">Jun 2026</span>
+          <li class="timeline-item reveal">
+            <span class="timeline-date">2025</span>
             <div class="timeline-content">
-              <span class="timeline-tag">describe</span>
-              <a href="/projects/faers-explorer" class="timeline-project">FAERS Explorer</a>
-              <p class="timeline-desc">An interactive dashboard over FDA adverse-event data.</p>
+              <p class="timeline-desc">Couldn't write a line of Python. Started learning data — in public.</p>
             </div>
           </li>
-          <li class="timeline-item">
-            <span class="timeline-date">Jun 2026</span>
+          <li class="timeline-item reveal">
+            <span class="timeline-date">Early 2026</span>
             <div class="timeline-content">
-              <span class="timeline-tag">query</span>
-              <a href="/projects/faers-sql" class="timeline-project">FAERS in SQL</a>
-              <p class="timeline-desc">The same data in a database, queried with SQL.</p>
+              <p class="timeline-desc">First project shipped: a live FAERS adverse-event dashboard.</p>
             </div>
           </li>
-          <li class="timeline-item">
-            <span class="timeline-date">Jul 2026</span>
+          <li class="timeline-item reveal">
+            <span class="timeline-date">Spring 2026</span>
             <div class="timeline-content">
-              <span class="timeline-tag">structure</span>
-              <a href="/projects/synthea-ehr" class="timeline-project">Synthea EHR</a>
-              <p class="timeline-desc">Learning how patient-record data is structured.</p>
+              <p class="timeline-desc">SQL, synthetic EHR, and pharmacovigilance signal detection.</p>
             </div>
           </li>
-          <li class="timeline-item">
-            <span class="timeline-date">Jul 2026</span>
+          <li class="timeline-item reveal">
+            <span class="timeline-date">Mid 2026</span>
             <div class="timeline-content">
-              <span class="timeline-tag">measure</span>
-              <a href="/projects/faers-signal" class="timeline-project">FAERS Signal Detection</a>
-              <p class="timeline-desc">A pharmacovigilance disproportionality method.</p>
+              <p class="timeline-desc">First ML model, then survival analysis in R — six projects, all interactive.</p>
             </div>
           </li>
-          <li class="timeline-item">
-            <span class="timeline-date">Aug 2026</span>
+          <li class="timeline-item timeline-item--accent reveal">
+            <span class="timeline-date">Next</span>
             <div class="timeline-content">
-              <span class="timeline-tag">predict</span>
-              <a href="/projects/ehr-ml" class="timeline-project">EHR ML Risk Model</a>
-              <p class="timeline-desc">My first machine-learning model.</p>
+              <p class="timeline-desc timeline-desc--accent">An industry-facing master's — bridging drug-safety data, AI, and the policy built on it.</p>
             </div>
           </li>
         </ol>
@@ -205,48 +210,113 @@ import Photography from '../components/Photography.astro';
     }
   }
 
-  /* Photo + bio band */
-  .about-band {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: var(--space-12);
-    align-items: start;
+  /* §3 intro: bio + facts card */
+  .about-intro {
     padding-bottom: var(--space-16);
   }
 
-  @media (max-width: 720px) {
-    .about-band {
+  .about-intro-head {
+    margin-bottom: var(--space-10);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .about-grid {
       grid-template-columns: 1fr;
       gap: var(--space-8);
     }
   }
 
-  .about-photo-wrap {
-    position: sticky;
-    top: 80px;
+  .about-bio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
   }
 
-  @media (max-width: 720px) {
-    .about-photo-wrap {
-      position: static;
-      max-width: 200px;
+  .about-lead {
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--color-text);
+    max-width: 30ch;
+  }
+
+  @media (max-width: 640px) {
+    .about-lead {
+      font-size: var(--text-xl);
     }
-  }
-
-  .about-photo {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--color-border);
-    display: block;
   }
 
   .about-bio-text {
     font-size: var(--text-lg);
     color: var(--color-text-muted);
     line-height: 1.75;
-    max-width: 56ch;
+    max-width: 60ch;
+  }
+
+  .accent {
+    color: var(--color-accent);
+  }
+
+  /* Facts card */
+  .facts-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    position: sticky;
+    top: 80px;
+  }
+
+  @media (max-width: 760px) {
+    .facts-card {
+      position: static;
+    }
+  }
+
+  .facts-photo {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    display: block;
+  }
+
+  .facts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .facts-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .facts-key {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+  }
+
+  .facts-val {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    line-height: 1.5;
   }
 
   /* Body sections */
@@ -306,7 +376,7 @@ import Photography from '../components/Photography.astro';
 
   .timeline-item {
     display: grid;
-    grid-template-columns: 6rem 1fr;
+    grid-template-columns: 7rem 1fr;
     gap: var(--space-6);
     padding: var(--space-4) 0 var(--space-4) var(--space-6);
     position: relative;
@@ -321,6 +391,16 @@ import Photography from '../components/Photography.astro';
     height: 7px;
     border-radius: 50%;
     background: var(--color-border);
+  }
+
+  .timeline-item--accent::before {
+    background: var(--color-accent);
+    box-shadow: 0 0 0 4px var(--color-accent-soft);
+  }
+
+  .timeline-desc--accent {
+    color: var(--color-text);
+    font-weight: 500;
   }
 
   @media (max-width: 540px) {
