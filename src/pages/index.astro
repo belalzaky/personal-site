@@ -3,10 +3,11 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import FeaturedProject from '../components/FeaturedProject.astro';
 import SignalThreshold from '../components/viz/SignalThreshold.astro';
-import ProjectItem from '../components/ProjectItem.astro';
+import ProjectCaseCard from '../components/ProjectCaseCard.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import { getCollection } from 'astro:content';
+import { projectCases } from '../data/project-cases';
 
 const allProjects = await getCollection('projects');
 const allFeatured = allProjects
@@ -52,8 +53,8 @@ const latestPost = allPosts
   <section class="section container">
     <header class="section-header">
       <div class="section-heading">
-        <p class="section-eyebrow">01</p>
-        <h2 class="section-title">Projects</h2>
+        <p class="section-eyebrow">01 · PROJECTS</p>
+        <h2 class="section-title">Six things I built — and can defend.</h2>
       </div>
       <a href="/projects" class="section-more">All projects →</a>
     </header>
@@ -68,21 +69,27 @@ const latestPost = allPosts
         link={heroProject.data.link}
         result={heroProject.data.result}
         image={heroProject.data.image}
+        problem={projectCases[heroProject.slug]?.problem}
+        found={projectCases[heroProject.slug]?.found}
       >
         {heroProject.slug === 'faers-signal' && <SignalThreshold slot="chart" />}
       </FeaturedProject>
     )}
 
-    <ul role="list" class="project-list">
-      {gridProjects.map(project => (
-        <ProjectItem
+    <div class="project-grid">
+      {gridProjects.map((project, i) => (
+        <ProjectCaseCard
           title={project.data.title}
-          summary={project.data.summary}
-          date={project.data.date}
+          problem={projectCases[project.slug]?.problem ?? project.data.summary}
+          found={projectCases[project.slug]?.found ?? project.data.result ?? ''}
+          tags={project.data.tags}
           href={`/projects/${project.slug}`}
+          github={project.data.github}
+          link={project.data.link}
+          delay={i * 60}
         />
       ))}
-    </ul>
+    </div>
   </section>
 
   {latestPost.length > 0 && (
@@ -162,10 +169,17 @@ const latestPost = allPosts
     color: var(--color-accent);
   }
 
-  .project-list {
-    list-style: none;
-    border-top: 1px solid var(--color-border);
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
     margin-top: var(--space-6);
+  }
+
+  @media (max-width: 640px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .writing-list {

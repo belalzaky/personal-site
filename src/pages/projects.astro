@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import ProjectCaseCard from '../components/ProjectCaseCard.astro';
 import { getCollection } from 'astro:content';
+import { projectCases } from '../data/project-cases';
 
 const projects = await getCollection('projects');
 const sorted = projects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -19,16 +20,16 @@ const sorted = projects.sort((a, b) => b.data.date.valueOf() - a.data.date.value
     </header>
 
     <div class="projects-grid">
-      {sorted.map(project => (
-        <ProjectCard
+      {sorted.map((project, i) => (
+        <ProjectCaseCard
           title={project.data.title}
-          summary={project.data.summary}
+          problem={projectCases[project.slug]?.problem ?? project.data.summary}
+          found={projectCases[project.slug]?.found ?? project.data.result ?? ''}
           tags={project.data.tags}
           href={`/projects/${project.slug}`}
           github={project.data.github}
           link={project.data.link}
-          result={project.data.result}
-          image={project.data.image}
+          delay={i * 60}
         />
       ))}
     </div>
