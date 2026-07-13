@@ -8,9 +8,10 @@ interface Props {
   description?: string;
   tags?: string[];
   image?: string;
+  showDate?: boolean;
 }
 
-const { title, date, dek, description, tags = [], image } = Astro.props;
+const { title, date, dek, description, tags = [], image, showDate = true } = Astro.props;
 const hasChart = Astro.slots.has('chart');
 
 const formattedDate = date.toLocaleDateString('en-GB', {
@@ -24,7 +25,9 @@ const formattedDate = date.toLocaleDateString('en-GB', {
   <article class="article container container--prose">
     <header class="article-header">
       <div class="article-meta">
-        <time datetime={date.toISOString()} class="article-date">{formattedDate}</time>
+        {showDate && (
+          <time datetime={date.toISOString()} class="article-date">{formattedDate}</time>
+        )}
         {tags.length > 0 && (
           <ul class="article-tags" role="list">
             {tags.map(tag => (
