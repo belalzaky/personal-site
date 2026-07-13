@@ -265,7 +265,16 @@ const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
     font-weight: 600;
     white-space: nowrap;
     pointer-events: none;
-    transition: color 0.3s ease;
+    /* Hidden until the bars expand (data-ready). At width:0 the right-anchored
+       value would otherwise overflow left onto the label column — most visible
+       in the narrow featured-card embed. Fades in once bars have grown, where
+       there is always clear separation from the labels. */
+    opacity: 0;
+    transition: color 0.3s ease, opacity 0.35s ease 0.4s;
+  }
+
+  .st[data-ready] .st-bar-val {
+    opacity: 1;
   }
 
   /* Inside: right-aligned within the bar */
