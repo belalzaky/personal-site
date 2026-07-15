@@ -4,6 +4,7 @@ summary: "Four different models — a keyword matcher, a general-purpose embeddi
 tags: ["Python", "PubMedBERT", "LLM eval"]
 date: 2026-07-15
 featured: true
+github: "https://github.com/belalzaky/adr-reader"
 ---
 
 ## What I did
