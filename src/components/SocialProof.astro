@@ -2,7 +2,8 @@
 // §3 — Social proof: grounded in real pharmacovigilance practice.
 // Soft attribution only, no names.
 const stats = [
-  { value: '6', label: 'projects shipped in public' },
+  { value: '7', label: 'projects shipped in public' },
+  { value: '4', label: 'model types benchmarked' },
   { value: '20M+', label: 'FAERS reports analysed' },
   { value: '1,100+', label: 'patients modelled' },
   { value: 'R · Py · SQL', label: '+ ML, self-taught' },
@@ -120,10 +121,17 @@ const stats = [
   /* Stats strip */
   .proof-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--space-4);
     border-top: 1px solid var(--color-border);
     padding-top: var(--space-6);
+  }
+
+  @media (max-width: 900px) {
+    .proof-stats {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
   }
 
   @media (max-width: 640px) {
