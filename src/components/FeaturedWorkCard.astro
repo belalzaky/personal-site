@@ -22,37 +22,41 @@ const hasInteractive = Astro.slots.has('interactive');
     </ul>
   </div>
 
-  <h3 class="fwcard-hook">
-    <a href={href} class="fwcard-link">{hook}</a>
-  </h3>
+  <div class={hasInteractive ? 'fwcard-body' : 'fwcard-body fwcard-body--solo'}>
+    <div class="fwcard-info">
+      <h3 class="fwcard-hook">
+        <a href={href} class="fwcard-link">{hook}</a>
+      </h3>
 
-  <div class="fwcard-case">
-    <p class="fwcard-problem">
-      <span class="fwcard-k">Problem</span>{problem}
-    </p>
-    <p class="fwcard-found">
-      <span class="fwcard-k fwcard-k--found">What I found</span>{found}
-    </p>
-  </div>
+      <div class="fwcard-case">
+        <p class="fwcard-problem">
+          <span class="fwcard-k">Problem</span>{problem}
+        </p>
+        <p class="fwcard-found">
+          <span class="fwcard-k fwcard-k--found">What I found</span>{found}
+        </p>
+      </div>
 
-  {hasInteractive && (
-    <div class="fwcard-interactive">
-      <slot name="interactive" />
+      <div class="fwcard-footer">
+        <a href={href} class="fwcard-cta" aria-label={`View project: ${hook}`}>
+          View project <span aria-hidden="true">→</span>
+        </a>
+        <div class="fwcard-ext">
+          {link && (
+            <a href={link} class="fwcard-ext-link" target="_blank" rel="noopener noreferrer">Live ↗</a>
+          )}
+          {github && (
+            <a href={github} class="fwcard-ext-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+          )}
+        </div>
+      </div>
     </div>
-  )}
 
-  <div class="fwcard-footer">
-    <a href={href} class="fwcard-cta" aria-label={`View project: ${hook}`}>
-      View project <span aria-hidden="true">→</span>
-    </a>
-    <div class="fwcard-ext">
-      {link && (
-        <a href={link} class="fwcard-ext-link" target="_blank" rel="noopener noreferrer">Live ↗</a>
-      )}
-      {github && (
-        <a href={github} class="fwcard-ext-link" target="_blank" rel="noopener noreferrer">GitHub</a>
-      )}
-    </div>
+    {hasInteractive && (
+      <div class="fwcard-interactive">
+        <slot name="interactive" />
+      </div>
+    )}
   </div>
 </article>
 
@@ -109,12 +113,35 @@ const hasInteractive = Astro.slots.has('interactive');
     font-weight: 500;
   }
 
+  .fwcard-body {
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .fwcard-body--solo {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 900px) {
+    .fwcard-body {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .fwcard-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
   .fwcard-hook {
     font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.25;
-    max-width: 48ch;
   }
 
   .fwcard-link {

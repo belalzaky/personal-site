@@ -44,7 +44,7 @@
   --dur:  180ms;
 
   --content-prose: 680px;
-  --content-wide:  1080px;
+  --content-wide:  1200px;
 }
 
 [data-theme="dark"] {
@@ -149,7 +149,7 @@ a:hover {
   width: 100%;
   max-width: var(--content-wide);
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: clamp(1.5rem, 4vw, 3rem);
 }
 
 .container--prose {
