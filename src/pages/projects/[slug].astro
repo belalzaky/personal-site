@@ -6,6 +6,8 @@ import SqlSampling from '../../components/viz/SqlSampling.astro';
 import SyntheaCohorts from '../../components/viz/SyntheaCohorts.astro';
 import ZantacTrend from '../../components/viz/ZantacTrend.astro';
 import SurvivalCurves from '../../components/viz/SurvivalCurves.astro';
+import ADRScoreboard from '../../components/viz/ADRScoreboard.astro';
+import ADRExplorer from '../../components/viz/ADRExplorer.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -35,5 +37,11 @@ const { Content } = await entry.render();
   {entry.slug === 'synthea-ehr' && <SyntheaCohorts slot="chart" />}
   {entry.slug === 'faers-explorer' && <ZantacTrend slot="chart" />}
   {entry.slug === 'ehr-survival-r' && <SurvivalCurves slot="chart" />}
+  {entry.slug === 'adr-reader' && (
+    <div slot="chart" style="display:flex;flex-direction:column;gap:var(--space-8)">
+      <ADRScoreboard />
+      <ADRExplorer />
+    </div>
+  )}
   <Content />
 </Article>

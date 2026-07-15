@@ -30,4 +30,8 @@ export const projectCases: Record<string, ProjectCase> = {
     problem: 'How long until hypertension, and what changes that?',
     found: 'Diabetics ~2.4× faster; the "null" age effect was actually time-varying.',
   },
+  'adr-reader': {
+    problem: 'Which model actually catches a dangerous drug side effect buried in a note?',
+    found: 'A domain-tuned model won; a plain keyword model beat a general-purpose transformer; a zero-shot LLM over-flagged and hallucinated details.',
+  },
 };

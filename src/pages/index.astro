@@ -1,22 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
-import FeaturedProject from '../components/FeaturedProject.astro';
+import FeaturedWorkCard from '../components/FeaturedWorkCard.astro';
 import SignalThreshold from '../components/viz/SignalThreshold.astro';
-import ProjectCaseCard from '../components/ProjectCaseCard.astro';
+import SurvivalCurves from '../components/viz/SurvivalCurves.astro';
+import ADRExplorer from '../components/viz/ADRExplorer.astro';
 import SocialProof from '../components/SocialProof.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import { getCollection } from 'astro:content';
-import { projectCases } from '../data/project-cases';
-
-const allProjects = await getCollection('projects');
-const allFeatured = allProjects
-  .filter(p => p.data.featured)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-const heroProject = allFeatured.find(p => p.slug === 'faers-signal') ?? allFeatured[0];
-const gridProjects = allFeatured.filter(p => p.slug !== heroProject?.slug);
 
 const SUBSTACK_HOME = 'https://belalzaky.substack.com';
 const isPublished = (url?: string) => !!url && url.replace(/\/$/, '') !== SUBSTACK_HOME;
@@ -54,42 +46,50 @@ const latestPost = allPosts
   <section class="section container">
     <header class="section-header">
       <div class="section-heading">
-        <p class="section-eyebrow">01 · PROJECTS</p>
-        <h2 class="section-title">Six things I built — and can defend.</h2>
+        <p class="section-eyebrow">01 · FEATURED WORK</p>
+        <h2 class="section-title">Three things worth your 30 seconds.</h2>
       </div>
-      <a href="/projects" class="section-more">All projects →</a>
     </header>
 
-    {heroProject && (
-      <FeaturedProject
-        title={heroProject.data.title}
-        summary={heroProject.data.summary}
-        tags={heroProject.data.tags}
-        href={`/projects/${heroProject.slug}`}
-        github={heroProject.data.github}
-        link={heroProject.data.link}
-        result={heroProject.data.result}
-        image={heroProject.data.image}
-        problem={projectCases[heroProject.slug]?.problem}
-        found={projectCases[heroProject.slug]?.found}
+    <div class="featured-work-stack">
+      <FeaturedWorkCard
+        hook="I taught four AIs to read medical notes for drug side effects. The fanciest one came last."
+        problem="Which model actually catches a dangerous drug side effect buried in a doctor's note?"
+        found="A domain-tuned model won; a plain keyword model beat a general-purpose transformer; a zero-shot LLM over-flagged and hallucinated details."
+        tags={["Python", "PubMedBERT", "LLM eval"]}
+        href="/projects/adr-reader"
+        delay={0}
       >
-        {heroProject.slug === 'faers-signal' && <SignalThreshold slot="chart" />}
-      </FeaturedProject>
-    )}
+        <ADRExplorer slot="interactive" />
+      </FeaturedWorkCard>
 
-    <div class="project-grid">
-      {gridProjects.map((project, i) => (
-        <ProjectCaseCard
-          title={project.data.title}
-          problem={projectCases[project.slug]?.problem ?? project.data.summary}
-          found={projectCases[project.slug]?.found ?? project.data.result ?? ''}
-          tags={project.data.tags}
-          href={`/projects/${project.slug}`}
-          github={project.data.github}
-          link={project.data.link}
-          delay={i * 60}
-        />
-      ))}
+      <FeaturedWorkCard
+        hook="Is a spike in side-effect reports a real danger, or just noise? I built the detector that tells them apart."
+        problem="A drug's adverse-event reports spike — is that a real safety signal or a reporting artefact?"
+        found="A disproportionality detector over 20M FAERS reports, validated on the known warfarin–haemorrhage signal and checked against negative controls."
+        tags={["Python", "pandas", "openFDA API"]}
+        href="/projects/faers-signal"
+        github="https://github.com/belalzaky/faers-signal"
+        delay={80}
+      >
+        <SignalThreshold slot="interactive" />
+      </FeaturedWorkCard>
+
+      <FeaturedWorkCard
+        hook="How long until a patient develops hypertension — and what a 'nothing' result was really hiding."
+        problem="Not just whether a patient gets hypertension, but how long it takes — and what changes that."
+        found="Diabetic patients develop hypertension roughly 2.4× faster; an apparently null age effect turned out to be time-varying, not actually absent."
+        tags={["R", "survival", "Cox regression"]}
+        href="/projects/ehr-survival-r"
+        github="https://github.com/belalzaky/ehr-survival-r"
+        delay={160}
+      >
+        <SurvivalCurves slot="interactive" />
+      </FeaturedWorkCard>
+    </div>
+
+    <div class="featured-work-cta">
+      <a href="/projects" class="btn btn-primary">Explore all seven projects →</a>
     </div>
   </section>
 
@@ -194,17 +194,16 @@ const latestPost = allPosts
     margin-bottom: var(--space-8);
   }
 
-  .project-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+  .featured-work-stack {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-6);
-    margin-top: var(--space-6);
   }
 
-  @media (max-width: 640px) {
-    .project-grid {
-      grid-template-columns: 1fr;
-    }
+  .featured-work-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-10);
   }
 
   .writing-list {

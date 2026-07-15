@@ -1,0 +1,353 @@
+---
+import data from "../../data/project7_examples.json";
+
+const MODEL_ORDER = ["keyword", "general", "domain", "llm"] as const;
+
+function escapeHtml(s: string) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function highlight(text: string, drug: string | null, effect: string | null) {
+  // Build a list of [start, end, cls] spans on the raw text, then render
+  // once so overlapping matches (e.g. effect containing drug name) can't
+  // double-wrap and break the HTML.
+  const spans: { start: number; end: number; cls: string }[] = [];
+  const find = (needle: string | null, cls: string) => {
+    if (!needle) return;
+    const idx = text.toLowerCase().indexOf(needle.toLowerCase());
+    if (idx !== -1) spans.push({ start: idx, end: idx + needle.length, cls });
+  };
+  find(drug, "hl-drug");
+  find(effect, "hl-effect");
+  spans.sort((a, b) => a.start - b.start);
+
+  let out = "";
+  let cursor = 0;
+  for (const s of spans) {
+    if (s.start < cursor) continue; // skip overlaps
+    out += escapeHtml(text.slice(cursor, s.start));
+    out += `<mark class="${s.cls}">${escapeHtml(text.slice(s.start, s.end))}</mark>`;
+    cursor = s.end;
+  }
+  out += escapeHtml(text.slice(cursor));
+  return out;
+}
+
+function verdict(correct: boolean, modelSaid: number) {
+  if (correct) return { icon: "✓", cls: "ok", text: "Nailed it" };
+  if (modelSaid === 0) return { icon: "✗", cls: "bad", text: "Missed it" };
+  return { icon: "✗", cls: "bad", text: "Cried wolf" };
+}
+
+const examples = data.examples.map(ex => ({
+  ...ex,
+  highlightedHtml: highlight(ex.text, ex.drug, ex.effect),
+  verdicts: MODEL_ORDER.map(m => ({
+    model: m,
+    label: data.model_labels[m],
+    ...verdict(ex.correct[m as keyof typeof ex.correct], ex.models[m as keyof typeof ex.models]),
+  })),
+}));
+---
+
+<figure class="adrx" data-viz="adr-explorer">
+  <div class="adrx-header">
+    <p class="adrx-eyebrow">ADR READER · EXAMPLE EXPLORER</p>
+    <h2 class="adrx-title">Pick a sentence. Watch four models disagree.</h2>
+    <p class="adrx-caption">
+      Real cases from my test set — the drug and side effect are highlighted, and
+      each model's verdict is shown in plain English, not a raw 1 or 0.
+    </p>
+  </div>
+
+  <div class="adrx-tabs" role="tablist" aria-label="Choose an example sentence">
+    {examples.map((ex, i) => (
+      <button
+        class="adrx-tab"
+        data-idx={i}
+        role="tab"
+        aria-selected={i === 0 ? "true" : "false"}
+        aria-controls={`adrx-panel-${i}`}
+        id={`adrx-tab-${i}`}
+      >
+        {i + 1}. {ex.gold === 1 ? "Real ADE" : "Not an ADE"}
+      </button>
+    ))}
+  </div>
+
+  {examples.map((ex, i) => (
+    <div
+      class="adrx-panel"
+      id={`adrx-panel-${i}`}
+      role="tabpanel"
+      aria-labelledby={`adrx-tab-${i}`}
+      hidden={i !== 0}
+      data-idx={i}
+    >
+      <p class="adrx-text" set:html={ex.highlightedHtml} />
+
+      <div class="adrx-verdicts">
+        {ex.verdicts.map(v => (
+          <div class={`adrx-verdict adrx-verdict--${v.cls}`}>
+            <span class="adrx-verdict-icon" aria-hidden="true">{v.icon}</span>
+            <span class="adrx-verdict-model">{v.label}</span>
+            <span class="adrx-verdict-text">{v.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {ex.llm_extracted && (
+        <details class="adrx-extracted">
+          <summary>What the LLM actually extracted</summary>
+          <p>
+            Drug: <strong>{ex.llm_extracted.drug ?? "—"}</strong> ·
+            Effect: <strong>{ex.llm_extracted.effect ?? "—"}</strong>
+          </p>
+        </details>
+      )}
+
+      <p class="adrx-lesson">{ex.lesson}</p>
+    </div>
+  ))}
+</figure>
+
+<style>
+  .adrx {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-8);
+    font-family: var(--font-sans);
+  }
+
+  .adrx-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    margin-bottom: var(--space-2);
+    max-width: none;
+  }
+
+  .adrx-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+
+  .adrx-caption {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    max-width: 62ch;
+  }
+
+  .adrx-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-4);
+  }
+
+  .adrx-tab {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .adrx-tab:hover {
+    color: var(--color-text);
+  }
+
+  .adrx-tab[aria-selected="true"] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+  }
+
+  .adrx-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .adrx-panel[hidden] {
+    display: none;
+  }
+
+  .adrx-text {
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-5);
+  }
+
+  /* Marks are injected via set:html (static-safe pre-rendered highlighting),
+     so they never get Astro's scoped data-astro-cid attribute — these rules
+     must be :global() or they silently no-op and fall back to the UA yellow. */
+  .adrx-text :global(mark) {
+    border-radius: 3px;
+    padding: 0 3px;
+    background: none;
+    color: inherit;
+    font-weight: 700;
+    box-decoration-break: clone;
+  }
+
+  .adrx-text :global(mark.hl-drug) {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+
+  .adrx-text :global(mark.hl-effect) {
+    background: rgba(224, 69, 90, 0.18);
+    color: #c1293f;
+  }
+
+  :global([data-theme="dark"] .adrx-text mark.hl-effect) {
+    background: rgba(255, 107, 127, 0.22);
+    color: #ff8a99;
+  }
+
+  .adrx-verdicts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 640px) {
+    .adrx-verdicts {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .adrx-verdict {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    text-align: center;
+    padding: var(--space-3) var(--space-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+  }
+
+  .adrx-verdict--ok {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  .adrx-verdict--bad {
+    background: var(--color-bg);
+  }
+
+  .adrx-verdict-icon {
+    font-size: var(--text-lg);
+    font-weight: 700;
+  }
+
+  .adrx-verdict--ok .adrx-verdict-icon {
+    color: var(--color-accent);
+  }
+
+  .adrx-verdict--bad .adrx-verdict-icon {
+    color: #c1293f;
+  }
+
+  :global([data-theme="dark"]) .adrx-verdict--bad .adrx-verdict-icon {
+    color: #ff8a99;
+  }
+
+  .adrx-verdict-model {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+  }
+
+  .adrx-verdict-text {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .adrx-extracted {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .adrx-extracted summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .adrx-extracted p {
+    margin-top: var(--space-2);
+    line-height: 1.6;
+  }
+
+  .adrx-lesson {
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--color-text);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--color-accent-soft);
+    padding: var(--space-3) var(--space-4);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 560px) {
+    .adrx {
+      padding: var(--space-6);
+    }
+    .adrx-title {
+      font-size: var(--text-lg);
+    }
+    .adrx-text {
+      font-size: var(--text-base);
+    }
+  }
+</style>
+
+<script>
+  function initExplorer(fig: HTMLElement) {
+    const tabs = Array.from(fig.querySelectorAll<HTMLButtonElement>(".adrx-tab"));
+    const panels = Array.from(fig.querySelectorAll<HTMLElement>(".adrx-panel"));
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const idx = tab.dataset.idx;
+        tabs.forEach(t => t.setAttribute("aria-selected", t === tab ? "true" : "false"));
+        panels.forEach(p => {
+          p.hidden = p.dataset.idx !== idx;
+        });
+      });
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-viz="adr-explorer"]').forEach(initExplorer);
+</script>

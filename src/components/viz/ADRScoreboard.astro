@@ -1,0 +1,204 @@
+---
+import data from "../../data/project7_examples.json";
+
+const rows = Object.entries(data.scoreboard)
+  .map(([key, score]) => ({ key, score, label: data.model_labels[key as keyof typeof data.model_labels] }))
+  .sort((a, b) => b.score - a.score);
+
+const AXIS_MAX = 1;
+---
+
+<figure class="adrsb" data-viz="adr-scoreboard">
+  <div class="adrsb-header">
+    <p class="adrsb-eyebrow">ADR READER · LEADERBOARD</p>
+    <h2 class="adrsb-title">Four models, one test set.</h2>
+    <p class="adrsb-caption">
+      {data.meta.scoreboard_metric} — how well each model spots a real adverse drug event
+      without crying wolf on a harmless sentence.
+    </p>
+  </div>
+
+  <div class="adrsb-chart">
+    <div class="adrsb-labels" aria-hidden="true">
+      {rows.map(r => <div class="adrsb-label">{r.label}</div>)}
+    </div>
+
+    <div class="adrsb-tracks">
+      {rows.map((r, i) => (
+        <div class="adrsb-track">
+          <div
+            class="adrsb-bar"
+            data-rank={i === 0 ? "1" : "0"}
+            style={`--target-w:${(r.score / AXIS_MAX * 100).toFixed(3)}%;--delay:${i * 110}ms`}
+          >
+            <span class="adrsb-bar-val">{r.score.toFixed(2)}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <p class="adrsb-foot">
+    The domain-tuned model wins — but a plain keyword matcher beats a general-purpose
+    transformer, and the zero-shot LLM comes last despite being the most sophisticated
+    model on paper. See the examples below for why.
+  </p>
+</figure>
+
+<style>
+  .adrsb {
+    --bar-off: #d3d6de;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-8);
+    font-family: var(--font-sans);
+    overflow: hidden;
+  }
+  :global([data-theme="dark"]) .adrsb {
+    --bar-off: #3a3a3d;
+  }
+
+  .adrsb-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    margin-bottom: var(--space-2);
+    max-width: none;
+  }
+
+  .adrsb-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+
+  .adrsb-caption {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    max-width: 62ch;
+  }
+
+  .adrsb-chart {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .adrsb-labels {
+    display: flex;
+    flex-direction: column;
+    width: 210px;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .adrsb-label {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: var(--space-2);
+  }
+
+  .adrsb-tracks {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .adrsb-track {
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .adrsb-bar {
+    position: relative;
+    height: 26px;
+    width: 0;
+    border-radius: 3px;
+    background-color: var(--bar-off);
+    transition: width 0.65s var(--ease) var(--delay);
+    will-change: width;
+  }
+
+  .adrsb[data-ready] .adrsb-bar {
+    width: var(--target-w);
+  }
+
+  .adrsb-bar[data-rank="1"] {
+    background-color: var(--color-accent);
+  }
+
+  .adrsb-bar-val {
+    position: absolute;
+    left: calc(100% + 7px);
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: opacity 0.35s ease 0.4s;
+  }
+
+  .adrsb[data-ready] .adrsb-bar-val {
+    opacity: 1;
+  }
+
+  .adrsb-foot {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    max-width: 62ch;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 560px) {
+    .adrsb {
+      padding: var(--space-6);
+    }
+    .adrsb-labels {
+      width: 120px;
+    }
+    .adrsb-label {
+      font-size: var(--text-xs);
+    }
+    .adrsb-title {
+      font-size: var(--text-lg);
+    }
+  }
+</style>
+
+<script>
+  function initViz(fig: HTMLElement) {
+    const io = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        fig.dataset.ready = '';
+        io.disconnect();
+      }
+    }, { threshold: 0.15 });
+    io.observe(fig);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-viz="adr-scoreboard"]').forEach(initViz);
+</script>
