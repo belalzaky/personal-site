@@ -1,0 +1,170 @@
+---
+import Base from '../layouts/Base.astro';
+
+const updated = '25 July 2026';
+---
+
+<Base
+  title="Privacy Policy · Belal Zaky"
+  description="How Mission Control, a personal single-user dashboard, handles bank account data accessed through Enable Banking."
+>
+  <article class="legal container container--prose">
+    <header class="legal-header">
+      <p class="legal-kicker">Legal</p>
+      <h1 class="legal-title">Privacy Policy</h1>
+      <p class="legal-dek">
+        This policy covers <strong>Mission Control</strong>, a personal desktop application I built
+        and use myself. It explains what account data the application accesses, where that data is
+        stored, and who can see it.
+      </p>
+      <p class="legal-updated">Last updated {updated}</p>
+    </header>
+
+    <div class="prose">
+      <h2>Who this is</h2>
+      <p>
+        Mission Control is written and operated by Belal Zaky, an individual based in London, United
+        Kingdom. It is not a company, a product, or a service offered to anyone else. Questions about
+        this policy go to <a href="mailto:belal4606@gmail.com">belal4606@gmail.com</a>.
+      </p>
+
+      <h2>Who uses the application</h2>
+      <p>
+        I am the only user. There are no accounts, no sign-up, and no way for another person to
+        connect their bank to this application. The only bank accounts it can reach are ones I
+        personally own and have explicitly linked to it. If that ever changes — if the application is
+        opened up to other people — this policy will be rewritten before that happens, not after.
+      </p>
+
+      <h2>What data is accessed</h2>
+      <p>
+        The application connects to my own bank through
+        <a href="https://enablebanking.com" target="_blank" rel="noopener noreferrer">Enable Banking</a>,
+        a licensed account information service provider (AISP) operating under PSD2 and UK Open
+        Banking rules. Through that connection it reads:
+      </p>
+      <ul>
+        <li>account identifiers, names, currency and balances for the accounts I have linked;</li>
+        <li>booked transactions on those accounts — date, amount, currency, description, and counterparty name.</li>
+      </ul>
+      <p>
+        Access is <strong>read-only</strong>. The application cannot move money, initiate payments,
+        or change anything at the bank. It has no ability to do so, by design.
+      </p>
+
+      <h2>Where the data is stored</h2>
+      <p>
+        Everything the application retrieves is written to a local database file on my own computer.
+        It is not uploaded to a server, not synced to cloud storage, and not backed up anywhere
+        off-device. There is no hosted component to this application — no website, no API, no
+        database that I or anyone else operates remotely.
+      </p>
+      <p>
+        The credentials used to authenticate with Enable Banking, including the private signing key,
+        are stored in the same local folder with owner-only file permissions, and are excluded from
+        version control so they cannot be published with the source code.
+      </p>
+
+      <h2>Who the data is shared with</h2>
+      <p>
+        Nobody. The data is not sold, not shared, not sent to advertisers, and not used to train
+        anything. The application contains no analytics, no telemetry, and no third-party trackers.
+      </p>
+      <p>
+        The only parties involved in the flow at all are my bank, which holds the account, and Enable
+        Banking, which acts as the regulated intermediary that carries the data from the bank to my
+        computer. Enable Banking processes that data under its own privacy policy and its licence as
+        an account information service provider. No other processor is involved.
+      </p>
+
+      <h2>Consent, and how it ends</h2>
+      <p>
+        Access is granted through my bank's own authorisation screen, using the bank's own
+        credentials. The application never sees or stores bank login details.
+      </p>
+      <p>
+        That consent is time-limited under PSD2 — typically 90 to 180 days — after which access stops
+        automatically unless it is renewed through the same authorisation flow. Consent can also be
+        withdrawn at any time, immediately, from within online banking, without involving this
+        application at all.
+      </p>
+
+      <h2>Retention and deletion</h2>
+      <p>
+        Transaction data stays in the local database until I delete it. The application includes a
+        function that erases the entire local store in one action. Deleting the application's data
+        folder has the same effect. Because nothing is stored remotely, deletion is final — there is
+        no copy elsewhere to be removed.
+      </p>
+
+      <h2>Rights</h2>
+      <p>
+        I am the sole data subject and the sole operator, so the usual rights of access, correction,
+        portability and erasure are exercised directly: the data is on my machine, in an open format,
+        and I can read, export or destroy it at will. Rights against my bank and against Enable
+        Banking are exercised through their respective processes.
+      </p>
+
+      <h2>Changes</h2>
+      <p>
+        If what the application does with data changes materially, this page is updated and the date
+        at the top changes with it.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Belal Zaky — <a href="mailto:belal4606@gmail.com">belal4606@gmail.com</a>
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-24);
+  }
+
+  .legal-header {
+    margin-bottom: var(--space-12);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .legal-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+
+  @media (max-width: 640px) {
+    .legal-title {
+      font-size: var(--text-2xl);
+    }
+  }
+
+  .legal-dek {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    max-width: 55ch;
+  }
+
+  .legal-updated {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-top: var(--space-4);
+  }
+</style>
