@@ -2,9 +2,9 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import FeaturedWorkCard from '../components/FeaturedWorkCard.astro';
-import SignalThreshold from '../components/viz/SignalThreshold.astro';
-import SurvivalCurves from '../components/viz/SurvivalCurves.astro';
 import ADRExplorer from '../components/viz/ADRExplorer.astro';
+import RweScoreboard from '../components/viz/RweScoreboard.astro';
+import PvPipeline from '../components/viz/PvPipeline.astro';
 import SocialProof from '../components/SocialProof.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
@@ -12,6 +12,11 @@ import { getCollection } from 'astro:content';
 
 const SUBSTACK_HOME = 'https://belalzaky.substack.com';
 const isPublished = (url?: string) => !!url && url.replace(/\/$/, '') !== SUBSTACK_HOME;
+
+// Single source of truth — derived, never hand-typed.
+const projectCount = (await getCollection('projects')).length;
+const WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+const countWord = WORDS[projectCount] ?? String(projectCount);
 
 const allPosts = await getCollection('posts');
 const latestPost = allPosts
@@ -63,32 +68,31 @@ const latestPost = allPosts
       </FeaturedWorkCard>
 
       <FeaturedWorkCard
-        hook="Is a spike in side-effect reports a real danger, or just noise? I built the detector that tells them apart."
-        problem="A drug's adverse-event reports spike — is that a real safety signal or a reporting artefact?"
-        found="A disproportionality detector over 20M FAERS reports, validated on the known warfarin–haemorrhage signal and checked against negative controls."
-        tags={["Python", "pandas", "openFDA API"]}
-        href="/projects/faers-signal"
-        github="https://github.com/belalzaky/faers-signal"
+        hook="A crude comparison said the risk was 1.19. The truth was 2.20. I can tell when my method is lying."
+        problem="Does an NSAID actually cause kidney injury — or does confounding just make it look that way?"
+        found="Channeling hid nearly half the harm. Propensity-score matching (2.05) and a self-controlled case series (2.14) independently recovered the sealed true effect of 2.20."
+        tags={["Python", "Causal inference", "SCCS"]}
+        href="/projects/rwe-causal"
         delay={80}
       >
-        <SignalThreshold slot="interactive" />
+        <RweScoreboard slot="interactive" />
       </FeaturedWorkCard>
 
       <FeaturedWorkCard
-        hook="How long until a patient develops hypertension — and what a 'nothing' result was really hiding."
-        problem="Not just whether a patient gets hypertension, but how long it takes — and what changes that."
-        found="Diabetic patients develop hypertension roughly 2.4× faster; an apparently null age effect turned out to be time-varying, not actually absent."
-        tags={["R", "survival", "Cox regression"]}
-        href="/projects/ehr-survival-r"
-        github="https://github.com/belalzaky/ehr-survival-r"
+        hook="An abstract goes in. A triaged, coded safety case comes out — tested, containerised, and running on every push."
+        problem="Pharmacovigilance intake is slow and manual: read the literature, spot possible drug harms, code them to a standard vocabulary."
+        found="A three-stage pipeline — triage (F1 0.79) → drug/effect extraction → SNOMED CT coding — with 32 unit tests, CI and Docker. Precision over coverage: a wrong code is worse than none."
+        tags={["Python", "NLP", "SNOMED CT", "Docker"]}
+        href="/projects/pv-intake"
+        github="https://github.com/belalzaky/pv-intake"
         delay={160}
       >
-        <SurvivalCurves slot="interactive" />
+        <PvPipeline slot="interactive" />
       </FeaturedWorkCard>
     </div>
 
     <div class="featured-work-cta">
-      <a href="/projects" class="btn btn-primary">Explore all nine projects →</a>
+      <a href="/projects" class="btn btn-primary">Explore all {countWord} projects →</a>
     </div>
   </section>
 

@@ -1,4 +1,11 @@
 ---
+import { getCollection } from 'astro:content';
+import HeroLadder from './viz/HeroLadder.astro';
+
+// Single source of truth: the count is derived, never hand-typed.
+const projectCount = (await getCollection('projects')).length;
+const WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+const countWord = WORDS[projectCount] ?? String(projectCount);
 ---
 
 <section class="hero">
@@ -13,8 +20,8 @@
       </h1>
 
       <p class="hero-sub reveal" style="--reveal-delay:120ms">
-        I teach computers to read medical data and catch dangerous drug side
-        effects — and I show my work, in public.
+        I teach computers to read medical data and catch dangerous drug side effects —
+        then prove whether the answer holds up. Built as working systems, in public.
       </p>
 
       <nav class="hero-actions reveal" style="--reveal-delay:180ms" aria-label="Primary links">
@@ -23,8 +30,12 @@
       </nav>
 
       <p class="hero-cred reveal" style="--reveal-delay:240ms">
-        BSc Pharmacology · King's College London · 7 live data projects · building in public
+        BSc Pharmacology · King's College London · {projectCount} live data projects · building in public
       </p>
+    </div>
+
+    <div class="hero-viz reveal" style="--reveal-delay:300ms">
+      <HeroLadder />
     </div>
   </div>
 </section>
@@ -43,13 +54,29 @@
   }
 
   .hero-inner {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
     gap: var(--space-12);
   }
 
   .hero-copy {
     max-width: 640px;
+  }
+
+  .hero-viz {
+    justify-self: end;
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+    .hero-viz {
+      justify-self: stretch;
+    }
   }
 
   /* Eyebrow */

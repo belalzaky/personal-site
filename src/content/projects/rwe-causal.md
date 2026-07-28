@@ -21,6 +21,8 @@ Do NSAIDs cause acute kidney injury (AKI) compared with acetaminophen? Every pro
 
 The estimates are in the interactive above. The naive, crude comparison gave an odds ratio of **1.19** — it *understated a real harm by 46%*, because channeling (sicker patients steered toward acetaminophen) hid it. Propensity-score matching moved that to **2.05**, and the self-controlled series independently landed at **2.14**. Both causal methods converged on roughly a doubling of AKI risk.
 
-## Why a sealed truth
+## Why a sealed truth — and what this is not
 
-The data was generated with a **known** true odds ratio of **2.20**, kept sealed until the analysis was done. That's the point: you can only prove a method *works* if you know the answer it's chasing — and no real dataset ever hands you that. Here, the crude estimate missed by nearly half and both causal methods recovered the truth to within a few percent.
+This is a **simulation study**, and I want to be plain about that. The patient data is **synthetic**: I generated it with a **known** true odds ratio of **2.20** and kept that number sealed until the analysis was finished. So the finding here is *not* "NSAIDs cause AKI at OR 2.14" — that claim would need real claims or EHR data.
+
+What it *does* demonstrate is the thing real data can never show you: whether your estimator recovers an effect you already know is there. Checking an estimator against a known answer is the standard way methods are validated, and it's the point of the exercise — the crude estimate missed by nearly half, and both causal designs recovered the truth to within a few percent. The next step is the same protocol on real data (MIMIC-IV, credentialing in progress).

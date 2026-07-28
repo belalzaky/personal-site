@@ -6,13 +6,17 @@ import { projectCases } from '../data/project-cases';
 
 const projects = await getCollection('projects');
 const sorted = projects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Single source of truth — derived, never hand-typed.
+const WORDS = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve'];
+const countWord = WORDS[projects.length] ?? String(projects.length);
 ---
 
 <Base title="Projects — Belal Zaky" description="Pharmacovigilance and health data science projects: FAERS analysis, signal detection, EHR data, and machine learning.">
   <div class="page container">
     <header class="page-header container--prose">
       <p class="page-eyebrow">Work</p>
-      <h1 class="page-title">Nine things I built — and can defend.</h1>
+      <h1 class="page-title">{countWord} things I built — and can defend.</h1>
       <p class="page-intro">
         Pharmacovigilance tools and health data exercises built while learning Python
         and SQL alongside a pharmacology degree.

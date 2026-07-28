@@ -1,11 +1,16 @@
 ---
 // §3 — Social proof: grounded in real pharmacovigilance practice.
 // Soft attribution only, no names.
+import { getCollection } from 'astro:content';
+
+// Single source of truth — derived, never hand-typed.
+const projectCount = (await getCollection('projects')).length;
+
 const stats = [
-  { value: '7', label: 'projects shipped in public' },
-  { value: '4', label: 'model types benchmarked' },
+  { value: String(projectCount), label: 'projects shipped in public' },
+  { value: 'CI · Docker', label: 'tested, containerised pipeline' },
   { value: '20M+', label: 'FAERS reports analysed' },
-  { value: '1,100+', label: 'patients modelled' },
+  { value: '461k', label: 'SNOMED CT terms coded against' },
   { value: 'R · Py · SQL', label: '+ ML, self-taught' },
 ];
 ---
@@ -24,12 +29,12 @@ const stats = [
 
     <figure class="proof-card reveal" style="--reveal-delay:80ms">
       <p class="proof-lead">
-        A working PV coordinator shared his six-part framework for telling signal from noise —
-        so I built it. <span class="proof-arrow" aria-hidden="true">→</span> <a href="/projects/faers-signal" class="proof-inline-link">became FAERS Signal Detection</a>.
+        A crude comparison said the risk was 1.19. The real answer was 2.20.
+        <span class="proof-arrow" aria-hidden="true">→</span> <a href="/projects/rwe-causal" class="proof-inline-link">I can tell when my method is lying</a>.
       </p>
       <p class="proof-context">
-        Validated on warfarin–haemorrhage; the negative controls caught the exact confounders
-        he’d warned about.
+        A simulation study — the true effect was sealed until the analysis finished, so the
+        estimators could be scored against a known answer. Real data never lets you do that.
       </p>
     </figure>
   </div>

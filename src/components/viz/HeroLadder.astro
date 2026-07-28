@@ -1,0 +1,104 @@
+---
+// Above-the-fold teaser: the causal-estimate ladder.
+// Static-first — all three bars and the truth line render server-side, so the story
+// lands with zero JS and zero clicks (no LCP cost, nothing to wait for).
+// Clicking a row is a reward, not a requirement: it reveals that method's one-liner.
+import data from "../../data/rwe-estimators.json";
+const est = data.estimators;
+const truthPct = ((data.truth / data.axisMax) * 100).toFixed(2);
+---
+
+<aside class="ladder js-ladder" aria-label="Causal estimate ladder">
+  <p class="ladder-eyebrow">FROM PROJECT 8 · CAUSAL SAFETY</p>
+  <p class="ladder-claim">
+    The naive comparison said <b>1.19</b>. The truth was <b>2.20</b>.
+    <span class="ladder-claim-sub">I can tell when my method is lying.</span>
+  </p>
+
+  <div class="ladder-rows">
+    <div class="ladder-truth" style={`left:${truthPct}%`} aria-hidden="true"></div>
+    {est.map((e, i) => (
+      <button
+        class="ladder-row"
+        data-i={i}
+        data-note={e.note}
+        aria-label={`${e.label}: odds ratio ${e.or}`}
+      >
+        <span class="ladder-label">{e.short}</span>
+        <span class="ladder-track">
+          <span
+            class="ladder-bar"
+            data-rec={e.recovers ? "1" : "0"}
+            style={`width:${((e.or / data.axisMax) * 100).toFixed(2)}%;--d:${i * 120}ms`}
+          ></span>
+        </span>
+        <span class="ladder-or">{e.or.toFixed(2)}</span>
+      </button>
+    ))}
+  </div>
+
+  <p class="ladder-foot">
+    <span class="ladder-note">Simulation study — the true effect was sealed until the analysis finished.</span>
+    <a href="/projects/rwe-causal" class="ladder-link">See how →</a>
+  </p>
+</aside>
+
+<style>
+  .ladder{ --off:#dcdee4; background:var(--color-surface); border:1px solid var(--color-border);
+    border-radius:var(--radius,12px); padding:20px 22px 16px; max-width:440px; box-sizing:border-box; }
+  :global([data-theme="dark"]) .ladder{ --off:#3a3a3d; }
+  .ladder *{ box-sizing:border-box; }
+  .ladder-eyebrow{ font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
+    color:var(--color-accent); margin:0 0 8px; max-width:none; }
+  .ladder-claim{ font-size:14.5px; line-height:1.5; color:var(--color-text); margin:0 0 16px; }
+  .ladder-claim b{ font-family:var(--font-mono); font-weight:700; }
+  .ladder-claim-sub{ display:block; color:var(--color-text-muted); font-size:13px; margin-top:3px; }
+  .ladder-rows{ position:relative; display:flex; flex-direction:column; gap:7px; }
+  .ladder-truth{ position:absolute; top:0; bottom:0; margin-left:96px;
+    border-left:2px dashed var(--color-text-muted); opacity:.7; z-index:2; pointer-events:none; }
+  .ladder-row{ display:flex; align-items:center; gap:8px; width:100%; padding:0; border:0;
+    background:none; cursor:pointer; text-align:left; font:inherit; }
+  .ladder-label{ width:88px; flex:none; font-family:var(--font-mono); font-size:10.5px;
+    color:var(--color-text-muted); }
+  .ladder-track{ position:relative; flex:1; height:14px; background:var(--color-bg);
+    border-radius:3px; overflow:hidden; }
+  .ladder-bar{ display:block; height:100%; background:var(--off); border-radius:3px; }
+  .ladder-bar[data-rec="1"]{ background:var(--color-accent); }
+  .ladder-or{ width:34px; flex:none; font-family:var(--font-mono); font-size:11px;
+    font-weight:600; color:var(--color-text); text-align:right; }
+  .ladder-row[aria-pressed="true"] .ladder-label{ color:var(--color-text); }
+  .ladder-foot{ display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+    margin:14px 0 0; padding-top:11px; border-top:1px solid var(--color-border); }
+  .ladder-note{ font-size:11px; line-height:1.45; color:var(--color-text-subtle); }
+  .ladder-link{ flex:none; font-family:var(--font-mono); font-size:11px; color:var(--color-accent);
+    text-decoration:none; }
+  .ladder-link:hover{ text-decoration:underline; }
+  @media (prefers-reduced-motion: no-preference){
+    .js-ladder[data-ready] .ladder-bar{ animation:ladder-grow .6s var(--ease,cubic-bezier(.2,.6,.2,1)) var(--d) both; }
+    @keyframes ladder-grow{ from{ transform:scaleX(0); transform-origin:left; } to{ transform:scaleX(1); transform-origin:left; } }
+  }
+  @media (max-width:640px){ .ladder{ max-width:none; } .ladder-label{ width:72px; } .ladder-truth{ margin-left:80px; } }
+</style>
+
+<script is:inline>
+  (function(){
+    function init(root){
+      if(root.dataset.init) return; root.dataset.init="1";
+      root.dataset.ready="";
+      var rows=[].slice.call(root.querySelectorAll('.ladder-row'));
+      var note=root.querySelector('.ladder-note');
+      var original=note.textContent;
+      rows.forEach(function(r){
+        r.addEventListener('click',function(){
+          var on=r.getAttribute('aria-pressed')==='true';
+          rows.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+          if(on){ note.textContent=original; return; }
+          r.setAttribute('aria-pressed','true');
+          note.textContent=r.dataset.note;
+        });
+      });
+    }
+    function boot(){ document.querySelectorAll('.js-ladder').forEach(init); }
+    if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+  })();
+</script>

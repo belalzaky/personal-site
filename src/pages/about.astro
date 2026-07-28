@@ -27,7 +27,13 @@ import Photography from '../components/Photography.astro';
             Most people in drug safety aren't strong on data; most data people don't know
             drug safety. I'm building toward the rare spot where drug-safety data, AI, and
             <span class="accent">policy</span> meet — and the decisions that get made there.
-            I teach myself the technical side (R, Python, SQL, ML) and build everything in public.
+          </p>
+          <p class="about-bio-text">
+            In practice that means three questions I keep coming back to: is this signal real or
+            just noise, does this drug actually <em>cause</em> the harm or only correlate with it,
+            and would this hold up if someone checked? I taught myself Python, R and SQL alongside
+            the degree, and everything gets built in public — shipped, documented, and explained
+            in plain English.
           </p>
         </div>
 
@@ -51,6 +57,10 @@ import Photography from '../components/Photography.astro';
               <dd class="facts-val">London &amp; Dubai</dd>
             </div>
             <div class="facts-row">
+              <dt class="facts-key">Working on</dt>
+              <dd class="facts-val">Causal inference &amp; production AI for drug safety</dd>
+            </div>
+            <div class="facts-row">
               <dt class="facts-key">Heading</dt>
               <dd class="facts-val">Health data, AI &amp; policy</dd>
             </div>
@@ -70,31 +80,31 @@ import Photography from '../components/Photography.astro';
           <li class="timeline-item reveal">
             <span class="timeline-date">2025</span>
             <div class="timeline-content">
-              <p class="timeline-desc">Couldn't write a line of Python. Started learning data — in public.</p>
+              <p class="timeline-desc">Couldn't write a line of Python. Started learning data — in public, following a roadmap from a working pharmacovigilance professional.</p>
             </div>
           </li>
           <li class="timeline-item reveal">
             <span class="timeline-date">Early 2026</span>
             <div class="timeline-content">
-              <p class="timeline-desc">First project shipped: a live FAERS adverse-event dashboard.</p>
+              <p class="timeline-desc">First project shipped: a dashboard over 20M+ FDA adverse-event reports. It showed a drug's alarming report spike was litigation, not new harm — attention isn't the same as risk.</p>
             </div>
           </li>
           <li class="timeline-item reveal">
             <span class="timeline-date">Spring 2026</span>
             <div class="timeline-content">
-              <p class="timeline-desc">SQL, synthetic EHR, and pharmacovigilance signal detection.</p>
+              <p class="timeline-desc">SQL, synthetic patient records, and real pharmacovigilance signal detection — validated on a known warfarin–haemorrhage signal, with negative controls to catch the confounders.</p>
             </div>
           </li>
           <li class="timeline-item reveal">
             <span class="timeline-date">Mid 2026</span>
             <div class="timeline-content">
-              <p class="timeline-desc">First ML model, survival analysis in R, then taught a model to read medical text — where the fanciest AI came last. Nine projects, all interactive.</p>
+              <p class="timeline-desc">First ML model, survival analysis in R, then taught a model to read medical text — where the fanciest AI came last. Now causal inference (proving a harm is real, not just correlated) and production systems: tested, containerised, running on every push.</p>
             </div>
           </li>
           <li class="timeline-item timeline-item--accent reveal">
             <span class="timeline-date">Next</span>
             <div class="timeline-content">
-              <p class="timeline-desc timeline-desc--accent">An industry-facing master's — bridging drug-safety data, AI, and the policy built on it.</p>
+              <p class="timeline-desc timeline-desc--accent">The same causal protocol on real clinical data (MIMIC-IV credentialing in progress), then an industry-facing master's — bridging drug-safety data, AI, and the policy built on it.</p>
             </div>
           </li>
         </ol>
@@ -108,15 +118,23 @@ import Photography from '../components/Photography.astro';
         <dl class="skills-list">
           <div class="skills-row">
             <dt class="skills-label">Data</dt>
-            <dd class="skills-value">Python, pandas, SQL, SQLite, scikit-learn, matplotlib</dd>
+            <dd class="skills-value">Python (pandas, scikit-learn, matplotlib), R, SQL &amp; SQLite</dd>
           </div>
           <div class="skills-row">
-            <dt class="skills-label">Tools</dt>
-            <dd class="skills-value">Git &amp; GitHub, Streamlit, openFDA API</dd>
+            <dt class="skills-label">Methods</dt>
+            <dd class="skills-value">Causal inference (propensity scores, self-controlled case series), survival analysis, disproportionality signal detection, machine learning, NLP</dd>
+          </div>
+          <div class="skills-row">
+            <dt class="skills-label">Engineering</dt>
+            <dd class="skills-value">Git &amp; GitHub, unit testing, GitHub Actions CI, Docker, CLI tools, Astro, Streamlit</dd>
           </div>
           <div class="skills-row">
             <dt class="skills-label">Domain</dt>
-            <dd class="skills-value">Pharmacology, pharmacovigilance, real-world-evidence basics</dd>
+            <dd class="skills-value">Pharmacology, pharmacovigilance, real-world evidence, EHR data, SNOMED CT coding, openFDA / FAERS</dd>
+          </div>
+          <div class="skills-row">
+            <dt class="skills-label">Communication</dt>
+            <dd class="skills-value">Data storytelling for non-specialists, technical writing, public speaking</dd>
           </div>
         </dl>
       </section>
@@ -131,18 +149,33 @@ import Photography from '../components/Photography.astro';
             <span class="edu-detail">Expected 2028</span>
           </li>
           <li class="edu-item">
-            <span class="edu-name">Toastmasters International</span>
-            <span class="edu-detail">Member &amp; Sergeant at Arms</span>
+            <span class="edu-name">Student Representative, BSc Pharmacology</span>
+            <span class="edu-detail">2025–present · Staff–Student Liaison Committee</span>
+            <span class="edu-note">
+              Scattered complaints about a Year 1 module kept reading as noise. I gathered my
+              cohort's feedback and brought it to the committee as one consistent signal — it was
+              escalated to the department, and the module's structure had visibly shifted by later
+              in the year. Same instinct as the data work: one voice is anecdote, the pattern is
+              evidence.
+            </span>
           </li>
           <li class="edu-item">
             <span class="edu-name">King's100 Leadership &amp; Employability Programme</span>
+            <span class="edu-detail">Selected, 2026</span>
+            <span class="edu-note">
+              King's flagship leadership programme — a selective cohort working through
+              employer-led challenges.
+            </span>
           </li>
           <li class="edu-item">
-            <span class="edu-name">Student Representative, BSc Pharmacology</span>
+            <span class="edu-name">Toastmasters International</span>
+            <span class="edu-detail">Member &amp; Sergeant at Arms</span>
+            <span class="edu-note">Regular public speaking; earned “Speech of the Meeting.”</span>
           </li>
           <li class="edu-item">
             <span class="edu-name">Model United Nations</span>
             <span class="edu-detail">Delegate</span>
+            <span class="edu-note">Awarded Delegate of the Conference — research, debate and negotiation.</span>
           </li>
         </ul>
       </section>
@@ -151,7 +184,16 @@ import Photography from '../components/Photography.astro';
       <section class="about-section">
         <h2 class="about-section-title">Beyond the work</h2>
         <p class="about-beyond">
-          Public speaking, languages (English &amp; Arabic), and splitting time between London and Dubai.
+          I split my time between London and Dubai, and speak English and Arabic. Most of what I
+          learn ends up explained somewhere — a Substack newsletter, project posts on LinkedIn, and
+          short films on Instagram breaking down how a drug's harm was actually discovered.
+          Translating this work for people outside it is a skill I practise deliberately, at
+          Toastmasters and in every write-up on this site.
+        </p>
+        <p class="about-beyond">
+          Away from the screen I'm building <span class="accent">LIFTKCL</span>, a beginner-friendly
+          strength community at King's for people who find the gym intimidating — and I shoot film
+          photography, some of which is below.
         </p>
       </section>
 
@@ -358,6 +400,18 @@ import Photography from '../components/Photography.astro';
     font-size: var(--text-base);
     color: var(--color-text-muted);
     line-height: 1.7;
+  }
+
+  .about-beyond + .about-beyond {
+    margin-top: var(--space-4);
+  }
+
+  .edu-note {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    max-width: 60ch;
+    margin-top: var(--space-1);
   }
 
   .about-contact {
