@@ -6,7 +6,7 @@ const updated = '25 July 2026';
 
 <Base
   title="Privacy Policy · Belal Zaky"
-  description="How Mission Control, a personal single-user dashboard, handles bank account data accessed through Enable Banking."
+  description="How Mission Control, a personal single-user desktop dashboard, handles the bank statement files it reads."
 >
   <article class="legal container container--prose">
     <header class="legal-header">
@@ -14,7 +14,7 @@ const updated = '25 July 2026';
       <h1 class="legal-title">Privacy Policy</h1>
       <p class="legal-dek">
         This policy covers <strong>Mission Control</strong>, a personal desktop application I built
-        and use myself. It explains what account data the application accesses, where that data is
+        and use myself. It explains what account data the application handles, where that data is
         stored, and who can see it.
       </p>
       <p class="legal-updated">Last updated {updated}</p>
@@ -30,85 +30,67 @@ const updated = '25 July 2026';
 
       <h2>Who uses the application</h2>
       <p>
-        I am the only user. There are no accounts, no sign-up, and no way for another person to
-        connect their bank to this application. The only bank accounts it can reach are ones I
-        personally own and have explicitly linked to it. If that ever changes — if the application is
-        opened up to other people — this policy will be rewritten before that happens, not after.
+        I am the only user. There are no accounts, no sign-up, and no way for another person to put
+        their data into it. The only financial records it holds are ones I have exported from my own
+        bank and opened on my own computer. If that ever changes, this policy will be rewritten
+        before it changes, not after.
       </p>
 
-      <h2>What data is accessed</h2>
+      <h2>What data is handled</h2>
       <p>
-        The application connects to my own bank through
-        <a href="https://enablebanking.com" target="_blank" rel="noopener noreferrer">Enable Banking</a>,
-        a licensed account information service provider (AISP) operating under PSD2 and UK Open
-        Banking rules. Through that connection it reads:
+        The application has <strong>no connection to any bank</strong>. It cannot log in to an
+        account, request data from one, or reach a bank's systems in any way. Data arrives only when
+        I download a CSV statement from my own online banking and open that file in the application
+        myself. From those files it reads the date, amount, description and running balance of each
+        transaction, and the account it belongs to.
       </p>
-      <ul>
-        <li>account identifiers, names, currency and balances for the accounts I have linked;</li>
-        <li>booked transactions on those accounts — date, amount, currency, description, and counterparty name.</li>
-      </ul>
       <p>
-        Access is <strong>read-only</strong>. The application cannot move money, initiate payments,
-        or change anything at the bank. It has no ability to do so, by design.
+        There is no payment capability of any kind. The application cannot move money, initiate
+        transfers, or alter anything at a bank, because it has no route to a bank at all.
       </p>
 
       <h2>Where the data is stored</h2>
       <p>
-        Everything the application retrieves is written to a local database file on my own computer.
-        It is not uploaded to a server, not synced to cloud storage, and not backed up anywhere
-        off-device. There is no hosted component to this application — no website, no API, no
-        database that I or anyone else operates remotely.
+        Imported transactions are written to a local database file on my own computer. Nothing is
+        uploaded to a server, synced to cloud storage, or backed up off-device. There is no hosted
+        component to this application — no website, no API, no remote database operated by me or by
+        anyone else.
       </p>
       <p>
-        The credentials used to authenticate with Enable Banking, including the private signing key,
-        are stored in the same local folder with owner-only file permissions, and are excluded from
-        version control so they cannot be published with the source code.
+        That data folder is excluded from version control, so no financial record can be published
+        with the source code if the code is ever made public.
       </p>
 
       <h2>Who the data is shared with</h2>
       <p>
-        Nobody. The data is not sold, not shared, not sent to advertisers, and not used to train
-        anything. The application contains no analytics, no telemetry, and no third-party trackers.
-      </p>
-      <p>
-        The only parties involved in the flow at all are my bank, which holds the account, and Enable
-        Banking, which acts as the regulated intermediary that carries the data from the bank to my
-        computer. Enable Banking processes that data under its own privacy policy and its licence as
-        an account information service provider. No other processor is involved.
-      </p>
-
-      <h2>Consent, and how it ends</h2>
-      <p>
-        Access is granted through my bank's own authorisation screen, using the bank's own
-        credentials. The application never sees or stores bank login details.
-      </p>
-      <p>
-        That consent is time-limited under PSD2 — typically 90 to 180 days — after which access stops
-        automatically unless it is renewed through the same authorisation flow. Consent can also be
-        withdrawn at any time, immediately, from within online banking, without involving this
-        application at all.
+        Nobody. It is not sold, not shared, not sent to advertisers, and not used to train anything.
+        The application contains no analytics, no telemetry, and no third-party trackers. No
+        processor, intermediary or service provider is involved in the flow, because the flow is a
+        file moving from my downloads folder into an application on the same machine.
       </p>
 
       <h2>Retention and deletion</h2>
       <p>
         Transaction data stays in the local database until I delete it. The application includes a
-        function that erases the entire local store in one action. Deleting the application's data
-        folder has the same effect. Because nothing is stored remotely, deletion is final — there is
-        no copy elsewhere to be removed.
+        function that erases the entire local store in one action, and deleting its data folder has
+        the same effect. Because nothing is stored remotely, deletion is final — there is no copy
+        elsewhere to be removed.
       </p>
 
       <h2>Rights</h2>
       <p>
         I am the sole data subject and the sole operator, so the usual rights of access, correction,
         portability and erasure are exercised directly: the data is on my machine, in an open format,
-        and I can read, export or destroy it at will. Rights against my bank and against Enable
-        Banking are exercised through their respective processes.
+        and I can read, export or destroy it at will. Rights against my bank are exercised through
+        the bank's own processes.
       </p>
 
       <h2>Changes</h2>
       <p>
         If what the application does with data changes materially, this page is updated and the date
-        at the top changes with it.
+        at the top changes with it. An earlier version of this policy described access to bank data
+        through a licensed account information provider; that route was never used and has been
+        removed from the application entirely.
       </p>
 
       <h2>Contact</h2>

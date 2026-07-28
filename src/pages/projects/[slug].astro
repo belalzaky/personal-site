@@ -8,6 +8,8 @@ import ZantacTrend from '../../components/viz/ZantacTrend.astro';
 import SurvivalCurves from '../../components/viz/SurvivalCurves.astro';
 import ADRScoreboard from '../../components/viz/ADRScoreboard.astro';
 import ADRExplorer from '../../components/viz/ADRExplorer.astro';
+import RweScoreboard from '../../components/viz/RweScoreboard.astro';
+import PvPipeline from '../../components/viz/PvPipeline.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -43,5 +45,7 @@ const { Content } = await entry.render();
       <ADRExplorer />
     </div>
   )}
+  {entry.slug === 'rwe-causal' && <RweScoreboard slot="chart" />}
+  {entry.slug === 'pv-intake' && <PvPipeline slot="chart" />}
   <Content />
 </Article>

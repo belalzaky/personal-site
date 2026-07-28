@@ -1,0 +1,106 @@
+---
+import data from "../../data/rwe-estimators.json";
+const est = data.estimators;
+const truthPct = ((data.truth / data.axisMax) * 100).toFixed(2);
+---
+
+<div class="rwe js-rwe" role="group" aria-label="Interactive causal-estimate explorer">
+  <p class="rwe-sr">Switch between the crude, propensity-matched, and self-controlled estimates to see each odds ratio move toward the sealed true effect of 2.20.</p>
+  <div class="rwe-eyebrow">RWE · CAUSAL ESTIMATE</div>
+  <h3 class="rwe-title">Adjust, and the harm appears.</h3>
+  <p class="rwe-sub">The crude comparison says these two drugs barely differ. But sicker patients were steered toward one of them — <b>confounding</b>. Switch on each method and watch the estimate climb toward the sealed truth.</p>
+
+  <div class="rwe-stats">
+    <div class="rwe-stat"><div class="rwe-k">ODDS RATIO</div><div class="rwe-v"><span class="rwe-or">–</span></div><div class="rwe-d rwe-ci">–</div></div>
+    <div class="rwe-stat"><div class="rwe-k">GAP TO TRUTH</div><div class="rwe-v"><span class="rwe-gap">–</span></div><div class="rwe-d">true effect · OR 2.20</div></div>
+  </div>
+
+  <div class="rwe-chart">
+    <div class="rwe-truth-tag" style={`left:${truthPct}%`}>true · 2.20</div>
+    <div class="rwe-track">
+      <div class="rwe-truth-line" style={`left:${truthPct}%`}></div>
+      <div class="rwe-bar"></div>
+    </div>
+    <div class="rwe-scale"><span>OR 1.0</span><span>2.6</span></div>
+  </div>
+
+  <p class="rwe-note">–</p>
+
+  <div class="rwe-control" role="tablist" aria-label="Estimation method">
+    {est.map((e, i) => (
+      <button class="rwe-seg" role="tab" data-i={i} data-or={e.or} data-lo={e.ci[0]} data-hi={e.ci[1]} data-rec={e.recovers ? "1" : "0"} data-note={e.note}>{e.short}</button>
+    ))}
+  </div>
+</div>
+
+<style>
+  .rwe{ --off:#dcdee4; font-family:var(--font-sans); color:var(--color-text);
+    background:var(--color-surface); border:1px solid var(--color-border);
+    border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
+  :global([data-theme="dark"]) .rwe{ --off:#3a3a3d; }
+  .rwe *{ box-sizing:border-box; }
+  .rwe-sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  .rwe-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
+  .rwe-title{ font-size:24px; font-weight:700; letter-spacing:-.02em; margin:0 0 6px; }
+  .rwe-sub{ font-size:13.5px; line-height:1.6; color:var(--color-text-muted); margin:0 0 18px; max-width:58ch; }
+  .rwe-sub b{ color:var(--color-text); font-weight:600; }
+  .rwe-stats{ display:flex; gap:10px; margin-bottom:20px; }
+  .rwe-stat{ flex:1; border:1px solid var(--color-border); border-radius:8px; padding:12px 14px; background:var(--color-bg); }
+  .rwe-k{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; color:var(--color-text-subtle); }
+  .rwe-v{ font-size:30px; font-weight:700; letter-spacing:-.02em; margin:2px 0; line-height:1; }
+  .rwe-or{ color:var(--color-accent); }
+  .rwe-d{ font-size:11px; color:var(--color-text-muted); }
+  .rwe-chart{ position:relative; padding-top:16px; margin-bottom:14px; }
+  .rwe-track{ position:relative; height:34px; background:var(--color-bg); border:1px solid var(--color-border); border-radius:6px; overflow:hidden; }
+  .rwe-bar{ position:absolute; left:0; top:0; height:100%; width:0; background:var(--off); transition:width .6s var(--ease,cubic-bezier(.2,.6,.2,1)), background-color .3s; }
+  .rwe-bar[data-rec="1"]{ background:var(--color-accent); }
+  .rwe-truth-line{ position:absolute; top:-1px; bottom:-1px; border-left:2px dashed var(--color-text-muted); z-index:2; }
+  .rwe-truth-tag{ position:absolute; top:0; transform:translateX(-50%); font-family:var(--font-mono); font-size:10px; color:var(--color-text-muted); white-space:nowrap; }
+  .rwe-scale{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:10px; color:var(--color-text-subtle); margin-top:5px; }
+  .rwe-note{ font-size:12.5px; line-height:1.55; color:var(--color-text-muted); min-height:2.8em; margin:0 0 18px; max-width:58ch; }
+  .rwe-control{ display:flex; gap:8px; padding-top:16px; border-top:1px solid var(--color-border); }
+  .rwe-seg{ flex:1; font-family:var(--font-mono); font-size:12px; color:var(--color-text-muted); background:var(--color-bg);
+    border:1px solid var(--color-border); border-radius:6px; padding:9px 6px; cursor:pointer; transition:all .18s var(--ease,ease); }
+  .rwe-seg:hover:not([aria-selected="true"]){ border-color:var(--color-accent); color:var(--color-text); }
+  .rwe-seg[aria-selected="true"]{ background:var(--color-accent); border-color:var(--color-accent); color:#fff; }
+  .rwe-seg[aria-selected="true"]:hover{ background:var(--color-accent); color:#fff; }
+  @media (max-width:560px){ .rwe{ padding:22px 20px 18px; } .rwe-title{ font-size:20px; } .rwe-v{ font-size:26px; } }
+</style>
+
+<script is:inline>
+  (function(){
+    const AXIS = 2.6, TRUTH = 2.20;
+    function init(root){
+      if(root.dataset.init) return; root.dataset.init="1";
+      const segs = Array.from(root.querySelectorAll('.rwe-seg'));
+      const bar = root.querySelector('.rwe-bar');
+      const orEl = root.querySelector('.rwe-or');
+      const ciEl = root.querySelector('.rwe-ci');
+      const gapEl = root.querySelector('.rwe-gap');
+      const noteEl = root.querySelector('.rwe-note');
+      function select(seg, animate){
+        const ACC = getComputedStyle(root).getPropertyValue('--color-accent').trim();
+        segs.forEach(function(s){ var on=s===seg; s.setAttribute('aria-selected', on?'true':'false'); s.style.background=on?ACC:''; s.style.borderColor=on?ACC:''; s.style.color=on?'#fff':''; });
+        const or=parseFloat(seg.dataset.or), lo=parseFloat(seg.dataset.lo), hi=parseFloat(seg.dataset.hi);
+        const gap=Math.round((TRUTH-or)/TRUTH*100);
+        bar.dataset.rec=seg.dataset.rec;
+        if(!animate) bar.style.transition='none';
+        bar.style.width=(or/AXIS*100).toFixed(2)+'%';
+        if(!animate) requestAnimationFrame(()=>{ bar.style.transition=''; });
+        orEl.textContent=or.toFixed(2);
+        ciEl.textContent='95% CI '+lo.toFixed(2)+'–'+hi.toFixed(2);
+        gapEl.textContent=(gap>0?'−':'')+Math.abs(gap)+'%';
+        noteEl.textContent=seg.dataset.note;
+      }
+      segs.forEach(s=> s.addEventListener('click', ()=>select(s, true)));
+      select(segs[0], false);
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(!reduce){
+        const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ select(segs[0], true); io.disconnect(); }}),{threshold:.25});
+        io.observe(root);
+      }
+    }
+    function boot(){ document.querySelectorAll('.js-rwe').forEach(init); }
+    if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+  })();
+</script>

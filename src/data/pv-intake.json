@@ -1,0 +1,8 @@
+{
+  "samples": [
+    { "abstract": "Acute kidney injury induced by ibuprofen in an elderly hypertensive patient.", "case": true, "drug": "ibuprofen", "effect": "acute kidney injury", "code": "14669001", "term": "Acute kidney injury (disorder)" },
+    { "abstract": "The patient developed severe hepatotoxicity following administration of methotrexate.", "case": true, "drug": "methotrexate", "effect": "severe hepatotoxicity", "code": "48374001", "term": "Hepatotoxicity (disorder)" },
+    { "abstract": "A case of ototoxicity secondary to prolonged gentamicin therapy is reported.", "case": true, "drug": "gentamicin", "effect": "ototoxicity", "code": "9062008", "term": "Ototoxicity (disorder)" },
+    { "abstract": "No adverse events were observed during the twelve-week study period.", "case": false }
+  ]
+}

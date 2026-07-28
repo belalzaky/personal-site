@@ -34,4 +34,12 @@ export const projectCases: Record<string, ProjectCase> = {
     problem: 'Which model actually catches a dangerous drug side effect buried in a note?',
     found: 'A domain-tuned model won; a plain keyword model beat a general-purpose transformer; a zero-shot LLM over-flagged and hallucinated details.',
   },
+  'pv-intake': {
+    problem: 'Can you triage, extract, and code a drug side effect from an abstract — end to end?',
+    found: 'A three-stage pipeline (triage F1 0.79 → extract → SNOMED code), tested + containerised; a fuzzy "coverage mirage" taught precision over coverage.',
+  },
+  'rwe-causal': {
+    problem: 'Does an NSAID actually cause kidney injury — or does it just look that way?',
+    found: 'Crude OR 1.19 hid the harm; propensity matching (2.05) and a self-controlled series (2.14) both recovered the sealed true 2.20.',
+  },
 };

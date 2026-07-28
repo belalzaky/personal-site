@@ -1,0 +1,128 @@
+---
+import data from "../../data/pv-intake.json";
+const samples = data.samples;
+---
+
+<div class="pvd js-pvd" role="group" aria-label="Interactive pharmacovigilance intake demo">
+  <p class="pvd-sr">Pick an example abstract to run it through the pipeline: triage decides whether it is a possible adverse drug event, then the drug and effect are extracted and the effect is coded to a SNOMED term.</p>
+  <div class="pvd-eyebrow">PV INTAKE · LIVE PIPELINE</div>
+  <h3 class="pvd-title">Read an abstract. Get a coded case.</h3>
+  <p class="pvd-sub">Pick a source abstract. The pipeline decides if it's a possible <b>adverse drug event</b>, pulls out the drug and the effect, and maps that effect to a standard <b>SNOMED CT</b> code.</p>
+
+  <div class="pvd-chips" role="tablist" aria-label="Example abstract">
+    {samples.map((s, i) => (
+      <button class="pvd-chip" role="tab" data-i={i}>{s.case ? s.drug : "negative control"}</button>
+    ))}
+  </div>
+
+  <blockquote class="pvd-abstract">–</blockquote>
+
+  <div class="pvd-flow">
+    <div class="pvd-step" data-step="0">
+      <div class="pvd-step-k">1 · TRIAGE</div>
+      <div class="pvd-badge">–</div>
+    </div>
+    <div class="pvd-step pvd-caseonly" data-step="1">
+      <div class="pvd-step-k">2 · EXTRACT</div>
+      <div class="pvd-pills"><span class="pvd-pill pvd-drug">–</span><span class="pvd-pill pvd-effect">–</span></div>
+    </div>
+    <div class="pvd-step pvd-caseonly" data-step="2">
+      <div class="pvd-step-k">3 · CODE</div>
+      <div class="pvd-code"><span class="pvd-snomed">–</span> <span class="pvd-term">–</span></div>
+    </div>
+    <div class="pvd-skip">Filtered out — no reviewer time spent.</div>
+  </div>
+
+  <script type="application/json" class="pvd-data" set:html={JSON.stringify(samples)}></script>
+</div>
+
+<style>
+  .pvd{ font-family:var(--font-sans); color:var(--color-text);
+    background:var(--color-surface); border:1px solid var(--color-border);
+    border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
+  .pvd *{ box-sizing:border-box; }
+  .pvd-sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  .pvd-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
+  .pvd-title{ font-size:24px; font-weight:700; letter-spacing:-.02em; margin:0 0 6px; }
+  .pvd-sub{ font-size:13.5px; line-height:1.6; color:var(--color-text-muted); margin:0 0 18px; max-width:58ch; }
+  .pvd-sub b{ color:var(--color-text); font-weight:600; }
+  .pvd-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .pvd-chip{ font-family:var(--font-mono); font-size:12px; color:var(--color-text-muted); background:var(--color-bg);
+    border:1px solid var(--color-border); border-radius:6px; padding:7px 12px; cursor:pointer; transition:all .18s var(--ease,ease); }
+  .pvd-chip:hover:not([aria-selected="true"]){ border-color:var(--color-accent); color:var(--color-text); }
+  .pvd-chip[aria-selected="true"]{ background:var(--color-accent); border-color:var(--color-accent); color:#fff; }
+  .pvd-chip[aria-selected="true"]:hover{ background:var(--color-accent); color:#fff; }
+  .pvd-abstract{ font-size:14px; line-height:1.6; color:var(--color-text); background:var(--color-bg);
+    border:1px solid var(--color-border); border-left:3px solid var(--color-accent); border-radius:0 6px 6px 0;
+    margin:0 0 18px; padding:12px 16px; }
+  .pvd-flow{ display:flex; flex-direction:column; gap:12px; }
+  .pvd-step{ opacity:0; transform:translateY(6px); transition:opacity .35s var(--ease,ease), transform .35s var(--ease,ease); }
+  .pvd-step.in{ opacity:1; transform:none; }
+  .pvd-step-k{ font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; color:var(--color-text-subtle); margin-bottom:6px; }
+  .pvd-badge{ display:inline-block; font-size:13px; font-weight:600; padding:5px 12px; border-radius:6px; }
+  .pvd-badge[data-case="1"]{ background:var(--color-accent-soft); color:var(--color-accent); }
+  .pvd-badge[data-case="0"]{ background:var(--color-bg); color:var(--color-text-muted); border:1px solid var(--color-border); }
+  .pvd-pills{ display:flex; flex-wrap:wrap; gap:8px; }
+  .pvd-pill{ font-size:13px; padding:5px 12px; border-radius:6px; border:1px solid var(--color-border); }
+  .pvd-drug{ background:var(--color-accent-soft); color:var(--color-accent); border-color:transparent; }
+  .pvd-effect{ background:var(--color-bg); color:var(--color-text); }
+  .pvd-code{ font-family:var(--font-mono); font-size:13px; }
+  .pvd-snomed{ color:var(--color-accent); font-weight:600; }
+  .pvd-term{ color:var(--color-text-muted); }
+  .pvd-skip{ display:none; font-size:13px; color:var(--color-text-muted); font-style:italic; }
+  .pvd.is-skip .pvd-caseonly{ display:none; }
+  .pvd.is-skip .pvd-skip{ display:block; opacity:0; transform:translateY(6px); transition:opacity .35s ease, transform .35s ease; }
+  .pvd.is-skip .pvd-skip.in{ opacity:1; transform:none; }
+  @media (max-width:560px){ .pvd{ padding:22px 20px 18px; } .pvd-title{ font-size:20px; } }
+</style>
+
+<script is:inline>
+  (function(){
+    function init(root){
+      if(root.dataset.init) return; root.dataset.init="1";
+      const samples = JSON.parse(root.querySelector('.pvd-data').textContent);
+      const chips = Array.from(root.querySelectorAll('.pvd-chip'));
+      const absEl = root.querySelector('.pvd-abstract');
+      const badge = root.querySelector('.pvd-badge');
+      const drug = root.querySelector('.pvd-drug');
+      const effect = root.querySelector('.pvd-effect');
+      const snomed = root.querySelector('.pvd-snomed');
+      const term = root.querySelector('.pvd-term');
+      const steps = Array.from(root.querySelectorAll('.pvd-step'));
+      const skip = root.querySelector('.pvd-skip');
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function stagger(els){
+        els.forEach(el=> el.classList.remove('in'));
+        els.forEach((el,i)=> reduce ? el.classList.add('in') : setTimeout(()=> el.classList.add('in'), 90 + i*260));
+      }
+      function select(i){
+        const s = samples[i];
+        const ACC = getComputedStyle(root).getPropertyValue('--color-accent').trim();
+        chips.forEach(function(c,ci){ var on=ci===i; c.setAttribute('aria-selected', on?'true':'false'); c.style.background=on?ACC:''; c.style.borderColor=on?ACC:''; c.style.color=on?'#fff':''; });
+        absEl.textContent = s.abstract;
+        badge.textContent = s.case ? 'Possible case' : 'Not a case';
+        badge.dataset.case = s.case ? '1' : '0';
+        if(s.case){
+          root.classList.remove('is-skip');
+          drug.textContent = s.drug;
+          effect.textContent = s.effect;
+          snomed.textContent = s.code;
+          term.textContent = s.term;
+          stagger(steps);
+        } else {
+          root.classList.add('is-skip');
+          stagger([steps[0], skip]);
+        }
+      }
+      chips.forEach((c,i)=> c.addEventListener('click', ()=>select(i)));
+      select(0);
+      if(!reduce){
+        const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ select(0); io.disconnect(); }}),{threshold:.2});
+        io.observe(root);
+      }
+    }
+    function boot(){ document.querySelectorAll('.js-pvd').forEach(init); }
+    if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+  })();
+</script>

@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "outcome": "30-day acute kidney injury",
+    "comparison": "NSAID vs acetaminophen (new-user, active-comparator)"
+  },
+  "truth": 2.20,
+  "axisMax": 2.6,
+  "estimators": [
+    { "key": "crude", "label": "Crude (unadjusted)", "short": "Crude", "or": 1.19, "ci": [1.05, 1.35], "recovers": false, "note": "Unadjusted — sicker patients were channeled to one drug, and that confounding hides the harm." },
+    { "key": "matched", "label": "Propensity-score matched", "short": "PS matched", "or": 2.05, "ci": [1.85, 2.28], "recovers": true, "note": "Groups balanced on measured confounders — the harm the crude estimate buried now emerges." },
+    { "key": "sccs", "label": "Self-controlled case series", "short": "SCCS", "or": 2.14, "ci": [1.86, 2.47], "recovers": true, "note": "Each patient is their own control — a method with different blind spots independently agrees." }
+  ]
+}
