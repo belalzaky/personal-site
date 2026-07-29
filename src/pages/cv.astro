@@ -1,0 +1,345 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+// Single source of truth for the project count.
+const projectCount = (await getCollection('projects')).length;
+
+const education = [
+  { name: "King's College London — BSc Pharmacology (Hons)", meta: 'Expected Jun 2028', place: 'London, United Kingdom' },
+  { name: 'Emirates International School – Jumeirah — IB Diploma', meta: '2024', place: 'Dubai, United Arab Emirates' },
+];
+
+const projects = [
+  {
+    title: 'Causal safety — does an NSAID cause kidney injury?',
+    meta: '2026',
+    stack: 'Python · propensity-score matching · self-controlled case series · bootstrap CI',
+    bullets: [
+      'Emulated a new-user, active-comparator study and validated the estimators against a sealed true effect: the crude comparison understated the harm by 46% (OR 1.19), while matching (2.05) and a self-controlled series (2.14) both recovered the truth (2.20).',
+      'A simulation study by design — the only setting where you can score a causal method against a known answer. Same protocol queued for real clinical data (MIMIC-IV, credentialing in progress).',
+    ],
+  },
+  {
+    title: 'PV Intake Assistant — production pharmacovigilance pipeline',
+    meta: '2026',
+    stack: 'Python · scikit-learn · scispaCy · SNOMED CT · pytest · GitHub Actions · Docker',
+    bullets: [
+      'Three-stage pipeline: triage a medical abstract for a possible adverse drug event (F1 0.38 → 0.79), extract the drug and effect, then code the effect to SNOMED CT against a 461,000-term vocabulary.',
+      'Built as a system, not a notebook — 32 unit tests, CI on every push, a Dockerfile and a CLI. Chose precision over coverage in coding: a wrong code corrupts a safety signal, a blank one does not.',
+    ],
+  },
+  {
+    title: 'Pharmacovigilance signal detection — FAERS (20M+ FDA reports)',
+    meta: '2026',
+    stack: 'Python · pandas · SQL · openFDA API · PRR / ROR / chi-squared / Evans criteria',
+    bullets: [
+      'Built a disproportionality signal-detection pipeline over 20M+ adverse-event reports; validated on the known warfarin–haemorrhage signal (PRR ≈ 5), with negative controls to screen out confounders.',
+      'Across companion projects (a live dashboard and a SQL reproduction), showed how notoriety and sampling distort conclusions — a heartburn drug’s 2020–21 report spike was litigation, not clinical harm.',
+    ],
+  },
+  {
+    title: 'Clinical NLP & EHR modelling — adverse events, risk and survival',
+    meta: '2026',
+    stack: 'R (survival) · Kaplan–Meier · Cox PH · Python · scikit-learn · PubMedBERT',
+    bullets: [
+      'Benchmarked four models for detecting adverse drug events in free text: the domain-tuned transformer won, a keyword model beat a general-purpose one, and a zero-shot LLM came last — domain fit beats model size.',
+      'Modelled time-to-hypertension in 1,100+ patients: diabetics progressed ~2.4× faster, and a seemingly null age effect proved time-varying.',
+    ],
+  },
+];
+
+const leadershipCompact = true;
+
+const experience = [
+  { name: 'Aster Pharmacy — Sales Intern', meta: 'Jul 2024', desc: 'Supported customer service and sales operations in a busy retail pharmacy environment, Dubai.' },
+  { name: 'Modon Designs — Project Coordinator & Business Development Associate', meta: 'Jun 2022 – Apr 2023', desc: 'Coordinated client–team communication and documentation, built digital filing systems, and supported business development and social media.' },
+  { name: 'M2 Supplements — Operations & Marketing Assistant', meta: 'Jan 2022 – Jun 2023', desc: 'Ran order fulfilment, customer communication and social-media campaigns, supporting product launches with the founders.' },
+];
+
+const leadership = [
+  { name: "Student Representative — BSc Pharmacology, King's College London", meta: '2025 – Present', desc: 'Represent coursemates on the Staff–Student Liaison Committee; consolidated scattered module feedback into one case that reached the department and changed the module.' },
+  { name: "King's100 — Leadership & Employability Programme", meta: '2026', desc: "Selected for King's flagship leadership programme — employer-led challenges." },
+  { name: 'Toastmasters International — Member & Sergeant at Arms', meta: '2023 – Present', desc: 'Regular prepared and impromptu speaking; earned “Speech of the Meeting”.' },
+  { name: 'Model United Nations — Delegate', meta: '2023', desc: 'Awarded Delegate of the Conference — research, debate and negotiation.' },
+];
+
+const skills = [
+  { label: 'Data & technical', value: 'Python (pandas, scikit-learn, matplotlib), R (survival analysis), SQL, machine learning, NLP; Git/GitHub, pytest, GitHub Actions CI, Docker, Astro' },
+  { label: 'Methods', value: 'Causal inference (propensity scores, self-controlled case series), survival analysis, disproportionality signal detection, statistical reasoning' },
+  { label: 'Domain', value: 'Pharmacovigilance & drug-safety signal detection, real-world evidence, EHR data, SNOMED CT coding' },
+  { label: 'Communication', value: 'Scientific & report writing, data storytelling, public speaking. English (fluent), Arabic (native)' },
+];
+---
+
+<Base
+  title="CV — Belal Zaky"
+  description="Curriculum vitae — Belal Zaky, BSc Pharmacology at King's College London, building pharmacovigilance and health-data projects in Python, R and SQL."
+>
+  <div class="page container container--prose">
+
+    <header class="cv-head">
+      <div class="cv-head-top">
+        <div>
+          <p class="page-eyebrow">Curriculum vitae</p>
+          <h1 class="cv-name">Belal Zaky</h1>
+        </div>
+        <a class="cv-print" href="/Belal-Zaky-CV.pdf" download>Download PDF ↓</a>
+      </div>
+
+      <p class="cv-contact">
+        London, UK &middot; Dubai, UAE &nbsp;|&nbsp;
+        <a href="mailto:hello@belalzaky.uk">hello@belalzaky.uk</a>
+      </p>
+      <p class="cv-links">
+        <a href="https://belalzaky.uk">belalzaky.uk</a> ·
+        <a href="https://linkedin.com/in/belalzaky">linkedin.com/in/belalzaky</a> ·
+        <a href="https://github.com/belalzaky">github.com/belalzaky</a> ·
+        <a href="https://belalzaky.substack.com">belalzaky.substack.com</a>
+      </p>
+
+      <p class="cv-summary">
+        Pharmacology student at King's College London, building at the intersection of drug safety,
+        data and AI. Self-taught in Python, R and SQL, with {projectCount} published data projects
+        analysing 20M+ real-world drug-safety and health records — from signal detection and causal
+        inference to a tested, containerised pharmacovigilance pipeline.
+      </p>
+    </header>
+
+    <section class="cv-section">
+      <h2 class="cv-section-title">Education</h2>
+      {education.map(e => (
+        <div class="cv-entry">
+          <div class="cv-entry-head">
+            <span class="cv-entry-name">{e.name}</span>
+            <span class="cv-entry-meta">{e.meta}</span>
+          </div>
+          <p class="cv-entry-sub">{e.place}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="cv-section">
+      <h2 class="cv-section-title">Selected data projects</h2>
+      {projects.map(p => (
+        <div class="cv-entry">
+          <div class="cv-entry-head">
+            <span class="cv-entry-name">{p.title}</span>
+            <span class="cv-entry-meta">{p.meta}</span>
+          </div>
+          <p class="cv-entry-stack">{p.stack}</p>
+          <ul class="cv-bullets">
+            {p.bullets.map(b => <li>{b}</li>)}
+          </ul>
+        </div>
+      ))}
+      <p class="cv-note">
+        Full write-ups, code and live interactives for all {projectCount} projects at
+        <a href="https://belalzaky.uk/projects">belalzaky.uk/projects</a>.
+      </p>
+    </section>
+
+    <section class="cv-section">
+      <h2 class="cv-section-title">Portfolio & public work</h2>
+      <ul class="cv-bullets cv-bullets--flush">
+        <li><strong>belalzaky.uk</strong> — self-built portfolio site (Astro · Vercel) presenting {projectCount} projects with bespoke interactive data visualisations built from real project data.</li>
+        <li><strong>Building in public</strong> — projects and drug-safety concepts explained via LinkedIn, a Substack newsletter and an educational Instagram (@belalzakyuk).</li>
+      </ul>
+    </section>
+
+    <section class="cv-section">
+      <h2 class="cv-section-title">Experience</h2>
+      {experience.map(e => (
+        <div class="cv-entry">
+          <div class="cv-entry-head">
+            <span class="cv-entry-name">{e.name}</span>
+            <span class="cv-entry-meta">{e.meta}</span>
+          </div>
+          <p class="cv-entry-sub">{e.desc}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="cv-section">
+      <h2 class="cv-section-title">Leadership & activities</h2>
+      {leadership.map(e => (
+        <div class="cv-entry">
+          <div class="cv-entry-head">
+            <span class="cv-entry-name">{e.name}</span>
+            <span class="cv-entry-meta">{e.meta}</span>
+          </div>
+          <p class="cv-entry-sub">{e.desc}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="cv-section">
+      <h2 class="cv-section-title">Skills</h2>
+      <dl class="cv-skills">
+        {skills.map(s => (
+          <div class="cv-skills-row">
+            <dt class="cv-skills-label">{s.label}</dt>
+            <dd class="cv-skills-value">{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+  </div>
+</Base>
+
+<style>
+  .page { padding-top: var(--space-16); padding-bottom: var(--space-24); }
+
+  .cv-head { margin-bottom: var(--space-12); }
+  .cv-head-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: var(--space-6); margin-bottom: var(--space-4);
+  }
+  .page-eyebrow {
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+    color: var(--color-text-muted); letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: var(--space-2); max-width: none;
+  }
+  .cv-name {
+    font-size: var(--text-3xl); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;
+  }
+  .cv-print {
+    flex: none; display: inline-block; text-decoration: none;
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+    color: var(--color-text-muted); background: none; border: 1px solid var(--color-border);
+    border-radius: var(--radius); padding: 8px 14px; cursor: pointer;
+    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .cv-print:hover { color: var(--color-accent); border-color: var(--color-accent); }
+
+  .cv-contact, .cv-links {
+    font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+  .cv-contact a, .cv-links a { color: var(--color-text-muted); text-decoration: none; }
+  .cv-contact a:hover, .cv-links a:hover { color: var(--color-accent); }
+  .cv-summary {
+    font-size: var(--text-base); color: var(--color-text); line-height: 1.7;
+    margin-top: var(--space-6); max-width: 68ch;
+  }
+
+  .cv-section { margin-top: var(--space-12); }
+  .cv-section-title {
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent);
+    padding-bottom: var(--space-2); border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-6);
+  }
+
+  .cv-entry { margin-bottom: var(--space-6); }
+  .cv-entry:last-child { margin-bottom: 0; }
+  .cv-entry-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: var(--space-4); margin-bottom: var(--space-1);
+  }
+  .cv-entry-name { font-size: var(--text-base); font-weight: 600; color: var(--color-text); line-height: 1.4; }
+  .cv-entry-meta {
+    flex: none; font-family: var(--font-mono); font-size: var(--text-xs);
+    color: var(--color-text-subtle); white-space: nowrap;
+  }
+  .cv-entry-sub { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
+  .cv-entry-stack {
+    font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-subtle);
+    line-height: 1.6; margin-bottom: var(--space-2);
+  }
+
+  .cv-bullets { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+  .cv-bullets li {
+    position: relative; padding-left: var(--space-4);
+    font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.65;
+  }
+  .cv-bullets li::before {
+    content: '—'; position: absolute; left: 0; color: var(--color-text-subtle);
+  }
+  .cv-bullets li strong { color: var(--color-text); font-weight: 600; }
+  .cv-note { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-4); }
+  .cv-note a { color: var(--color-accent); text-decoration: none; }
+  .cv-note a:hover { text-decoration: underline; }
+
+  .cv-skills { display: flex; flex-direction: column; gap: var(--space-3); }
+  .cv-skills-row { display: grid; grid-template-columns: 9rem 1fr; gap: var(--space-4); align-items: baseline; }
+  .cv-skills-label {
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+    color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .cv-skills-value { font-size: var(--text-sm); color: var(--color-text); line-height: 1.6; }
+
+  @media (max-width: 640px) {
+    .cv-name { font-size: var(--text-2xl); }
+    .cv-entry-head { flex-direction: column; gap: var(--space-1); }
+    .cv-skills-row { grid-template-columns: 1fr; gap: var(--space-1); }
+  }
+
+  /* Print / save-as-PDF — always in sync with this page, no stale file to maintain.
+     Forces the LIGHT palette (so a dark-mode visitor still gets a printable CV) but
+     keeps the brand: accent section rules, mono labels, the same type hierarchy. */
+  @media print {
+    /* Matches the one-page CV in the vault: narrow vertical, generous horizontal. */
+    @page { margin: 7mm 19mm 6mm; }
+
+    /* Pin light-theme tokens regardless of the toggle, and let colour actually print. */
+    :global(:root),
+    :global([data-theme='dark']) {
+      --color-bg: #ffffff;
+      --color-surface: #ffffff;
+      --color-border: #d9d9d5;
+      --color-text: #14141a;
+      --color-text-muted: #3f3f3c;
+      --color-text-subtle: #6f6f6c;
+      --color-accent: #2546f0;
+    }
+    :global(*) {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    :global(html), :global(body) {
+      background: #fff !important;
+      color: var(--color-text) !important;
+    }
+
+    /* Chrome off */
+    :global(#site-nav), :global(footer), :global(.nav), .cv-print { display: none !important; }
+    :global(main) { padding: 0 !important; margin: 0 !important; }
+    .page { padding: 0 !important; max-width: none !important; }
+    :global(.container) { max-width: none !important; padding-inline: 0 !important; }
+
+    /* Type scale mirrors the vault one-pager: 23pt name, 9.5pt body. */
+    .cv-head { margin-bottom: 8pt; }
+    .cv-head-top { margin-bottom: 2pt; display: block; }
+    .page-eyebrow { display: none; }
+    .cv-name { font-size: 23pt; margin: 0 0 2pt; }
+    .cv-contact, .cv-links { font-size: 8pt; line-height: 1.4; }
+    .cv-summary { font-size: 9pt; line-height: 1.4; margin-top: 5pt; max-width: none; }
+
+    .cv-section { margin-top: 8pt; break-inside: auto; }
+    .cv-section-title {
+      font-size: 8pt; letter-spacing: 0.09em; margin-bottom: 4pt; padding-bottom: 1.5pt;
+      border-bottom: 0.7pt solid var(--color-accent);
+      break-after: avoid;
+    }
+
+    .cv-entry { margin-bottom: 5pt; break-inside: avoid; }
+    .cv-entry-head { margin-bottom: 0.5pt; gap: 8pt; }
+    .cv-entry-name { font-size: 9.5pt; font-weight: 600; }
+    .cv-entry-meta { font-size: 8pt; }
+    .cv-entry-sub { font-size: 9pt; line-height: 1.35; }
+    .cv-entry-stack { font-size: 8pt; line-height: 1.3; margin-bottom: 1.5pt; }
+
+    .cv-bullets { gap: 1.5pt; }
+    .cv-bullets li { font-size: 9pt; line-height: 1.35; padding-left: 9pt; }
+    .cv-note { font-size: 8pt; margin-top: 4pt; }
+
+    .cv-skills { gap: 2pt; }
+    .cv-skills-row { grid-template-columns: 5.6rem 1fr; gap: 8pt; }
+    .cv-skills-label { font-size: 7.6pt; }
+    .cv-skills-value { font-size: 9pt; line-height: 1.35; }
+
+    a { text-decoration: none !important; }
+  }
+</style>
