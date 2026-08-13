@@ -18,8 +18,8 @@ const countWord = WORDS[projects.length] ?? String(projects.length);
       <p class="page-eyebrow">Work</p>
       <h1 class="page-title">{countWord} things I built — and can defend.</h1>
       <p class="page-intro">
-        Pharmacovigilance tools and health data exercises built while learning Python
-        and SQL alongside a pharmacology degree.
+        Each one started as a question about a drug and ended in a judgement about a decision.
+        The headline is what I found; the small print is how, for anyone who wants to check.
       </p>
     </header>
 
@@ -27,8 +27,10 @@ const countWord = WORDS[projects.length] ?? String(projects.length);
       {sorted.map((project, i) => (
         <ProjectCaseCard
           title={project.data.title}
-          problem={projectCases[project.slug]?.problem ?? project.data.summary}
-          found={projectCases[project.slug]?.found ?? project.data.result ?? ''}
+          stake={projectCases[project.slug]?.stake ?? project.data.summary}
+          finding={projectCases[project.slug]?.finding ?? project.data.result ?? ''}
+          method={projectCases[project.slug]?.method ?? ''}
+          decision={projectCases[project.slug]?.decision ?? ''}
           tags={project.data.tags}
           href={`/projects/${project.slug}`}
           github={project.data.github}

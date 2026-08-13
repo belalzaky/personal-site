@@ -12,25 +12,27 @@ const countWord = WORDS[projectCount] ?? String(projectCount);
   <div class="container hero-inner">
     <div class="hero-copy">
       <p class="hero-eyebrow reveal" style="--reveal-delay:0ms">
-        DRUG SAFETY · DATA · DECISIONS
+        EVIDENCE · JUDGEMENT · DECISIONS
       </p>
 
       <h1 class="hero-headline reveal" style="--reveal-delay:60ms">
-        I turn drug-safety data into things you can <span class="hero-headline-accent">argue with</span>.
+        Most of what a drug's data appears to say is <span class="hero-headline-accent">an artefact of how it was collected</span>.
       </h1>
 
       <p class="hero-sub reveal" style="--reveal-delay:120ms">
-        I teach computers to read medical data and catch dangerous drug side effects —
-        then prove whether the answer holds up. Built as working systems, in public.
+        I'm a pharmacology student who builds the analysis behind that claim, then tries to break it.
+        A safety scare that turned out to be a wave of lawsuits. A painkiller that looked twice as safe
+        as it was. My own system, thrown away for scoring too well.
       </p>
 
       <nav class="hero-actions reveal" style="--reveal-delay:180ms" aria-label="Primary links">
-        <a href="/projects" class="btn btn-primary">Explore the work →</a>
-        <a href="/writing" class="btn btn-ghost">Read the writing</a>
+        <a href="/projects" class="btn btn-primary">See what I found →</a>
+        <a href="/about" class="btn btn-ghost">Who I am</a>
       </nav>
 
       <p class="hero-cred reveal" style="--reveal-delay:240ms">
-        BSc Pharmacology · King's College London · {projectCount} live data projects · building in public
+        BSc Pharmacology · King's College London · {projectCount} projects, shipped and public ·
+        <span class="hero-ask">seeking a summer 2027 internship in life sciences consulting</span>
       </p>
     </div>
 
@@ -139,6 +141,11 @@ const countWord = WORDS[projectCount] ?? String(projectCount);
     line-height: 1.7;
     padding-top: var(--space-4);
     border-top: 1px solid var(--color-border);
+  }
+
+  /* The ask. A reader should never have to guess what I want from them. */
+  .hero-ask {
+    color: var(--color-accent);
   }
 
   /* Buttons */

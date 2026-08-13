@@ -6,9 +6,11 @@ import ADRExplorer from '../components/viz/ADRExplorer.astro';
 import RweScoreboard from '../components/viz/RweScoreboard.astro';
 import PvPipeline from '../components/viz/PvPipeline.astro';
 import SocialProof from '../components/SocialProof.astro';
+import Positions from '../components/Positions.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import { getCollection } from 'astro:content';
+import { projectCases } from '../data/project-cases';
 
 const SUBSTACK_HOME = 'https://belalzaky.substack.com';
 const isPublished = (url?: string) => !!url && url.replace(/\/$/, '') !== SUBSTACK_HOME;
@@ -25,7 +27,7 @@ const latestPost = allPosts
   .slice(0, 1);
 ---
 
-<Base title="Belal Zaky — I turn drug-safety data into things you can argue with" description="Nine shipped projects on adverse events, real-world evidence and causal inference — and the decisions built on them.">
+<Base title="Belal Zaky — most of what a drug's data appears to say is an artefact of how it was collected" description="A pharmacology student at King's turning uncertain drug-safety evidence into decisions. Nine shipped projects on adverse events, causal inference and AI — and the positions they left me with.">
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -50,38 +52,32 @@ const latestPost = allPosts
     <header class="section-header">
       <div class="section-heading">
         <p class="section-eyebrow">01 · FEATURED WORK</p>
-        <h2 class="section-title">Three things worth your 30 seconds.</h2>
+        <h2 class="section-title">Three findings worth your 30 seconds.</h2>
       </div>
     </header>
 
     <div class="featured-work-stack">
       <FeaturedWorkCard
-        hook="I taught four AIs to read medical notes for drug side effects. The fanciest one came last."
-        problem="Which model actually catches a dangerous drug side effect buried in a doctor's note?"
-        found="A domain-tuned model won; a plain keyword model beat a general-purpose transformer; a zero-shot LLM over-flagged and hallucinated details."
-        tags={["Python", "PubMedBERT", "LLM eval"]}
-        href="/projects/adr-reader"
-        github="https://github.com/belalzaky/adr-reader"
-        delay={0}
-      >
-        <ADRExplorer slot="interactive" />
-      </FeaturedWorkCard>
-
-      <FeaturedWorkCard
-        hook="A crude comparison said the risk was 1.19. The truth was 2.20. I can tell when my method is lying."
-        problem="Does an NSAID actually cause kidney injury — or does confounding just make it look that way?"
-        found="Channeling hid nearly half the harm. Propensity-score matching (2.05) and a self-controlled case series (2.14) independently recovered the sealed true effect of 2.20."
+        {...projectCases['rwe-causal']}
         tags={["Python", "Causal inference", "SCCS"]}
         href="/projects/rwe-causal"
-        delay={80}
+        delay={0}
       >
         <RweScoreboard slot="interactive" />
       </FeaturedWorkCard>
 
       <FeaturedWorkCard
-        hook="An abstract goes in. A triaged, coded safety case comes out — tested, containerised, and running on every push."
-        problem="Pharmacovigilance intake is slow and manual: read the literature, spot possible drug harms, code them to a standard vocabulary."
-        found="A three-stage pipeline — triage (F1 0.79) → drug/effect extraction → SNOMED CT coding — with 32 unit tests, CI and Docker. Precision over coverage: a wrong code is worse than none."
+        {...projectCases['adr-reader']}
+        tags={["Python", "PubMedBERT", "LLM eval"]}
+        href="/projects/adr-reader"
+        github="https://github.com/belalzaky/adr-reader"
+        delay={80}
+      >
+        <ADRExplorer slot="interactive" />
+      </FeaturedWorkCard>
+
+      <FeaturedWorkCard
+        {...projectCases['pv-intake']}
         tags={["Python", "NLP", "SNOMED CT", "Docker"]}
         href="/projects/pv-intake"
         github="https://github.com/belalzaky/pv-intake"
@@ -104,18 +100,32 @@ const latestPost = allPosts
       </div>
     </header>
     <p class="section-intro reveal">
-      The projects come from real pharmacovigilance practice — practitioners' frameworks and
-      advice, turned into working code — the evidence base behind commercial and clinical
-      decisions in drug safety.
+      The questions come from people who do this for a living — drug safety teams whose
+      conclusions end up in front of regulators, courts and boards. The work is checked the
+      way theirs is: against cases where the answer is already known.
     </p>
     <SocialProof />
+  </section>
+
+  <section class="section container">
+    <header class="section-header">
+      <div class="section-heading">
+        <p class="section-eyebrow">03 · WHAT I THINK</p>
+        <h2 class="section-title">Three things I'd argue for.</h2>
+      </div>
+    </header>
+    <p class="section-intro reveal">
+      A finding is not a view. These are the positions the work above has left me with —
+      each one with the evidence behind it, and the thing that would change my mind.
+    </p>
+    <Positions />
   </section>
 
   {latestPost.length > 0 && (
     <section class="section container container--prose">
       <header class="section-header">
         <div class="section-heading">
-          <p class="section-eyebrow">03</p>
+          <p class="section-eyebrow">04 · WRITING</p>
           <h2 class="section-title">Latest writing</h2>
         </div>
         <a href="/writing" class="section-more">All posts →</a>

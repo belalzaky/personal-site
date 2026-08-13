@@ -6,12 +6,15 @@ import { getCollection } from 'astro:content';
 // Single source of truth — derived, never hand-typed.
 const projectCount = (await getCollection('projects')).length;
 
+// Each label has to make sense to someone who has never opened a statistics textbook,
+// while the value stays precise enough for someone who has. If a label needs a glossary,
+// it is the wrong label.
 const stats = [
-  { value: String(projectCount), label: 'projects shipped in public' },
-  { value: '1.19 → 2.20', label: 'confounding caught against a sealed truth' },
-  { value: '20M+', label: 'FAERS reports analysed' },
-  { value: '4 models', label: 'benchmarked — the most expensive one lost' },
-  { value: 'CI · Docker', label: 'tested, containerised pipeline' },
+  { value: String(projectCount), label: 'projects built, shipped and public' },
+  { value: '46%', label: 'of a real harm the obvious analysis missed' },
+  { value: '20M+', label: 'FDA reports of drug side effects analysed' },
+  { value: '4 models', label: 'put head to head — the priciest one lost' },
+  { value: '26 points', label: 'of accuracy given up, on purpose, to be right' },
 ];
 ---
 
@@ -29,12 +32,13 @@ const stats = [
 
     <figure class="proof-card reveal" style="--reveal-delay:80ms">
       <p class="proof-lead">
-        A crude comparison said the risk was 1.19. The real answer was 2.20.
-        <span class="proof-arrow" aria-hidden="true">→</span> <a href="/projects/rwe-causal" class="proof-inline-link">I can tell when my method is lying</a>.
+        I wrote down the right answer, sealed it, and then tried to find it.
+        <span class="proof-arrow" aria-hidden="true">→</span> <a href="/projects/rwe-causal" class="proof-inline-link">I can tell when my own method is lying</a>.
       </p>
       <p class="proof-context">
-        A simulation study — the true effect was sealed until the analysis finished, so the
-        estimators could be scored against a known answer. Real data never lets you do that.
+        The patient data was simulated, so the true effect was known in advance and kept hidden
+        until the analysis finished. That is the one thing real data can never let you do: mark
+        your own work against an answer key.
       </p>
     </figure>
   </div>

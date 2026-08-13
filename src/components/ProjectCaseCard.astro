@@ -1,8 +1,13 @@
 ---
+/* Same four layers as FeaturedWorkCard — see src/data/project-cases.ts.
+ * The stake carries the card; the title is demoted to a label above it, because a project
+ * name tells a visitor nothing and the stake tells them everything. */
 interface Props {
   title: string;
-  problem: string;
-  found: string;
+  stake: string;
+  finding: string;
+  method: string;
+  decision: string;
   tags: string[];
   href: string;
   github?: string;
@@ -10,7 +15,7 @@ interface Props {
   delay?: number;
 }
 
-const { title, problem, found, tags, href, github, link, delay = 0 } = Astro.props;
+const { title, stake, finding, method, decision, tags, href, github, link, delay = 0 } = Astro.props;
 ---
 
 <article class="pcard reveal" style={`--reveal-delay:${delay}ms`}>
@@ -21,16 +26,17 @@ const { title, problem, found, tags, href, github, link, delay = 0 } = Astro.pro
     </ul>
   </div>
 
+  <p class="pcard-project">{title}</p>
+
   <h3 class="pcard-title">
-    <a href={href} class="pcard-link">{title}</a>
+    <a href={href} class="pcard-link">{stake}</a>
   </h3>
 
   <div class="pcard-case">
-    <p class="pcard-problem">
-      <span class="pcard-k">Problem</span>{problem}
-    </p>
-    <p class="pcard-found">
-      <span class="pcard-k pcard-k--found">What I found</span>{found}
+    <p class="pcard-found">{finding}</p>
+    <p class="pcard-method">{method}</p>
+    <p class="pcard-decision">
+      <span class="pcard-k pcard-k--decision">So what</span>{decision}
     </p>
   </div>
 
@@ -113,6 +119,16 @@ const { title, problem, found, tags, href, github, link, delay = 0 } = Astro.pro
   }
 
   /* Title */
+  /* The project name, demoted to a label. It identifies the work; it does not sell it. */
+  .pcard-project {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-subtle);
+    max-width: none;
+  }
+
   .pcard-title {
     font-size: 1.125rem;
     font-weight: 600;
@@ -148,18 +164,29 @@ const { title, problem, found, tags, href, github, link, delay = 0 } = Astro.pro
     margin-bottom: 3px;
   }
 
-  .pcard-k--found {
+  .pcard-k--decision {
     color: var(--color-accent);
   }
 
-  .pcard-problem {
+  /* Layer 2 — the number. */
+  .pcard-found {
     font-size: var(--text-sm);
     color: var(--color-text-muted);
     line-height: 1.55;
     max-width: none;
   }
 
-  .pcard-found {
+  /* Layer 3 — secondary by design. Scannable, never in the way. */
+  .pcard-method {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    line-height: 1.65;
+    max-width: none;
+  }
+
+  /* Layer 4 — the judgement. */
+  .pcard-decision {
     font-size: var(--text-sm);
     color: var(--color-text);
     font-weight: 500;

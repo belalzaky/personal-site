@@ -1,8 +1,12 @@
 ---
+/* Four layers, in reading order — see src/data/project-cases.ts for the rule.
+ * stake (headline, plain) → finding (the number) → method (secondary) → decision (the judgement).
+ * A reader who stops at any layer should still leave impressed. */
 interface Props {
-  hook: string;
-  problem: string;
-  found: string;
+  stake: string;
+  finding: string;
+  method: string;
+  decision: string;
   tags: string[];
   href: string;
   github?: string;
@@ -10,7 +14,7 @@ interface Props {
   delay?: number;
 }
 
-const { hook, problem, found, tags, href, github, link, delay = 0 } = Astro.props;
+const { stake, finding, method, decision, tags, href, github, link, delay = 0 } = Astro.props;
 const hasInteractive = Astro.slots.has('interactive');
 ---
 
@@ -25,20 +29,19 @@ const hasInteractive = Astro.slots.has('interactive');
   <div class={hasInteractive ? 'fwcard-body' : 'fwcard-body fwcard-body--solo'}>
     <div class="fwcard-info">
       <h3 class="fwcard-hook">
-        <a href={href} class="fwcard-link">{hook}</a>
+        <a href={href} class="fwcard-link">{stake}</a>
       </h3>
 
       <div class="fwcard-case">
-        <p class="fwcard-problem">
-          <span class="fwcard-k">Problem</span>{problem}
-        </p>
-        <p class="fwcard-found">
-          <span class="fwcard-k fwcard-k--found">What I found</span>{found}
+        <p class="fwcard-found">{finding}</p>
+        <p class="fwcard-method">{method}</p>
+        <p class="fwcard-decision">
+          <span class="fwcard-k fwcard-k--decision">So what</span>{decision}
         </p>
       </div>
 
       <div class="fwcard-footer">
-        <a href={href} class="fwcard-cta" aria-label={`View project: ${hook}`}>
+        <a href={href} class="fwcard-cta" aria-label={`View project: ${stake}`}>
           View project <span aria-hidden="true">→</span>
         </a>
         <div class="fwcard-ext">
@@ -171,17 +174,29 @@ const hasInteractive = Astro.slots.has('interactive');
     margin-bottom: 3px;
   }
 
-  .fwcard-k--found {
+  .fwcard-k--decision {
     color: var(--color-accent);
   }
 
-  .fwcard-problem {
+  /* Layer 2 — the number, now that the stake above has framed it. */
+  .fwcard-found {
     font-size: var(--text-base);
-    color: var(--color-text-muted);
+    color: var(--color-text);
     line-height: 1.6;
   }
 
-  .fwcard-found {
+  /* Layer 3 — deliberately secondary. A specialist scans this to check the work is real;
+   * a non-specialist's eye should pass over it without friction. Never hidden, never loud. */
+  .fwcard-method {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+  }
+
+  /* Layer 4 — the judgement. The line that turns a result into a point of view. */
+  .fwcard-decision {
     font-size: var(--text-base);
     color: var(--color-text);
     font-weight: 500;

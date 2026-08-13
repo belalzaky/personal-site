@@ -1,0 +1,183 @@
+---
+/* The point-of-view section.
+ *
+ * The rest of the site proves he can run an analysis. Nine times over, it ends on a result.
+ * A result is not a view. This section is the only place where the claim is about the world
+ * rather than about a project — which is the difference between a research student and someone
+ * you would put in front of a client.
+ *
+ * Rule for adding one: every position must be (a) a claim about how decisions get made,
+ * (b) backed by work on this site, not by reading, and (c) accompanied by the thing that
+ * would change his mind. The third part is not modesty — a position you cannot falsify is
+ * an opinion, and opinions are cheap.
+ */
+
+interface Position {
+  claim: string;
+  argument: string;
+  evidence: string;
+  evidenceHref: string;
+  falsifier: string;
+}
+
+const positions: Position[] = [
+  {
+    claim: 'A rise in reported side effects is treated as a rise in harm. It routinely is not.',
+    argument:
+      'Adverse-event reporting is voluntary, so the count measures who is paying attention — media coverage, lawyers advertising, a regulator asking questions. When one heartburn drug\'s reports exploded in 2020, the cause was litigation, not new clinical harm. The reports moved before the evidence did.',
+    evidence: 'Twenty million FDA reports, and the Zantac timeline',
+    evidenceHref: '/projects/faers-explorer',
+    falsifier:
+      'A spike that holds up after adjusting for prescriptions dispensed and media volume would be a real signal, and I would want to see that adjustment before dismissing any of them.',
+  },
+  {
+    claim: 'Life sciences is buying AI on sophistication. Sophistication is not what predicts performance.',
+    argument:
+      'I put four systems on the same task of finding drug side effects in medical text. A model trained on biomedical literature won. A plain keyword matcher beat a general-purpose AI model. A general LLM with no task-specific training came last, and invented details that were not in the source. The ranking tracked fit to the domain, not capability or cost.',
+    evidence: 'Four models, one test set, measured hallucination rate',
+    evidenceHref: '/projects/adr-reader',
+    falsifier:
+      'This was a deliberately worst-case setup for the LLM — no fine-tuning, no examples. A few-shot version would likely close some of the gap, and I would want that comparison before generalising the claim to procurement.',
+  },
+  {
+    claim: 'When patients are not randomly assigned, the bias has a direction — and it flatters the drug.',
+    argument:
+      'Doctors steer frailer patients away from riskier drugs. That is good medicine and it quietly makes the risky drug look safe in the data afterwards. On a dataset where I had sealed the true answer in advance, the obvious comparison understated a real harm by 46%. Two independent methods recovered it. More data would not have helped: the problem was structural, not statistical.',
+    evidence: 'A sealed true effect of 2.20, and two ways of finding it',
+    evidenceHref: '/projects/rwe-causal',
+    falsifier:
+      'The direction is not a law. Where the sicker patients get the newer drug, the same mechanism runs the other way and exaggerates harm instead — so the honest claim is that the bias is directional and knowable, not that it always favours the drug.',
+  },
+];
+---
+
+<section class="positions">
+  {positions.map((p, i) => (
+    <article class="pos reveal" style={`--reveal-delay:${i * 80}ms`}>
+      <p class="pos-num">{String(i + 1).padStart(2, '0')}</p>
+
+      <div class="pos-body">
+        <h3 class="pos-claim">{p.claim}</h3>
+        <p class="pos-argument">{p.argument}</p>
+
+        <div class="pos-meta">
+          <a href={p.evidenceHref} class="pos-evidence">
+            <span class="pos-k">Evidence</span>
+            <span class="pos-evidence-text">{p.evidence} <span aria-hidden="true">→</span></span>
+          </a>
+          <p class="pos-falsifier">
+            <span class="pos-k">What would change my mind</span>
+            {p.falsifier}
+          </p>
+        </div>
+      </div>
+    </article>
+  ))}
+</section>
+
+<style>
+  .positions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .pos {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-8);
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .pos:hover {
+    border-color: var(--color-border-strong, var(--color-accent));
+  }
+
+  @media (max-width: 640px) {
+    .pos {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+      padding: var(--space-6);
+    }
+  }
+
+  .pos-num {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    line-height: 1.35;
+    max-width: none;
+  }
+
+  .pos-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Layer 1 — the claim. Plain enough that nobody needs the paragraph underneath it. */
+  .pos-claim {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    color: var(--color-text);
+    max-width: 44ch;
+  }
+
+  .pos-argument {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    max-width: 66ch;
+  }
+
+  .pos-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .pos-k {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-subtle);
+    margin-bottom: 3px;
+  }
+
+  .pos-evidence {
+    text-decoration: none;
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .pos-evidence-text {
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .pos-evidence:hover .pos-evidence-text {
+    border-bottom-color: currentColor;
+  }
+
+  /* The falsifier is deliberately quiet. It is there for the reader who is checking whether
+   * the confident bit above was earned. */
+  .pos-falsifier {
+    font-size: var(--text-sm);
+    color: var(--color-text-subtle);
+    line-height: 1.6;
+    max-width: 66ch;
+  }
+</style>
