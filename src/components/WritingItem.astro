@@ -45,6 +45,17 @@ const comingLabel = date.toLocaleDateString('en-GB', {
       </div>
     </div>
   )}
+
+  {Astro.slots.has('default') && (
+    <div class="writing-excerpt">
+      <slot />
+      {href && (
+        <a class="writing-more" href={href} target="_blank" rel="noopener noreferrer">
+          Continue reading on Substack ↗
+        </a>
+      )}
+    </div>
+  )}
 </li>
 
 <style>
@@ -110,5 +121,38 @@ const comingLabel = date.toLocaleDateString('en-GB', {
     font-size: var(--text-sm);
     color: var(--color-text-muted);
     line-height: 1.5;
+  }
+
+  /* Excerpt — the part of the post that lives on this domain. */
+  .writing-excerpt {
+    grid-column: 1 / -1;
+    padding-left: calc(7rem + var(--space-6));
+    padding-bottom: var(--space-5);
+    max-width: 68ch;
+  }
+
+  @media (max-width: 640px) {
+    .writing-excerpt {
+      padding-left: 0;
+    }
+  }
+
+  .writing-excerpt :global(p) {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-3);
+  }
+
+  .writing-more {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .writing-more:hover {
+    text-decoration: underline;
   }
 </style>

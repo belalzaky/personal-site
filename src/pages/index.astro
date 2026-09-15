@@ -9,6 +9,7 @@ import SocialProof from '../components/SocialProof.astro';
 import Positions from '../components/Positions.astro';
 import WritingItem from '../components/WritingItem.astro';
 import ContactBlock from '../components/ContactBlock.astro';
+import EmailCapture from '../components/EmailCapture.astro';
 import { getCollection } from 'astro:content';
 import { projectCases } from '../data/project-cases';
 
@@ -142,6 +143,10 @@ const latestPost = allPosts
       </ul>
     </section>
   )}
+
+  <section class="section container container--prose">
+    <EmailCapture compact />
+  </section>
 
   <section class="section container container--prose">
     <ContactBlock />

@@ -2,22 +2,27 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '@vercel/analytics/astro';
 
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  ogType?: 'website' | 'article';
 }
 
 const {
   title,
   description = 'Pharmacology BSc at King\'s College London — turning drug-safety evidence into decisions you can defend.',
   ogImage = '/og-image.png',
+  ogType = 'website',
 } = Astro.props;
 
-const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://belal.dev').toString();
+const SITE = Astro.site ?? new URL('https://belalzaky.uk');
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://belal.dev');
+const ogImageUrl = new URL(ogImage, SITE).toString();
+
+const canonicalURL = new URL(Astro.url.pathname, SITE);
 ---
 
 <!doctype html>
@@ -26,13 +31,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://belal.de
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="Belal Zaky — Writing" href={new URL('/rss.xml', SITE)} />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -74,6 +80,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://belal.de
       <slot />
     </main>
     <Footer />
+
+    <Analytics />
 
     <!-- Section 0: shared scroll-reveal observer (once-only, threshold 0.15) -->
     <script>

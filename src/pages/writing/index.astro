@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import WritingItem from '../../components/WritingItem.astro';
+import EmailCapture from '../../components/EmailCapture.astro';
 import { getCollection } from 'astro:content';
 
 const SUBSTACK_HOME = 'https://belalzaky.substack.com';
@@ -15,6 +16,18 @@ const featuredPost = sorted.find(p => isPublished(p.data.url));
 
 // Remaining list = everything except the featured post, newest first
 const listPosts = sorted.filter(p => p !== featuredPost);
+
+// Each post file carries an excerpt in its body — the part of the piece that lives on this
+// domain. Render them once here; posts with a `url` never get their own page.
+// Only posts that actually carry an excerpt get one rendered — an empty body would
+// otherwise produce a bare "continue reading" link duplicating the title.
+const contentBySlug = new Map<string, any>();
+for (const post of sorted) {
+  if (!post.body?.trim()) continue;
+  const { Content } = await post.render();
+  contentBySlug.set(post.slug, Content);
+}
+const FeaturedContent = featuredPost ? contentBySlug.get(featuredPost.slug) : null;
 
 const featuredDate = featuredPost?.data.date.toLocaleDateString('en-GB', {
   year: 'numeric',
@@ -50,22 +63,33 @@ const deepDives = (await getCollection('projects'))
     </header>
 
     {featuredPost && (
-      <a
-        href={featuredPost.data.url}
-        class="featured-card"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <div class="featured-card">
         <p class="featured-label">Latest</p>
         <time class="featured-date" datetime={featuredPost.data.date.toISOString()}>
           {featuredDate}
         </time>
-        <h2 class="featured-title">{featuredPost.data.title}</h2>
+        <h2 class="featured-title">
+          <a href={featuredPost.data.url} target="_blank" rel="noopener noreferrer">
+            {featuredPost.data.title}
+          </a>
+        </h2>
         {featuredPost.data.summary && (
           <p class="featured-summary">{featuredPost.data.summary}</p>
         )}
-        <span class="featured-cta">Read on Substack ↗</span>
-      </a>
+        {FeaturedContent && (
+          <div class="featured-excerpt">
+            <FeaturedContent />
+          </div>
+        )}
+        <a
+          class="featured-cta"
+          href={featuredPost.data.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Continue reading on Substack ↗
+        </a>
+      </div>
     )}
 
     {!featuredPost && (
@@ -74,16 +98,33 @@ const deepDives = (await getCollection('projects'))
 
     {listPosts.length > 0 && (
       <ul role="list" class="writing-list">
-        {listPosts.map(post => (
-          <WritingItem
-            title={post.data.title}
-            date={post.data.date}
-            summary={post.data.summary}
-            href={isPublished(post.data.url) ? post.data.url : undefined}
-          />
-        ))}
+        {listPosts.map(post => {
+          const Excerpt = contentBySlug.get(post.slug);
+          const href = isPublished(post.data.url) ? post.data.url : undefined;
+          return Excerpt ? (
+            <WritingItem
+              title={post.data.title}
+              date={post.data.date}
+              summary={post.data.summary}
+              href={href}
+            >
+              <Excerpt />
+            </WritingItem>
+          ) : (
+            <WritingItem
+              title={post.data.title}
+              date={post.data.date}
+              summary={post.data.summary}
+              href={href}
+            />
+          );
+        })}
       </ul>
     )}
+
+    <div class="capture-slot">
+      <EmailCapture />
+    </div>
 
     <section class="dives">
       <h2 class="dives-title">Deep dives</h2>
@@ -188,6 +229,32 @@ const deepDives = (await getCollection('projects'))
     border-color: var(--color-accent);
   }
 
+  .featured-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .featured-excerpt {
+    margin-bottom: var(--space-5);
+    max-width: 64ch;
+  }
+
+  .featured-excerpt :global(p) {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-3);
+  }
+
+  .featured-cta {
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .capture-slot {
+    margin-top: var(--space-12);
+  }
+
   .featured-label {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
@@ -219,7 +286,7 @@ const deepDives = (await getCollection('projects'))
     transition: color var(--dur) var(--ease);
   }
 
-  .featured-card:hover .featured-title {
+  .featured-title a:hover {
     color: var(--color-accent);
   }
 
@@ -239,8 +306,9 @@ const deepDives = (await getCollection('projects'))
     transition: color var(--dur) var(--ease);
   }
 
-  .featured-card:hover .featured-cta {
+  .featured-cta:hover {
     color: var(--color-accent-hover);
+    text-decoration: underline;
   }
 
   /* No published state */

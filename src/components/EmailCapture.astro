@@ -1,0 +1,146 @@
+---
+// On-site email capture.
+//
+// ENDPOINT is the only line to change. Left empty, this renders a Substack fallback
+// rather than a form that goes nowhere — a dead form is worse than no form.
+//
+// To own the list rather than Substack's, set ENDPOINT to the form action of whichever
+// provider is signed up for (Buttondown, MailerLite, Kit, Listmonk — each gives a POST
+// URL taking an `email` field). Nothing else here needs to change.
+const ENDPOINT = '';
+
+const SUBSTACK = 'https://belalzaky.substack.com';
+
+interface Props {
+  heading?: string;
+  blurb?: string;
+  compact?: boolean;
+}
+
+const {
+  heading = 'New writing, when there is some',
+  blurb = 'One email when a project or a piece goes up. No schedule, no filler, unsubscribe in a click.',
+  compact = false,
+} = Astro.props;
+---
+
+<section class:list={['capture', { 'capture--compact': compact }]}>
+  <div class="capture-copy">
+    <h2 class="capture-heading">{heading}</h2>
+    <p class="capture-blurb">{blurb}</p>
+  </div>
+
+  {ENDPOINT ? (
+    <form class="capture-form" action={ENDPOINT} method="post">
+      <label class="visually-hidden" for="capture-email">Email address</label>
+      <input
+        class="capture-input"
+        id="capture-email"
+        type="email"
+        name="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      />
+      <button class="capture-button" type="submit">Subscribe</button>
+    </form>
+  ) : (
+    <a class="capture-button capture-button--link" href={SUBSTACK} target="_blank" rel="noopener noreferrer">
+      Subscribe on Substack →
+    </a>
+  )}
+</section>
+
+<style>
+  .capture {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .capture--compact {
+    padding: var(--space-6);
+  }
+
+  .capture-heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-2);
+  }
+
+  .capture-blurb {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    max-width: 56ch;
+  }
+
+  .capture-form {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .capture-input {
+    flex: 1 1 16rem;
+    min-width: 0;
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .capture-input:focus-visible {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .capture-button {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-bg);
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: 10px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      background var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+
+  .capture-button:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+
+  .capture-button--link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
