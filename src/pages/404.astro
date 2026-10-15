@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+// Not on the boards: two lines of plain wayfinding, in the site's own voice and layout.
+---
+
+<Base title="Page not found — Belal Zaky" description="This page doesn't exist.">
+  <section class="wrap page-head">
+    <p class="label">404</p>
+    <h1 class="page-h1">This page doesn’t exist. <span class="muted">The rest of the site does.</span></h1>
+    <div class="btn-row nf-ctas">
+      <a href="/" class="btn btn-primary">Home</a>
+      <a href="/projects" class="btn btn-outline">See my work</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf-ctas {
+    margin-top: 32px;
+  }
+
+  .page-head {
+    padding-bottom: var(--sect);
+  }
+</style>
