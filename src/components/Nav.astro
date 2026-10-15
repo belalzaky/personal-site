@@ -1,209 +1,133 @@
 ---
-import ThemeToggle from './ThemeToggle.astro';
-
+// v2 nav: brand, four links and an "Email me" pill. The current page is underlined.
+// On phones the links sit on a second row, always visible. No hamburger, no toggle.
 const navLinks = [
-  { href: '/projects', label: 'Projects' },
-  { href: '/writing', label: 'Writing' },
+  { href: '/projects', label: 'Work' },
+  { href: '/mission-control', label: 'Mission Control' },
   { href: '/about', label: 'About' },
   { href: '/cv', label: 'CV' },
 ];
 
-const pathname = Astro.url.pathname;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => path === href || path.startsWith(href + '/');
 ---
 
-<header id="site-nav" class="nav">
-  <div class="nav-inner container">
-    <a href="/" class="nav-brand" aria-label="Belal — home">belal</a>
-
-    <nav aria-label="Main navigation">
-      <ul class="nav-links" role="list">
-        {navLinks.map(({ href, label }) => (
-          <li>
-            <a
-              href={href}
-              class:list={['nav-link', { 'nav-link--active': pathname.startsWith(href) }]}
-            >
-              {label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-
+<header class="nav wrap">
+  <div class="nav-top">
+    <a href="/" class="nav-brand"><span class="nav-mark" aria-hidden="true">BZ</span>Belal Zaky</a>
     <div class="nav-right">
-      <ThemeToggle />
-      <button
-        class="nav-burger js-only"
-        id="nav-burger"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        aria-controls="nav-mobile-menu"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <rect y="3" width="20" height="2" rx="1" fill="currentColor"/>
-          <rect y="9" width="20" height="2" rx="1" fill="currentColor"/>
-          <rect y="15" width="20" height="2" rx="1" fill="currentColor"/>
-        </svg>
-      </button>
+      <nav aria-label="Main" class="nav-links nav-links--desk">
+        {navLinks.map(({ href, label }) => (
+          <a href={href} class="nav-link" aria-current={isCurrent(href) ? 'page' : undefined}>{label}</a>
+        ))}
+      </nav>
+      <a href="mailto:hello@belalzaky.uk" class="nav-pill">Email me</a>
     </div>
   </div>
-
-  <nav
-    class="nav-mobile-menu"
-    id="nav-mobile-menu"
-    aria-label="Mobile navigation"
-    aria-hidden="true"
-  >
-    <ul role="list">
-      {navLinks.map(({ href, label }) => (
-        <li>
-          <a
-            href={href}
-            class:list={['nav-mobile-link', { 'nav-link--active': pathname.startsWith(href) }]}
-          >
-            {label}
-          </a>
-        </li>
-      ))}
-    </ul>
+  <nav aria-label="Main" class="nav-links nav-links--mob">
+    {navLinks.map(({ href, label }) => (
+      <a href={href} class="nav-link" aria-current={isCurrent(href) ? 'page' : undefined}>{label}</a>
+    ))}
   </nav>
 </header>
 
 <style>
   .nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: transparent;
-    border-bottom: 1px solid transparent;
-    transition:
-      background var(--dur) var(--ease),
-      border-color var(--dur) var(--ease);
+    padding-top: 28px;
+    padding-bottom: 28px;
   }
 
-  .nav.scrolled {
-    background: var(--color-bg);
-    border-bottom-color: var(--color-border);
-  }
-
-  .nav-inner {
+  .nav-top {
     display: flex;
     align-items: center;
-    gap: var(--space-8);
-    height: 60px;
+    justify-content: space-between;
+    gap: 16px;
   }
 
   .nav-brand {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-text);
-    letter-spacing: 0.02em;
-    text-decoration: none;
-    flex-shrink: 0;
-  }
-
-  .nav-brand:hover {
-    color: var(--color-accent);
-  }
-
-  .nav-links {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-6);
-    list-style: none;
-    margin-left: auto;
-  }
-
-  .nav-link {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
+    gap: 10px;
+    color: var(--text);
     text-decoration: none;
-    transition: color var(--dur) var(--ease);
+    font-weight: 600;
+    font-size: 16px;
+    white-space: nowrap;
   }
 
-  .nav-link:hover,
-  .nav-link--active {
-    color: var(--color-text);
+  .nav-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--text);
+    color: var(--bg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
   .nav-right {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    margin-left: var(--space-4);
+    gap: 32px;
   }
 
-  .nav-burger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-muted);
-    padding: var(--space-2);
-    border-radius: var(--radius-sm);
-    transition: color var(--dur) var(--ease);
+  .nav-links {
+    display: flex;
+    gap: 32px;
   }
 
-  .nav-burger:hover {
-    color: var(--color-text);
-  }
-
-  .nav-mobile-menu {
-    display: none;
-    border-top: 1px solid var(--color-border);
-    background: var(--color-bg);
-    padding: var(--space-4) 0;
-  }
-
-  .nav-mobile-menu.open {
-    display: block;
-  }
-
-  .nav-mobile-link {
-    display: block;
-    font-size: var(--text-base);
-    color: var(--color-text-muted);
+  .nav-link {
+    color: var(--body);
     text-decoration: none;
-    padding: var(--space-3) var(--space-6);
-    transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+    font-size: 15px;
+    white-space: nowrap;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 1px;
   }
 
-  .nav-mobile-link:hover,
-  .nav-mobile-link.nav-link--active {
-    color: var(--color-text);
-    background: var(--color-surface);
+  .nav-link:hover {
+    color: var(--text);
   }
 
-  /* Without JS: hide burger, always show links */
-  html:not(.js) .nav-burger { display: none !important; }
-  html:not(.js) .nav-mobile-menu { display: none !important; }
+  .nav-link[aria-current='page'] {
+    color: var(--text);
+    text-decoration-line: underline;
+  }
 
-  @media (max-width: 640px) {
-    .nav-links { display: none; }
-    .nav-right { margin-left: auto; }
-    .nav-burger { display: flex; }
+  .nav-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border2);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .nav-links--mob {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .nav {
+      padding-top: 16px;
+      padding-bottom: 0;
+    }
+    .nav-links--desk { display: none; }
+    .nav-links--mob {
+      display: flex;
+      gap: 20px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
   }
 </style>
-
-<script>
-  const nav = document.getElementById('site-nav');
-  const burger = document.getElementById('nav-burger');
-  const mobileMenu = document.getElementById('nav-mobile-menu');
-
-  // Scroll → solid
-  window.addEventListener('scroll', () => {
-    if (nav) {
-      nav.classList.toggle('scrolled', window.scrollY > 20);
-    }
-  }, { passive: true });
-
-  // Mobile menu toggle
-  if (burger && mobileMenu) {
-    burger.addEventListener('click', () => {
-      const isOpen = mobileMenu.classList.toggle('open');
-      burger.setAttribute('aria-expanded', String(isOpen));
-      mobileMenu.setAttribute('aria-hidden', String(!isOpen));
-    });
-  }
-</script>

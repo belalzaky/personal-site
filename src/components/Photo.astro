@@ -1,0 +1,36 @@
+---
+// A photo from public/photos/ as <picture>: WebP with a JPEG fallback, two widths,
+// intrinsic width/height set, lazy unless `eager`. Crop with `pos` (object-position).
+import { photos, type PhotoName } from '../data/photos';
+
+interface Props {
+  name: PhotoName;
+  alt: string;
+  pos?: string;
+  sizes?: string;
+  eager?: boolean;
+}
+
+const { name, alt, pos = '50% 50%', sizes = '(max-width: 640px) 100vw, 50vw', eager = false } = Astro.props;
+const { w, h } = photos[name];
+const long = Math.max(w, h);
+// The -800 file is 800px on its long edge; srcset wants its width.
+const smallW = Math.round((w / long) * Math.min(800, long));
+const set = (ext: string) =>
+  smallW < w ? `/photos/${name}-800.${ext} ${smallW}w, /photos/${name}.${ext} ${w}w` : `/photos/${name}.${ext} ${w}w`;
+---
+
+<picture>
+  <source type="image/webp" srcset={set('webp')} sizes={sizes} />
+  <img
+    src={`/photos/${name}.jpg`}
+    srcset={set('jpg')}
+    sizes={sizes}
+    alt={alt}
+    width={w}
+    height={h}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+    style={`object-position: ${pos};`}
+  />
+</picture>

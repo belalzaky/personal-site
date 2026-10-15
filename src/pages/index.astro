@@ -1,34 +1,73 @@
 ---
 import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
-import FeaturedWorkCard from '../components/FeaturedWorkCard.astro';
-import ADRExplorer from '../components/viz/ADRExplorer.astro';
-import RweScoreboard from '../components/viz/RweScoreboard.astro';
-import PvPipeline from '../components/viz/PvPipeline.astro';
-import SocialProof from '../components/SocialProof.astro';
-import Positions from '../components/Positions.astro';
-import WritingItem from '../components/WritingItem.astro';
-import ContactBlock from '../components/ContactBlock.astro';
-import EmailCapture from '../components/EmailCapture.astro';
+import Photo from '../components/Photo.astro';
+import McFlow from '../components/McFlow.astro';
 import { getCollection } from 'astro:content';
-import { projectCases } from '../data/project-cases';
+import { now, nowUpdated } from '../data/now';
+import type { PhotoName } from '../data/photos';
 
-const SUBSTACK_HOME = 'https://belalzaky.substack.com';
-const isPublished = (url?: string) => !!url && url.replace(/\/$/, '') !== SUBSTACK_HOME;
+// Copy below is from the v2 Home boards (agreed 15 Oct 2026), verbatim.
 
-// Single source of truth — derived, never hand-typed.
-const projectCount = (await getCollection('projects')).length;
-const WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
-const countWord = WORDS[projectCount] ?? String(projectCount);
+const triptych: { name: PhotoName; pos: string; alt: string; cap: string }[] = [
+  { name: 'regent-street', pos: '50% 55%', alt: 'Black-and-white London street with stone buildings and a black cab', cap: 'London' },
+  { name: 'plane-window', pos: '50% 50%', alt: 'A plane window at dusk, the last orange light on the horizon', cap: 'In between' },
+  { name: 'dubai-drive', pos: '50% 30%', alt: 'Driving through Dubai at night, towers ahead and the dashboard glowing', cap: 'Dubai' },
+];
 
-const allPosts = await getCollection('posts');
-const latestPost = allPosts
+type Tile =
+  | { name: PhotoName; pos: string; alt: string; wide?: boolean; video?: undefined }
+  | { video: string; poster: string; pos: string; alt: string; wide?: undefined; name?: undefined };
+
+// Collage groups in reading order. Desktop places them on a 5-column grid in pairs
+// (Wellness + Coffee, then Food + Photography); phones show each group in turn.
+const groups: { label: string; cap: string; tiles: Tile[] }[] = [
+  {
+    label: 'Wellness', cap: 'Training most evenings.',
+    tiles: [
+      { name: 'gym-interior', pos: '50% 78%', alt: 'A gym floor with treadmills, racks and murals' },
+      { name: 'gym-mirror', pos: '50% 62%', alt: 'Mirror selfie in a gym, phone covering the face' },
+    ],
+  },
+  {
+    label: 'Coffee', cap: 'Coffee, and the places around it.',
+    tiles: [
+      { name: 'coffee-espresso', pos: '45% 50%', alt: 'An espresso and a pair of earphones on a grey table, seen from above' },
+      { name: 'laptop-espresso', pos: '60% 50%', wide: true, alt: 'A closed laptop and an espresso on a wooden café table, seen from above' },
+    ],
+  },
+  {
+    label: 'Food', cap: 'Meal prep for the week.',
+    tiles: [
+      { video: '/media/cooking-loop.mp4', poster: '/photos/cooking-poster.jpg', pos: '50% 70%', alt: 'Looping clip of a chopping board with gnocchi, salami, cherries and strawberries' },
+      { name: 'plate', pos: '50% 50%', alt: 'A plate of rice, spiced mince and roasted peppers' },
+    ],
+  },
+  {
+    label: 'Photography', cap: 'Shot on iPhone 17 Pro.',
+    tiles: [
+      { name: 'atrium', pos: '50% 50%', alt: 'Looking up through a glass atrium roof between dark steel-framed walls' },
+      { name: 'lambo', pos: '45% 65%', wide: true, alt: 'A dark grey Lamborghini on a London street' },
+    ],
+  },
+];
+
+const finds = [
+  { big: '46%', href: '/projects/rwe-causal', text: 'A painkiller looked barely riskier for your kidneys than paracetamol. It was twice as risky — the obvious analysis missed 46% of the harm.' },
+  { big: '80→54%', href: '/projects/pv-intake', text: 'I gave up coverage on purpose. The extra matches were wrong codes, and a wrong code looks exactly like evidence.' },
+  { big: '0.71', href: '/projects/adr-reader', text: 'The most advanced model finished last. Finding drug side effects in medical text, a zero-shot LLM scored 0.71; a specialist model won with 0.83.' },
+];
+
+const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const posts = (await getCollection('posts'))
+  .filter((p) => !!p.data.url)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .filter(p => isPublished(p.data.url))
-  .slice(0, 1);
+  .slice(0, 3);
 ---
 
-<Base title="Belal Zaky — most of what a drug's data appears to say is an artefact of how it was collected" description="Pharmacology student at King's College London, looking for a 2027/28 placement year in pharma. Nine shipped projects on adverse events, causal inference and AI — and the positions they left me with.">
+<Base
+  title="Belal Zaky — Health. Tech. Build. Lifestyle."
+  description="MSci Pharmacology at King's. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee. Open to a 2027/28 placement year in pharma."
+>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -42,190 +81,471 @@ const latestPost = allPosts
       },
       "sameAs": [
         "https://linkedin.com/in/belalzaky",
+        "https://instagram.com/belalzakyuk",
         "https://github.com/belalzaky",
         "https://belalzaky.substack.com"
       ]
     })} />
   </Fragment>
-  <Hero />
 
-  <section class="section container">
-    <header class="section-header">
-      <div class="section-heading">
-        <p class="section-eyebrow">01 · FEATURED WORK</p>
-        <h2 class="section-title">Three findings worth your 30 seconds.</h2>
-      </div>
-    </header>
-
-    <div class="featured-work-stack">
-      <FeaturedWorkCard
-        {...projectCases['rwe-causal']}
-        tags={["Python", "Causal inference", "SCCS"]}
-        href="/projects/rwe-causal"
-        delay={0}
-      >
-        <RweScoreboard slot="interactive" />
-      </FeaturedWorkCard>
-
-      <FeaturedWorkCard
-        {...projectCases['adr-reader']}
-        tags={["Python", "PubMedBERT", "LLM eval"]}
-        href="/projects/adr-reader"
-        github="https://github.com/belalzaky/adr-reader"
-        delay={80}
-      >
-        <ADRExplorer slot="interactive" />
-      </FeaturedWorkCard>
-
-      <FeaturedWorkCard
-        {...projectCases['pv-intake']}
-        tags={["Python", "NLP", "SNOMED CT", "Docker"]}
-        href="/projects/pv-intake"
-        github="https://github.com/belalzaky/pv-intake"
-        delay={160}
-      >
-        <PvPipeline slot="interactive" />
-      </FeaturedWorkCard>
+  <!-- HERO -->
+  <section class="hero wrap" id="top">
+    <h1 class="hero-h1">Health. Tech. Build. Lifestyle.<br /><span class="muted">London | Dubai.</span></h1>
+    <p class="hero-sub lead">MSci Pharmacology at King's. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee.</p>
+    <div class="btn-row hero-ctas">
+      <a href="/about" class="btn btn-primary">About me</a>
+      <a href="/projects" class="btn btn-outline">See my work</a>
     </div>
+    <p class="hero-status"><span class="hero-dot" aria-hidden="true"></span>Open to a 2027/28 placement year in pharma</p>
+  </section>
 
-    <div class="featured-work-cta">
-      <a href="/projects" class="btn btn-primary">Explore all {countWord} projects →</a>
+  <!-- LONDON | DUBAI -->
+  <section class="wrap sect" aria-label="London, in between, Dubai">
+    <div class="tri">
+      {triptych.map((t) => (
+        <figure class="tri-fig">
+          <div class="tile tri-tile">
+            <Photo name={t.name} alt={t.alt} pos={t.pos} sizes="(max-width: 640px) 33vw, 340px" eager />
+          </div>
+          <figcaption class="tri-cap">{t.cap}</figcaption>
+        </figure>
+      ))}
     </div>
   </section>
 
-  <section class="section container">
-    <header class="section-header">
-      <div class="section-heading">
-        <p class="section-eyebrow">02 · GROUNDED IN THE FIELD</p>
-        <h2 class="section-title">Not just built in a classroom.</h2>
-      </div>
-    </header>
-    <p class="section-intro reveal">
-      The questions come from people who do this for a living — drug safety teams whose
-      conclusions end up in front of regulators, courts and boards. The work is checked the
-      way theirs is: against cases where the answer is already known.
-    </p>
-    <SocialProof />
-  </section>
-
-  <section class="section container">
-    <header class="section-header">
-      <div class="section-heading">
-        <p class="section-eyebrow">03 · WHAT I THINK</p>
-        <h2 class="section-title">Three things I'd argue for.</h2>
-      </div>
-    </header>
-    <p class="section-intro reveal">
-      A finding is not a view. These are the positions the work above has left me with —
-      each one with the evidence behind it, and the thing that would change my mind.
-    </p>
-    <Positions />
-  </section>
-
-  {latestPost.length > 0 && (
-    <section class="section container container--prose">
-      <header class="section-header">
-        <div class="section-heading">
-          <p class="section-eyebrow">04 · WRITING</p>
-          <h2 class="section-title">Latest writing</h2>
+  <!-- NOW -->
+  <section class="wrap sect" aria-labelledby="now-h" data-fade>
+    <div class="now-head">
+      <p class="label">Now</p>
+      <p class="now-updated">{nowUpdated}</p>
+    </div>
+    <h2 id="now-h" class="h2">This month.</h2>
+    <div class="rows now-rows">
+      {now.map((r) => (
+        <div class="row">
+          <span class="row-key">{r.k}</span>
+          <span class="row-val">{r.v}</span>
         </div>
-        <a href="/writing" class="section-more">All posts →</a>
-      </header>
-      <ul role="list" class="writing-list">
-        {latestPost.map(post => (
-          <WritingItem
-            title={post.data.title}
-            date={post.data.date}
-            summary={post.data.summary}
-            href={post.data.url}
-          />
-        ))}
-      </ul>
-    </section>
-  )}
-
-  <section class="section container container--prose">
-    <EmailCapture compact />
+      ))}
+    </div>
   </section>
 
-  <section class="section container container--prose">
-    <ContactBlock />
+  <!-- MISSION CONTROL -->
+  <section class="wrap sect" id="mc" aria-labelledby="mc-h" data-fade>
+    <div class="mc-intro">
+      <div class="mc-text">
+        <p class="label">Mission Control</p>
+        <h2 id="mc-h" class="h2">Every productivity app I tried was built for someone else. <span class="muted">So I built my own.</span></h2>
+        <p class="copy mc-copy">Mission Control is the desktop app I run my week on. My notes are the source of truth; an assistant prepares drafts and tasks, and nothing goes out until I approve it.</p>
+      </div>
+      <figure class="tile mc-fig">
+        <Photo name="working-portrait" alt="Belal at his desk at night in headphones, working across two monitors and a laptop" sizes="(max-width: 900px) 100vw, 440px" />
+      </figure>
+    </div>
+    <div class="mc-flow">
+      <McFlow />
+    </div>
+    <a href="/mission-control" class="text-link more">How it works <span class="arrow" aria-hidden="true">→</span></a>
+  </section>
+
+  <!-- OUTSIDE WORK -->
+  <section class="wrap sect" id="life" aria-labelledby="life-h" data-fade>
+    <p class="label">Outside work</p>
+    <h2 id="life-h" class="h2">The rest of the week.</h2>
+    <div class="collage">
+      {groups.map((g, gi) => (
+        <>
+          <p class:list={['c-label', `c-label--${gi}`]}><span class="c-label-name">{g.label}</span> · {g.cap}</p>
+          {g.tiles.map((t, ti) => (
+            <div class:list={['tile', 'tile--zoom', 'c-tile', `c-tile--${gi}-${ti}`, { 'c-tile--wide': t.wide }]}>
+              {t.video ? (
+                <video
+                  src={t.video}
+                  poster={t.poster}
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                  width="540"
+                  height="960"
+                  aria-label={t.alt}
+                  data-loop
+                  style={`object-position: ${t.pos};`}
+                ></video>
+              ) : (
+                <Photo name={t.name!} alt={t.alt} pos={t.pos} sizes={t.wide ? '(max-width: 640px) 50vw, 440px' : '(max-width: 640px) 50vw, 220px'} />
+              )}
+            </div>
+          ))}
+        </>
+      ))}
+    </div>
+    <a href="/about" class="text-link more">More about me <span class="arrow" aria-hidden="true">→</span></a>
+  </section>
+
+  <!-- WHAT I'VE FOUND -->
+  <section class="wrap sect" id="work" aria-labelledby="work-h" data-fade>
+    <p class="label">What I've found</p>
+    <h2 id="work-h" class="h2">Nine projects on drug-safety data. <span class="muted">Three results that surprised me.</span></h2>
+    <div class="finds">
+      {finds.map((f) => (
+        <a href={f.href} class="row-link find">
+          <span class="find-big">{f.big}</span>
+          <span class="find-text">{f.text}</span>
+          <span class="find-cta">Read the case <span class="arrow" aria-hidden="true">→</span></span>
+        </a>
+      ))}
+    </div>
+    <a href="/projects" class="text-link more">All 9 projects <span class="arrow" aria-hidden="true">→</span></a>
+  </section>
+
+  <!-- WRITING -->
+  <section class="wrap sect" id="writing" aria-labelledby="writing-h" data-fade>
+    <h2 id="writing-h" class="label">Writing</h2>
+    <div class="posts">
+      {posts.map((p) => (
+        <a href={p.data.url} class="row-link post" target="_blank" rel="noopener noreferrer">
+          <span class="post-date">{fmt(p.data.date)}</span>
+          <span class="post-title">{p.data.title}</span>
+          <span class="post-where">Substack ↗</span>
+        </a>
+      ))}
+    </div>
+    <a href="/writing" class="text-link more">All writing <span class="arrow" aria-hidden="true">→</span></a>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="wrap sect" id="contact" aria-labelledby="contact-h" data-fade>
+    <div class="card contact">
+      <h2 id="contact-h" class="contact-h">Looking for a 2027/28 placement year in pharma.</h2>
+      <p class="copy contact-copy">Drug safety, real-world evidence, clinical data. Happy to talk, or to show you Mission Control running.</p>
+      <div class="btn-row contact-ctas">
+        <a href="mailto:hello@belalzaky.uk" class="btn btn-primary">hello@belalzaky.uk</a>
+        <a href="https://linkedin.com/in/belalzaky" class="btn btn-outline btn-social" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://instagram.com/belalzakyuk" class="btn btn-outline btn-social" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </div>
+    </div>
   </section>
 </Base>
 
 <style>
-  .section {
-    padding-bottom: var(--space-24);
+  /* Hero */
+  .hero {
+    padding-top: 120px;
+    padding-bottom: 88px;
   }
 
-  .section-header {
+  .hero-h1 {
+    max-width: 860px;
+    font-size: var(--fs-home-h1);
+    line-height: 1.08;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+  }
+
+  .hero-sub {
+    margin-top: 20px;
+    max-width: 560px;
+  }
+
+  .hero-ctas {
+    margin-top: 32px;
+  }
+
+  .hero-status {
+    margin-top: 24px;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--label);
+  }
+
+  .hero-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    flex: 0 0 auto;
+  }
+
+  /* Triptych */
+  .tri {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .tri-fig {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
+  .tri-tile {
+    aspect-ratio: 0.8;
+  }
+
+  .tri-cap {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--label);
+  }
+
+  .tile :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Now */
+  .now-head {
+    display: flex;
+    align-items: baseline;
     justify-content: space-between;
-    margin-bottom: var(--space-8);
-    gap: var(--space-4);
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
-  .section-heading {
+  .now-updated {
+    font-size: 13px;
+    color: var(--label);
+  }
+
+  .now-rows {
+    margin-top: 24px;
+  }
+
+  /* Mission Control */
+  .mc-intro {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
+    gap: 48px;
+    align-items: center;
   }
 
-  .section-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
+  .mc-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .mc-copy {
+    margin-top: 16px;
+    max-width: 640px;
+  }
+
+  .mc-fig {
+    flex: 0 0 440px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .mc-flow {
+    margin-top: 28px;
+  }
+
+  .more {
+    margin-top: 24px;
+  }
+
+  #mc .more {
+    margin-top: 20px;
+  }
+
+  /* Collage: desktop is a 5-column grid placed explicitly, pairs of groups side by side */
+  .collage {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .c-label {
+    align-self: end;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--body);
+  }
+
+  .c-label-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .c-tile {
+    aspect-ratio: 0.8;
+    min-width: 0;
+  }
+
+  .c-tile--wide {
+    aspect-ratio: auto;
+  }
+
+  .c-tile--wide :global(picture),
+  .c-tile--wide video {
+    position: absolute;
+    inset: 0;
+  }
+
+  .c-label--0 { grid-area: 1 / 1 / 2 / 3; }
+  .c-label--1 { grid-area: 1 / 3 / 2 / 6; }
+  .c-tile--0-0 { grid-area: 2 / 1; }
+  .c-tile--0-1 { grid-area: 2 / 2; }
+  .c-tile--1-0 { grid-area: 2 / 3; }
+  .c-tile--1-1 { grid-area: 2 / 4 / 3 / 6; }
+  .c-label--2 { grid-area: 3 / 1 / 4 / 3; margin-top: 20px; }
+  .c-label--3 { grid-area: 3 / 3 / 4 / 6; margin-top: 20px; }
+  .c-tile--2-0 { grid-area: 4 / 1; }
+  .c-tile--2-1 { grid-area: 4 / 2; }
+  .c-tile--3-0 { grid-area: 4 / 3; }
+  .c-tile--3-1 { grid-area: 4 / 4 / 5 / 6; }
+
+  /* Findings */
+  .finds,
+  .posts {
+    border-top: 1px solid var(--border);
+  }
+
+  .finds {
+    margin-top: 28px;
+  }
+
+  .find {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    align-items: baseline;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .find-big {
+    font-size: 40px;
+    line-height: 1;
     font-weight: 500;
-    color: var(--color-text-muted);
-    letter-spacing: 0.1em;
-    max-width: none;
+    letter-spacing: -0.02em;
+    color: var(--accent);
   }
 
-  .section-title {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xl);
+  .find-text {
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--text);
+  }
+
+  .find-cta {
+    font-size: 15px;
     font-weight: 500;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    color: var(--color-text);
-  }
-
-  .section-more {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    text-decoration: none;
-    transition: color var(--dur) var(--ease);
+    color: var(--accent);
     white-space: nowrap;
-    padding-bottom: var(--space-1);
   }
 
-  .section-more:hover {
-    color: var(--color-accent);
+  /* Writing */
+  .posts {
+    margin-top: 16px;
   }
 
-  .section-intro {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    max-width: 64ch;
-    margin-top: calc(-1 * var(--space-4));
-    margin-bottom: var(--space-8);
+  .post {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    align-items: baseline;
+    gap: 24px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
   }
 
-  .featured-work-stack {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
+  .post-date {
+    font-size: 13px;
+    color: var(--label);
+    white-space: nowrap;
   }
 
-  .featured-work-cta {
-    display: flex;
-    justify-content: center;
-    margin-top: var(--space-16);
+  .post-title {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--text);
   }
 
-  .writing-list {
-    list-style: none;
-    border-top: 1px solid var(--color-border);
+  .post-where {
+    font-size: 14px;
+    color: var(--label);
+  }
+
+  /* Contact */
+  .contact {
+    padding: 48px;
+  }
+
+  .contact-h {
+    max-width: 640px;
+    font-size: var(--fs-h2);
+    line-height: 1.2;
+  }
+
+  .contact-copy {
+    margin-top: 12px;
+    max-width: 600px;
+  }
+
+  .contact-ctas {
+    margin-top: 24px;
+  }
+
+  .btn-social {
+    padding: 0 20px;
+    font-weight: 400;
+  }
+
+  @media (max-width: 900px) {
+    .mc-intro {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 24px;
+    }
+    .mc-fig {
+      flex: none;
+      width: 100%;
+      aspect-ratio: 1.6;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding-top: 56px;
+      padding-bottom: 48px;
+    }
+
+    .tri { gap: 8px; }
+
+    .collage {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .collage .c-tile { grid-area: auto; }
+    .collage .c-label {
+      grid-area: auto;
+      grid-column: 1 / -1;
+      margin-top: 16px;
+    }
+    .collage .c-label--0 { margin-top: 0; }
+    .c-tile,
+    .c-tile--wide {
+      aspect-ratio: 1;
+    }
+
+    .find {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 22px 0;
+    }
+    .find-big { font-size: 34px; }
+
+    .post {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 16px 0;
+    }
+
+    .contact { padding: 24px 20px; }
   }
 </style>

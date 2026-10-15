@@ -1,0 +1,170 @@
+---
+// MC-Flow live card. Server-renders the first state of the first example, so it reads
+// as a sentence without JS; mc-flow.ts takes over from there.
+import { FLOW_EXAMPLES, FLOW_NODES } from '../scripts/mc-flow';
+
+const first = FLOW_EXAMPLES[0];
+---
+
+<div class="flow card" data-mc-flow>
+  <p class="flow-example">Example: <span class="flow-example-name" data-flow-label>{first.label}</span></p>
+  <ol class="flow-list" role="list">
+    {FLOW_NODES.map((n, i) => (
+      <li class="flow-node" data-flow-node data-state={i === 0 ? 'active' : 'todo'} data-gate={i === FLOW_NODES.length - 1 ? '' : undefined}>
+        <span class="flow-dot" aria-hidden="true" data-flow-mark>{i + 1}</span>
+        <span class="flow-text">
+          <span class="flow-name">{n.name}</span>
+          <span class="flow-sub">{n.sub}</span>
+        </span>
+      </li>
+    ))}
+  </ol>
+  <div class="flow-foot">
+    <p class="flow-log" aria-live="polite" data-flow-log>{first.lines[0]}</p>
+    <button type="button" class="flow-approve" data-flow-approve disabled>Approve</button>
+  </div>
+</div>
+
+<style>
+  .flow {
+    padding: 32px 36px;
+  }
+
+  .flow-example {
+    font-size: 13px;
+    color: var(--label);
+  }
+
+  .flow-example-name {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .flow-list {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+
+  .flow-node {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .flow-dot {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--label);
+    transition: background 300ms ease, border-color 300ms ease, color 300ms ease;
+  }
+
+  .flow-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .flow-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--label);
+  }
+
+  .flow-sub {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--label);
+  }
+
+  .flow-node[data-state='active'] .flow-dot {
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+    color: var(--text);
+  }
+
+  .flow-node[data-state='done'] .flow-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .flow-node[data-gate][data-state='active'] .flow-dot { border-color: var(--green); }
+  .flow-node[data-gate][data-state='done'] .flow-dot {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .flow-node[data-state='active'] .flow-name,
+  .flow-node[data-state='done'] .flow-name {
+    color: var(--text);
+  }
+
+  .flow-foot {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .flow-log {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+    min-height: 23px;
+  }
+
+  .flow-approve {
+    min-height: 44px;
+    padding: 0 20px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    border: 1px solid var(--btn-bg);
+  }
+
+  .flow-approve:disabled {
+    cursor: default;
+    background: transparent;
+    color: var(--label);
+    border-color: var(--border2);
+  }
+
+  @media (max-width: 900px) {
+    .flow-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .flow-node { align-items: center; }
+  }
+
+  @media (max-width: 640px) {
+    .flow { padding: 20px; }
+  }
+</style>
+
+<script>
+  import { initAllFlows } from '../scripts/mc-flow';
+  initAllFlows();
+</script>

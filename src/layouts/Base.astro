@@ -13,7 +13,7 @@ interface Props {
 
 const {
   title,
-  description = 'Pharmacology BSc at King\'s College London — turning drug-safety evidence into decisions you can defend.',
+  description = 'MSci Pharmacology at King\'s. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee.',
   ogImage = '/og-image.png',
   ogType = 'website',
 } = Astro.props;
@@ -56,21 +56,26 @@ const canonicalURL = new URL(Astro.url.pathname, SITE);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
 
     <slot name="head" />
 
-    <!-- Prevent flash of wrong theme -->
+    <!-- Theme: follows the device. data-theme mirrors prefers-color-scheme (set before
+         first paint, updated live) so any viz that reads it keeps working. No toggle. -->
     <script is:inline>
       (function () {
-        document.documentElement.classList.add('js');
-        const stored = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (stored === 'dark' || (!stored && prefersDark)) {
-          document.documentElement.setAttribute('data-theme', 'dark');
+        var root = document.documentElement;
+        root.classList.add('js');
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        function apply() {
+          if (mq.matches) root.setAttribute('data-theme', 'dark');
+          else root.removeAttribute('data-theme');
         }
+        apply();
+        if (mq.addEventListener) mq.addEventListener('change', apply);
+        else if (mq.addListener) mq.addListener(apply);
       })();
     </script>
   </head>
@@ -83,27 +88,8 @@ const canonicalURL = new URL(Astro.url.pathname, SITE);
 
     <Analytics />
 
-    <!-- Section 0: shared scroll-reveal observer (once-only, threshold 0.15) -->
     <script>
-      const els = document.querySelectorAll<HTMLElement>('.reveal');
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      if (reduce || !('IntersectionObserver' in window)) {
-        els.forEach((el) => el.classList.add('is-visible'));
-      } else {
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                io.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.15 }
-        );
-        els.forEach((el) => io.observe(el));
-      }
+      import '../scripts/motion';
     </script>
   </body>
 </html>

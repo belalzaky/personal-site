@@ -1,21 +1,56 @@
 /* ==========================================================================
-   Design Tokens
+   Design tokens: v2 "calm" (build brief v4, values from gen_home.py)
+   Light on :root, dark under prefers-color-scheme. No toggle: the site
+   follows the device. data-theme on <html> mirrors the same media query
+   for any viz that reads it.
    ========================================================================== */
 
 :root {
-  --color-bg:           #ffffff;
-  --color-surface:      #f7f7f5;
-  --color-border:       #e6e6e3;
-  --color-text:         #1a1a1a;
-  --color-text-muted:   #6b6b68;
-  --color-text-subtle:  #9a9a96;
-  --color-accent:       #2546f0;
-  --color-accent-hover: #1b35c4;
-  --color-accent-soft:  #eef1ff;
-  --color-focus:        #2546f0;
+  --bg:          #F2F2F0;
+  --card:        #FFFFFF;
+  --quiet:       #ECECE9;
+  --border:      #E4E4E0;
+  --border2:     #D6D6D1;
+  --text:        #1E1E1E;
+  --body:        #575754;
+  --label:       #686864;
+  --accent:      #86683A;
+  --accent-soft: #F3EEE6;
+  --green:       #47804F;
+  --btn-bg:      #1E1E1E;
+  --btn-fg:      #FFFFFF;
 
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  color-scheme: light dark;
+
+  --font-sans: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-sans);
+
+  /* Type scale: desktop values; phone values are set in the media query below */
+  --fs-home-h1: 68px;
+  --fs-page-h1: 52px;
+  --fs-case-h1: 42px;
+  --fs-h2:      34px;
+  --fs-lead:    19px;
+  --fs-body:    17px;
+
+  /* Layout */
+  --maxw:      1120px;
+  --padx:      40px;
+  --sect:      112px;
+  --r-tile:    14px;
+  --r-card:    20px;
+
+  /* Legacy names, still read by the viz components and older pages */
+  --color-bg:           var(--bg);
+  --color-surface:      var(--quiet);
+  --color-border:       var(--border);
+  --color-text:         var(--text);
+  --color-text-muted:   var(--body);
+  --color-text-subtle:  var(--label);
+  --color-accent:       var(--accent);
+  --color-accent-hover: var(--text);
+  --color-accent-soft:  var(--accent-soft);
+  --color-focus:        var(--accent);
 
   --text-xs:   0.75rem;
   --text-sm:   0.875rem;
@@ -45,20 +80,40 @@
   --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
   --dur:  180ms;
 
-  --content-prose: 680px;
-  --content-wide:  1200px;
+  --content-prose: 720px;
+  --content-wide:  var(--maxw);
 }
 
-[data-theme="dark"] {
-  --color-bg:           #0e0e0f;
-  --color-surface:      #1a1a1c;
-  --color-border:       #2a2a2d;
-  --color-text:         #ededec;
-  --color-text-muted:   #a0a0a0;
-  --color-text-subtle:  #6e6e70;
-  --color-accent:       #6c83ff;
-  --color-accent-hover: #8a9cff;
-  --color-accent-soft:  #1a1f3a;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:          #1C1B19;
+    --card:        #242320;
+    --quiet:       #201F1C;
+    --border:      #32302C;
+    --border2:     #45423C;
+    --text:        #EDE9E2;
+    --body:        #B5AFA5;
+    --label:       #9C968C;
+    --accent:      #CDB68E;
+    --accent-soft: #2E2B24;
+    --green:       #93B98F;
+    --btn-bg:      #E3D9C6;
+    --btn-fg:      #1C1B19;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --fs-home-h1: 38px;
+    --fs-page-h1: 36px;
+    --fs-case-h1: 28px;
+    --fs-h2:      26px;
+    --fs-lead:    17px;
+    --fs-body:    16px;
+    --padx:       20px;
+    --sect:       72px;
+    --r-tile:     12px;
+  }
 }
 
 /* ==========================================================================
@@ -90,13 +145,13 @@ html {
 
 body {
   font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.7;
-  color: var(--color-text);
-  background-color: var(--color-bg);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  overflow-x: clip;
 }
 
 img, video {
@@ -110,13 +165,12 @@ ul[role="list"], ol[role="list"] {
 }
 
 /* ==========================================================================
-   Focus
+   Focus: 2px accent ring, 2px offset, on every interactive element
    ========================================================================== */
 
 :focus-visible {
-  outline: 2px solid var(--color-focus);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: var(--radius-sm);
 }
 
 /* ==========================================================================
@@ -124,9 +178,10 @@ ul[role="list"], ol[role="list"] {
    ========================================================================== */
 
 h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  letter-spacing: -0.015em;
   line-height: 1.2;
-  color: var(--color-text);
+  color: var(--text);
 }
 
 p {
@@ -134,24 +189,235 @@ p {
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--accent);
   text-decoration: none;
-  transition: color var(--dur) var(--ease);
-}
-
-a:hover {
-  color: var(--color-accent-hover);
 }
 
 /* ==========================================================================
-   Layout
+   v2 building blocks
+   ========================================================================== */
+
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--padx);
+}
+
+.sect {
+  padding-bottom: var(--sect);
+}
+
+.label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.h2 {
+  margin-top: 12px;
+  max-width: 760px;
+  font-size: var(--fs-h2);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.muted { color: var(--label); }
+
+.lead {
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: var(--body);
+}
+
+.copy {
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--body);
+}
+
+/* Pills */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1px solid var(--btn-bg);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border2);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Text links with an arrow */
+.text-link {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 150ms ease-out;
+}
+
+a:hover .arrow,
+a:focus-visible .arrow {
+  transform: translateX(3px);
+}
+
+/* Rows: 200px label + 1fr value on desktop, stacked on phone */
+.rows {
+  border-top: 1px solid var(--border);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.row-key {
+  font-size: 15px;
+  color: var(--label);
+}
+
+.row-val {
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 0;
+  }
+  .row-key { font-size: 13px; }
+}
+
+/* A whole row that is a link: gets the quiet background on hover */
+.row-link {
+  position: relative;
+  isolation: isolate;
+  text-decoration: none;
+}
+
+.row-link::before {
+  content: '';
+  position: absolute;
+  inset: 0 -12px;
+  z-index: -1;
+  border-radius: 10px;
+  background: var(--quiet);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.row-link:hover::before {
+  opacity: 1;
+}
+
+/* Image tiles */
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-tile);
+  background: var(--quiet);
+}
+
+.tile img,
+.tile video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile--zoom img,
+  .tile--zoom video {
+    transition: transform 300ms ease-out;
+  }
+  .tile--zoom:hover img,
+  .tile--zoom:hover video {
+    transform: scale(1.02);
+  }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Section fade-up (motion.ts). The hidden start state is only ever added
+   by the script, so content is fully visible without JS.
+   ========================================================================== */
+
+.fade-pending {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.fade-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 500ms ease-out, transform 500ms ease-out;
+}
+
+/* ==========================================================================
+   Container (legacy pages, until they are rebuilt)
    ========================================================================== */
 
 .container {
   width: 100%;
   max-width: var(--content-wide);
   margin-inline: auto;
-  padding-inline: clamp(1.5rem, 4vw, 3rem);
+  padding-inline: var(--padx);
 }
 
 .container--prose {
@@ -163,7 +429,8 @@ a:hover {
    ========================================================================== */
 
 .prose {
-  color: var(--color-text);
+  color: var(--body);
+  font-size: var(--fs-body);
 }
 
 .prose > * + * {
@@ -171,34 +438,38 @@ a:hover {
 }
 
 .prose h2 {
-  font-size: 1.875rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--text);
   margin-top: var(--space-12);
   margin-bottom: var(--space-4);
 }
 
 .prose h3 {
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  color: var(--text);
   margin-top: var(--space-8);
   margin-bottom: var(--space-3);
 }
 
 .prose p {
-  line-height: 1.75;
+  line-height: 1.7;
+}
+
+.prose strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .prose a {
   text-decoration: underline;
-  text-decoration-color: var(--color-accent-soft);
+  text-decoration-color: var(--border2);
   text-underline-offset: 3px;
-  transition: text-decoration-color var(--dur) var(--ease);
 }
 
 .prose a:hover {
-  text-decoration-color: var(--color-accent);
+  text-decoration-color: var(--accent);
 }
 
 .prose ul, .prose ol {
@@ -213,38 +484,38 @@ a:hover {
 }
 
 .prose blockquote {
-  border-left: 3px solid var(--color-border);
+  border-left: 3px solid var(--border2);
   padding-left: var(--space-4);
-  color: var(--color-text-muted);
+  color: var(--body);
   font-style: italic;
 }
 
 .prose hr {
   border: none;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--border);
   margin-block: var(--space-8);
 }
 
 .prose img {
-  border-radius: var(--radius);
-  border: 1px solid var(--color-border);
+  border-radius: var(--r-tile);
+  border: 1px solid var(--border);
 }
 
 .prose code {
-  font-family: var(--font-mono);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 0.875em;
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
+  background: var(--quiet);
+  color: var(--text);
   padding: 0.1em 0.4em;
   border-radius: var(--radius-sm);
 }
 
 .prose pre {
   background: #0d1117 !important;
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   padding: var(--space-4);
   overflow-x: auto;
-  font-family: var(--font-mono);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: var(--text-sm);
   line-height: 1.6;
   border: 1px solid #30363d;
@@ -258,51 +529,31 @@ a:hover {
   font-size: inherit;
 }
 
-/* ==========================================================================
-   Scroll-in animation
-   ========================================================================== */
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
 }
 
-.animate-in {
-  animation: fadeUp 400ms var(--ease) both;
-}
-
-.animate-in-delay-1 { animation-delay: 80ms; }
-.animate-in-delay-2 { animation-delay: 160ms; }
-.animate-in-delay-3 { animation-delay: 240ms; }
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-in { animation: none; }
+.prose th, .prose td {
+  text-align: left;
+  padding: 8px 12px 8px 0;
+  border-bottom: 1px solid var(--border);
 }
 
 /* ==========================================================================
-   Scroll reveal utility (Section 0)
-   Shared IntersectionObserver adds .is-visible once, on scroll into view.
-   Gated on html.js so no-JS users always see content. Staggerable via
-   --reveal-delay. prefers-reduced-motion: render visible immediately.
+   Legacy scroll reveal (.reveal), still used by pages not yet rebuilt.
+   html.js is set by the inline script in Base, and motion.ts adds
+   .is-visible, so without JS nothing is hidden.
    ========================================================================== */
 
 html.js .reveal {
   opacity: 0;
   transform: translateY(12px);
-  transition:
-    opacity 0.55s cubic-bezier(0.2, 0.6, 0.2, 1),
-    transform 0.55s cubic-bezier(0.2, 0.6, 0.2, 1);
+  transition: opacity 500ms ease-out, transform 500ms ease-out;
   transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
 }
 
-/* Scoped under html.js so it outranks the hidden state above (specificity). */
 html.js .reveal.is-visible {
   opacity: 1;
   transform: none;
