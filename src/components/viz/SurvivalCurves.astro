@@ -22,9 +22,9 @@ import km from "../../data/km-curves.json";
 </div>
 
 <style>
-  .sc{ --slate:#7c8598; font-family:var(--font-sans); color:var(--color-text); background:var(--color-surface);
+  .sc{ --slate:var(--label); font-family:var(--font-sans); color:var(--color-text); background:var(--color-surface);
     border:1px solid var(--color-border); border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
-  :global([data-theme="dark"]) .sc{ --slate:#8a92a0; }
+  
   .sc *{ box-sizing:border-box; }
   .sc-sr{ position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0); }
   .sc-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
@@ -33,7 +33,7 @@ import km from "../../data/km-curves.json";
   .sc-toggle{ display:inline-flex; flex-wrap:wrap; border:1px solid var(--color-border); border-radius:9px; padding:4px; margin-bottom:16px; background:var(--color-bg); gap:4px; }
   .sc-btn{ font-family:var(--font-mono); font-size:12px; font-weight:600; padding:8px 14px; border:0; background:transparent; color:var(--color-text-muted); border-radius:6px; cursor:pointer; transition:all .18s; }
   .sc-btn:hover{ color:var(--color-text); }
-  .sc-btn.active{ background:var(--color-accent); color:#fff; }
+  .sc-btn.active{ background:var(--color-accent); color:var(--color-bg); }
   .sc-legend{ display:flex; gap:20px; margin-bottom:6px; min-height:20px; font-size:13px; font-weight:500; color:var(--color-text); }
   .sc-lg{ display:flex; align-items:center; gap:7px; }
   .sc-sw{ width:16px; height:4px; border-radius:2px; display:inline-block; }

@@ -136,3 +136,24 @@ function initFlow(root: HTMLElement) {
 export function initAllFlows() {
   document.querySelectorAll<HTMLElement>('[data-mc-flow]').forEach(initFlow);
 }
+
+// Today hotspots (/mission-control only): three numbered buttons over the Today screenshot.
+// Pressing one selects it and shows its caption underneath (aria-live). Without JS the
+// buttons stay hidden and the three captions show as a numbered list instead.
+export function initHotspots() {
+  document.querySelectorAll<HTMLElement>('[data-spots]').forEach((root) => {
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-spot]'));
+    const num = root.querySelector<HTMLElement>('[data-spot-n]');
+    const text = root.querySelector<HTMLElement>('[data-spot-text]');
+    const captions = buttons.map((b) => b.dataset.caption || '');
+    if (!buttons.length || !num || !text) return;
+    const pick = (i: number) => {
+      buttons.forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
+      num.textContent = String(i + 1);
+      text.textContent = captions[i];
+    };
+    buttons.forEach((b, i) => b.addEventListener('click', () => pick(i)));
+    root.classList.add('spots-live');
+    pick(0);
+  });
+}

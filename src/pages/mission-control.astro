@@ -1,0 +1,297 @@
+---
+import Base from '../layouts/Base.astro';
+import McFlow from '../components/McFlow.astro';
+import { mcScreens, todaySpots } from '../data/mc-screens';
+
+// Copy from the V2-MissionControl boards (agreed 15 Oct 2026), verbatim.
+
+const shots = [
+  { key: 'projects', name: 'Projects', cap: 'Status, next task and last activity, read from each note.' },
+  { key: 'study', name: 'Study', cap: 'Concept cards built from a sample lecture.' },
+  { key: 'gideon', name: 'Gideon', cap: 'Up to three things a day, waiting for my approval.' },
+] as const;
+
+const features = [
+  { t: 'Today', d: 'Opens on one “up next” card, ranked by the nearest real deadline, with my inbox underneath.' },
+  { t: 'Projects', d: 'Every project’s status, next task and last activity, read straight from its note. Tick a task and the note updates.' },
+  { t: 'Career', d: 'My deadlines, as countdowns.' },
+  { t: 'Study', d: 'A lecture tracker for my modules, and concept cards built from lecture slides.' },
+  { t: 'Gideon', d: 'An assistant that answers “what’s next?” in seconds, prepares up to three things for me to approve each day, and flags projects that are slipping.' },
+  { t: 'News', d: 'A filtered watchlist over 49 feeds on the topics and firms I follow, with plain-English explanations on demand.' },
+];
+
+const rules = [
+  { n: '01', t: 'My notes are the truth.', d: 'The app reads plain-text notes and changes to fit them, never the reverse. If the two disagree, I fix the app.' },
+  { n: '02', t: 'Nothing goes out without me.', d: 'Gideon drafts emails and prepares tasks. I approve every one before anything leaves.' },
+  { n: '03', t: 'Every failure becomes a test.', d: '600+ automated checks, each one written after something actually broke.' },
+  { n: '04', t: 'Does it change a decision?', d: 'A feature earns its place only if it changes what I do this week. Otherwise it is polish.' },
+];
+
+const grew = [
+  { d: 'Jul 2026', text: 'First version: a dashboard over my project notes.' },
+  { d: 'Jul 2026', text: 'Global search across notes, files and past AI sessions; a phone companion prototype.' },
+  { d: 'Aug 2026', text: 'A committed test suite: every past failure is re-checked on every change.' },
+  { d: 'Sep 2026', text: 'Gideon, the assistant, first built.' },
+  { d: 'Oct 2026', text: 'Gideon now prepares my day for me to approve.' },
+  { d: 'Oct 2026', text: 'Redesigned into five sections, opening on what is next.' },
+];
+
+const today = mcScreens.today;
+---
+
+<Base
+  title="Mission Control — Belal Zaky"
+  description="The system I run my week on. Built around how I actually work. My notes are the source of truth; an assistant prepares drafts and tasks, and nothing goes out until I approve it."
+>
+  <section class="wrap page-head">
+    <p class="label">Mission Control</p>
+    <h1 class="page-h1">The system I run my week on. <span class="muted">Built around how I actually work.</span></h1>
+    <p class="lead page-lead">I had two reasons. I wanted to be AI-literate in practice — to build and deploy my own agents, not just read about them. And I wanted a tool built directly around my own needs.</p>
+    <p class="page-meta">Since July 2026 · Electron + Node · Markdown notes · AI agents</p>
+  </section>
+
+  <!-- TODAY + HOTSPOTS -->
+  <section class="wrap sect" aria-label="Today, with sample data">
+    <figure class="spots" data-spots>
+      <div class="shot shot--today">
+        <picture>
+          <source type="image/webp" srcset="/mc/today.webp" />
+          <img src="/mc/today.png" alt={today.alt} width={today.w} height={today.h} loading="eager" decoding="async" />
+        </picture>
+        {todaySpots.map((s, i) => (
+          <button
+            type="button"
+            class="spot"
+            data-spot
+            data-caption={s.t}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            aria-label={`Point ${i + 1}: ${s.t}`}
+            style={`left: ${s.x}%; top: ${s.y}%;`}
+          >{i + 1}</button>
+        ))}
+      </div>
+      <figcaption class="spot-cap">
+        <span class="spot-n" data-spot-n>1</span>
+        <span class="spot-text" aria-live="polite" data-spot-text>{todaySpots[0].t}</span>
+      </figcaption>
+      <ol class="spot-list">
+        {todaySpots.map((s) => <li>{s.t}</li>)}
+      </ol>
+    </figure>
+    <p class="spot-note">Shown with sample data. The real one runs on my own projects, deadlines and notes. Tap a number to see what that part does.</p>
+  </section>
+
+  <!-- TRY IT -->
+  <section class="wrap sect" aria-labelledby="try-h" data-fade>
+    <p class="label">Try it</p>
+    <h2 id="try-h" class="h2">Approve it at the last step.</h2>
+    <div class="try-flow">
+      <McFlow />
+    </div>
+  </section>
+
+  <!-- WHAT IT DOES -->
+  <section class="wrap sect" aria-labelledby="does-h" data-fade>
+    <h2 id="does-h" class="label">What it does</h2>
+    <div class="shots">
+      {shots.map((s) => {
+        const m = mcScreens[s.key];
+        return (
+          <figure class="shot-fig">
+            <div class="shot">
+              <picture>
+                <source type="image/webp" srcset={`/mc/${s.key}.webp`} />
+                <img src={`/mc/${s.key}.png`} alt={m.alt} width={m.w} height={m.h} loading="lazy" decoding="async" />
+              </picture>
+            </div>
+            <figcaption class="shot-cap"><span class="shot-name">{s.name}</span> · {s.cap}</figcaption>
+          </figure>
+        );
+      })}
+    </div>
+    <div class="rows does-rows">
+      {features.map((f) => (
+        <div class="row">
+          <span class="row-key">{f.t}</span>
+          <div><span class="row-val">{f.d}</span></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- THE RULES -->
+  <section class="wrap sect" aria-labelledby="rules-h" data-fade>
+    <p class="label">The rules</p>
+    <h2 id="rules-h" class="h2">The rules it runs on.</h2>
+    <div class="rows list-rows">
+      {rules.map((r) => (
+        <div class="row">
+          <span class="row-key">{r.n}</span>
+          <div>
+            <span class="row-title">{r.t}</span>
+            <p class="row-desc">{r.d}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- HOW IT GREW -->
+  <section class="wrap sect" aria-labelledby="grew-h" data-fade>
+    <h2 id="grew-h" class="label">How it grew</h2>
+    <div class="rows list-rows">
+      {grew.map((t) => (
+        <div class="row">
+          <span class="row-key">{t.d}</span>
+          <div><span class="row-val">{t.text}</span></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="wrap sect" data-fade>
+    <div class="card cta">
+      <div>
+        <h2 class="cta-h">Want to see it running?</h2>
+        <p class="cta-copy">I’m happy to walk through it on a call.</p>
+      </div>
+      <a href="mailto:hello@belalzaky.uk" class="btn btn-primary">hello@belalzaky.uk</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .shot {
+    position: relative;
+    border-radius: var(--r-tile);
+    background: var(--quiet);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .spot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: 0 0 0 6px transparent, 0 1px 3px rgba(0, 0, 0, 0.18);
+  }
+
+  .spot[aria-pressed='true'] {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 6px rgba(134, 104, 58, 0.18), 0 1px 3px rgba(0, 0, 0, 0.18);
+  }
+
+  .spot-cap {
+    margin-top: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .spot-n {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .spot-text {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .spot-list {
+    margin-top: 14px;
+    padding-left: 22px;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .spot-list li + li {
+    margin-top: 6px;
+  }
+
+  /* Without JS: no buttons and no single caption, the numbered list instead */
+  .spot,
+  .spot-cap {
+    display: none;
+  }
+
+  .spots-live .spot { display: block; }
+  .spots-live .spot-cap { display: flex; }
+  .spots-live .spot-list { display: none; }
+
+  .spot-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--label);
+  }
+
+  .try-flow {
+    margin-top: 24px;
+  }
+
+  .shots {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .shot-cap {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--body);
+  }
+
+  .shot-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .does-rows,
+  .list-rows {
+    margin-top: 24px;
+  }
+
+  .does-rows .row-val {
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    .shots {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .spot {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
+    }
+  }
+</style>
+
+<script>
+  import { initHotspots } from '../scripts/mc-flow';
+  initHotspots();
+</script>

@@ -1,90 +1,123 @@
 ---
 import Base from '../layouts/Base.astro';
-import ProjectCaseCard from '../components/ProjectCaseCard.astro';
 import { getCollection } from 'astro:content';
 import { projectCases } from '../data/project-cases';
+import { projectDisplay } from '../data/projects-v2';
 
-const projects = await getCollection('projects');
-const sorted = projects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-// Single source of truth — derived, never hand-typed.
-const WORDS = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve'];
-const countWord = WORDS[projects.length] ?? String(projects.length);
+// Copy from the V2-Projects boards; stakes from project-cases.ts. Order: newest first,
+// as /projects has always been.
+const projects = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const rows = projects.map((p, i) => {
+  const d = projectDisplay[p.slug];
+  return {
+    n: String(i + 1).padStart(2, '0'),
+    name: d?.name ?? p.data.title,
+    big: d?.big ?? '',
+    stake: projectCases[p.slug]?.stake ?? p.data.summary,
+    tools: d?.tools ?? p.data.tags.join(' · '),
+    href: `/projects/${p.slug}`,
+  };
+});
 ---
 
-<Base title="Projects — Belal Zaky" description="Pharmacovigilance and health data science projects: FAERS analysis, signal detection, EHR data, and machine learning.">
-  <div class="page container">
-    <header class="page-header container--prose">
-      <p class="page-eyebrow">Work</p>
-      <h1 class="page-title">{countWord} things I built — and can defend.</h1>
-      <p class="page-intro">
-        Each one started as a question about a drug and ended in a judgement about a decision.
-        The headline is what I found; the small print is how, for anyone who wants to check.
-      </p>
-    </header>
+<Base
+  title="Work — Belal Zaky"
+  description="Nine projects on drug-safety data. Each one ends in a finding and a decision it should change."
+>
+  <section class="wrap page-head">
+    <p class="label">Work</p>
+    <h1 class="page-h1">Nine projects on drug-safety data. <span class="muted">Each one ends in a finding and a decision it should change.</span></h1>
+    <p class="lead page-lead">Every project leads with what surprised me. The method and the code are one click further in.</p>
+  </section>
 
-    <div class="projects-grid">
-      {sorted.map((project, i) => (
-        <ProjectCaseCard
-          title={project.data.title}
-          stake={projectCases[project.slug]?.stake ?? project.data.summary}
-          finding={projectCases[project.slug]?.finding ?? project.data.result ?? ''}
-          method={projectCases[project.slug]?.method ?? ''}
-          decision={projectCases[project.slug]?.decision ?? ''}
-          tags={project.data.tags}
-          href={`/projects/${project.slug}`}
-          github={project.data.github}
-          link={project.data.link}
-          delay={i * 60}
-        />
+  <section class="wrap sect" aria-label="All projects">
+    <div class="list">
+      {rows.map((r) => (
+        <a href={r.href} class="row-link proj">
+          <span class="proj-big">{r.big}</span>
+          <span class="proj-main">
+            <span class="proj-title">{r.n} · {r.name}</span>
+            <span class="proj-stake">{r.stake}</span>
+            <span class="proj-tools">{r.tools}</span>
+          </span>
+          <span class="proj-cta">Read <span class="arrow" aria-hidden="true">→</span></span>
+        </a>
       ))}
     </div>
-  </div>
+  </section>
 </Base>
 
 <style>
-  .page {
-    padding-top: var(--space-16);
-    padding-bottom: var(--space-24);
+  .list {
+    border-top: 1px solid var(--border);
   }
 
-  .page-header {
-    margin-bottom: var(--space-12);
-  }
-
-  .page-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    font-weight: 500;
-    color: var(--color-text-muted);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-3);
-    max-width: none;
-  }
-
-  .page-title {
-    font-size: var(--text-3xl);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: var(--space-4);
-  }
-
-  .page-intro {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    line-height: 1.6;
-  }
-
-  .projects-grid {
+  .proj {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-6);
+    grid-template-columns: 200px 1fr auto;
+    align-items: baseline;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .proj-big {
+    font-size: 40px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .proj-main {
+    display: block;
+    min-width: 0;
+  }
+
+  .proj-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--label);
+  }
+
+  .proj-stake {
+    display: block;
+    margin-top: 6px;
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--text);
+  }
+
+  .proj-tools {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--label);
+  }
+
+  .proj-cta {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1000px) {
+    .proj-big { font-size: 34px; }
+    .proj { grid-template-columns: 170px 1fr auto; }
   }
 
   @media (max-width: 640px) {
-    .projects-grid {
-      grid-template-columns: 1fr;
+    .proj {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 22px 0;
     }
+    .proj-big { font-size: 34px; }
+    .proj-big:empty { display: none; }
   }
 </style>

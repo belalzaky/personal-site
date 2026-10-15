@@ -47,7 +47,7 @@ const AXIS_MAX = 1;
 
 <style>
   .adrsb {
-    --bar-off: #d3d6de;
+    --bar-off: var(--border2);
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
@@ -59,7 +59,7 @@ const AXIS_MAX = 1;
     overflow: hidden;
   }
   :global([data-theme="dark"]) .adrsb {
-    --bar-off: #3a3a3d;
+    --bar-off: var(--border2);
   }
 
   .adrsb-eyebrow {

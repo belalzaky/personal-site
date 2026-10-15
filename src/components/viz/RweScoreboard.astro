@@ -34,10 +34,10 @@ const truthPct = ((data.truth / data.axisMax) * 100).toFixed(2);
 </div>
 
 <style>
-  .rwe{ --off:#dcdee4; font-family:var(--font-sans); color:var(--color-text);
+  .rwe{ --off:var(--border2); font-family:var(--font-sans); color:var(--color-text);
     background:var(--color-surface); border:1px solid var(--color-border);
     border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
-  :global([data-theme="dark"]) .rwe{ --off:#3a3a3d; }
+  
   .rwe *{ box-sizing:border-box; }
   .rwe-sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
   .rwe-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
@@ -62,8 +62,8 @@ const truthPct = ((data.truth / data.axisMax) * 100).toFixed(2);
   .rwe-seg{ flex:1; font-family:var(--font-mono); font-size:12px; color:var(--color-text-muted); background:var(--color-bg);
     border:1px solid var(--color-border); border-radius:6px; padding:9px 6px; cursor:pointer; transition:all .18s var(--ease,ease); }
   .rwe-seg:hover:not([aria-selected="true"]){ border-color:var(--color-accent); color:var(--color-text); }
-  .rwe-seg[aria-selected="true"]{ background:var(--color-accent); border-color:var(--color-accent); color:#fff; }
-  .rwe-seg[aria-selected="true"]:hover{ background:var(--color-accent); color:#fff; }
+  .rwe-seg[aria-selected="true"]{ background:var(--color-accent); border-color:var(--color-accent); color:var(--color-bg); }
+  .rwe-seg[aria-selected="true"]:hover{ background:var(--color-accent); color:var(--color-bg); }
   @media (max-width:560px){ .rwe{ padding:22px 20px 18px; } .rwe-title{ font-size:20px; } .rwe-v{ font-size:26px; } }
 </style>
 
@@ -80,7 +80,7 @@ const truthPct = ((data.truth / data.axisMax) * 100).toFixed(2);
       const noteEl = root.querySelector('.rwe-note');
       function select(seg, animate){
         const ACC = getComputedStyle(root).getPropertyValue('--color-accent').trim();
-        segs.forEach(function(s){ var on=s===seg; s.setAttribute('aria-selected', on?'true':'false'); s.style.background=on?ACC:''; s.style.borderColor=on?ACC:''; s.style.color=on?'#fff':''; });
+        segs.forEach(function(s){ var on=s===seg; s.setAttribute('aria-selected', on?'true':'false'); s.style.background=on?ACC:''; s.style.borderColor=on?ACC:''; s.style.color=on?'var(--color-bg)':''; });
         const or=parseFloat(seg.dataset.or), lo=parseFloat(seg.dataset.lo), hi=parseFloat(seg.dataset.hi);
         const gap=Math.round((TRUTH-or)/TRUTH*100);
         bar.dataset.rec=seg.dataset.rec;

@@ -32,10 +32,10 @@ const POS = preds.filter(d => d.y === 1).length;
 </div>
 
 <style>
-  .mlx{ --off:#dcdee4; font-family:var(--font-sans); color:var(--color-text);
+  .mlx{ --off:var(--border2); font-family:var(--font-sans); color:var(--color-text);
     background:var(--color-surface); border:1px solid var(--color-border);
     border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
-  :global([data-theme="dark"]) .mlx{ --off:#3a3a3d; }
+  
   .mlx *{ box-sizing:border-box; }
   .mlx-sr{ position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0); }
   .mlx-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }

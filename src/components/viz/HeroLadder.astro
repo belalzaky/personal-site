@@ -44,9 +44,9 @@ const truthPct = ((data.truth / data.axisMax) * 100).toFixed(2);
 </aside>
 
 <style>
-  .ladder{ --off:#dcdee4; background:var(--color-surface); border:1px solid var(--color-border);
+  .ladder{ --off:var(--border2); background:var(--color-surface); border:1px solid var(--color-border);
     border-radius:var(--radius,12px); padding:20px 22px 16px; max-width:440px; box-sizing:border-box; }
-  :global([data-theme="dark"]) .ladder{ --off:#3a3a3d; }
+  
   .ladder *{ box-sizing:border-box; }
   .ladder-eyebrow{ font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
     color:var(--color-accent); margin:0 0 8px; max-width:none; }

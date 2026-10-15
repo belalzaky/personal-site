@@ -566,3 +566,82 @@ html.js .reveal.is-visible {
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Page header (inner pages): label, H1 with a muted second half, lead
+   ========================================================================== */
+
+.page-head {
+  padding-top: 96px;
+  padding-bottom: 72px;
+}
+
+.page-h1 {
+  margin-top: 16px;
+  max-width: 860px;
+  font-size: var(--fs-page-h1);
+  line-height: 1.08;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.page-lead {
+  margin-top: 24px;
+  max-width: 660px;
+}
+
+.page-meta {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--label);
+}
+
+@media (max-width: 640px) {
+  .page-head {
+    padding-top: 48px;
+    padding-bottom: 40px;
+  }
+}
+
+/* Rows with a title and a paragraph under it (rules, positions) */
+.row-title {
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.row-desc {
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--body);
+}
+
+/* CTA card: heading + line on the left, pill on the right */
+.cta {
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.cta-h {
+  font-size: var(--fs-h2);
+  line-height: 1.2;
+}
+
+.cta-copy {
+  margin-top: 8px;
+  font-size: var(--fs-body);
+  color: var(--body);
+}
+
+@media (max-width: 640px) {
+  .cta {
+    padding: 24px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

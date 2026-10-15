@@ -1,0 +1,260 @@
+---
+// v2 case page (V2-Case boards), used by all nine /projects/[slug] pages.
+// Breadcrumb, stake as H1 (last sentence muted), tools, GitHub only where a repo URL
+// exists, stat tiles only where the numbers exist, finding / method / so what, the
+// project's existing interactive, the full write-up, and next-project links.
+import Base from './Base.astro';
+import type { Stat } from '../data/projects-v2';
+
+interface Props {
+  name: string;
+  stake: string;
+  description: string;
+  tools: string;
+  github?: string;
+  stats?: Stat[];
+  finding?: string;
+  method?: string;
+  decision?: string;
+  next?: { name: string; href: string };
+}
+
+const { name, stake, description, tools, github, stats = [], finding, method, decision, next } = Astro.props;
+
+// Mute the last sentence of the stake, when there is more than one.
+const parts = stake.split(/(?<=[.?!])\s+/);
+const lead = parts.length > 1 ? parts.slice(0, -1).join(' ') : stake;
+const tail = parts.length > 1 ? parts[parts.length - 1] : '';
+const hasChart = Astro.slots.has('chart');
+---
+
+<Base title={`${name} — Belal Zaky`} description={description} ogType="article">
+  <section class="wrap case-head">
+    <p class="crumb"><a href="/projects">Work</a> <span aria-hidden="true">/</span> <span class="crumb-here">{name}</span></p>
+    <h1 class="case-h1">{lead}{tail && <> <span class="muted">{tail}</span></>}</h1>
+    <p class="case-tools">{tools}</p>
+    {github && (
+      <div class="btn-row case-ctas">
+        <a href={github} class="btn btn-outline btn-quiet" target="_blank" rel="noopener noreferrer">Code on GitHub ↗</a>
+      </div>
+    )}
+  </section>
+
+  {stats.length > 0 && (
+    <section class="wrap sect" aria-label="Key numbers">
+      <div class="stats">
+        {stats.map((s) => (
+          <div class="stat">
+            <p class:list={['stat-val', { 'stat-val--wrong': s.wrong }]}>{s.value}</p>
+            <p class="stat-label">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {(finding || method || decision) && (
+    <section class="wrap sect" aria-label="Finding, method and what it changes" data-fade>
+      {finding && (
+        <>
+          <h2 class="label">The finding</h2>
+          <p class="case-p case-p--strong">{finding}</p>
+        </>
+      )}
+      {method && (
+        <>
+          <h2 class="label case-label">Method</h2>
+          <p class="case-p">{method}</p>
+        </>
+      )}
+      {decision && (
+        <>
+          <h2 class="label case-label">So what</h2>
+          <div class="sowhat"><p>{decision}</p></div>
+        </>
+      )}
+    </section>
+  )}
+
+  {hasChart && (
+    <section class="wrap sect" aria-label="Interactive" data-fade>
+      <h2 class="label">Interactive</h2>
+      <div class="chart">
+        <slot name="chart" />
+      </div>
+    </section>
+  )}
+
+  <section class="wrap sect" aria-labelledby="writeup-h">
+    <h2 id="writeup-h" class="label">Full write-up</h2>
+    <div class="prose writeup">
+      <slot />
+    </div>
+  </section>
+
+  <section class="wrap sect">
+    <nav class="case-nav" aria-label="More projects">
+      <a href="/projects" class="btn btn-outline btn-quiet">← All work</a>
+      {next && <a href={next.href} class="btn btn-outline btn-quiet">Next: {next.name} →</a>}
+    </nav>
+  </section>
+</Base>
+
+<style>
+  .case-head {
+    padding-top: 96px;
+    padding-bottom: 72px;
+  }
+
+  .crumb {
+    font-size: 14px;
+    color: var(--label);
+  }
+
+  .crumb a {
+    color: var(--label);
+  }
+
+  .crumb a:hover {
+    color: var(--text);
+  }
+
+  .crumb-here {
+    color: var(--text);
+  }
+
+  .case-h1 {
+    margin-top: 20px;
+    max-width: 900px;
+    font-size: var(--fs-case-h1);
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .case-tools {
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--label);
+  }
+
+  .case-ctas {
+    margin-top: 24px;
+  }
+
+  .btn-quiet {
+    padding: 0 20px;
+    font-weight: 400;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat {
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--quiet);
+  }
+
+  .stat-val {
+    font-size: 38px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .stat-val--wrong {
+    color: var(--accent);
+  }
+
+  .stat-label {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--body);
+  }
+
+  .case-label {
+    margin-top: 48px;
+  }
+
+  .case-p {
+    margin-top: 16px;
+    max-width: 680px;
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: var(--body);
+  }
+
+  .case-p--strong {
+    color: var(--text);
+  }
+
+  .sowhat {
+    margin-top: 16px;
+    max-width: 760px;
+    padding: 20px 24px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 0 14px 14px 0;
+  }
+
+  .sowhat p {
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: var(--text);
+  }
+
+  .chart {
+    margin-top: 16px;
+  }
+
+  .writeup {
+    margin-top: 24px;
+    max-width: 720px;
+    border-top: 1px solid var(--border);
+  }
+
+  .writeup :global(h2) {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .writeup :global(h2:first-child) {
+    margin-top: 0;
+    border-top: 0;
+  }
+
+  .writeup :global(h3) {
+    font-size: 17px;
+  }
+
+  .case-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .case-head {
+      padding-top: 48px;
+      padding-bottom: 40px;
+    }
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stat-val {
+      font-size: 30px;
+    }
+  }
+</style>

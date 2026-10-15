@@ -1,5 +1,5 @@
 ---
-import Article from '../../layouts/Article.astro';
+import Case from '../../layouts/Case.astro';
 import SignalThreshold from '../../components/viz/SignalThreshold.astro';
 import EHRThreshold from '../../components/viz/EHRThreshold.astro';
 import SqlSampling from '../../components/viz/SqlSampling.astro';
@@ -11,27 +11,38 @@ import ADRExplorer from '../../components/viz/ADRExplorer.astro';
 import RweScoreboard from '../../components/viz/RweScoreboard.astro';
 import PvPipeline from '../../components/viz/PvPipeline.astro';
 import { getCollection } from 'astro:content';
+import { projectCases } from '../../data/project-cases';
+import { projectDisplay } from '../../data/projects-v2';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map(entry => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+  // Newest first, the /projects order; "Next" follows it and the last has none.
+  const projects = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return projects.map((entry, i) => {
+    const n = projects[i + 1];
+    return {
+      params: { slug: entry.slug },
+      props: { entry, next: n ? { name: projectDisplay[n.slug]?.name ?? n.data.title, href: `/projects/${n.slug}` } : undefined },
+    };
+  });
 }
 
-const { entry } = Astro.props;
+const { entry, next } = Astro.props;
 const { Content } = await entry.render();
+const d = projectDisplay[entry.slug];
+const c = projectCases[entry.slug];
 ---
 
-<Article
-  title={entry.data.title}
-  date={entry.data.date}
-  showDate={false}
-  dek={entry.data.summary}
+<Case
+  name={d?.name ?? entry.data.title}
+  stake={c?.stake ?? entry.data.summary}
   description={entry.data.summary}
-  tags={entry.data.tags}
-  image={entry.data.image}
+  tools={entry.data.tags.join(' · ')}
+  github={entry.data.github}
+  stats={d?.stats}
+  finding={c?.finding}
+  method={c?.method}
+  decision={c?.decision}
+  next={next}
 >
   {entry.slug === 'faers-signal' && <SignalThreshold slot="chart" />}
   {entry.slug === 'ehr-ml' && <EHRThreshold slot="chart" />}
@@ -48,4 +59,4 @@ const { Content } = await entry.render();
   {entry.slug === 'rwe-causal' && <RweScoreboard slot="chart" />}
   {entry.slug === 'pv-intake' && <PvPipeline slot="chart" />}
   <Content />
-</Article>
+</Case>

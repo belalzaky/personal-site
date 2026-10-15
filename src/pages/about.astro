@@ -1,616 +1,306 @@
 ---
 import Base from '../layouts/Base.astro';
-import ContactBlock from '../components/ContactBlock.astro';
-import Photography from '../components/Photography.astro';
+import Photo from '../components/Photo.astro';
+import type { PhotoName } from '../data/photos';
+
+// Copy from the V2-About boards (agreed 15 Oct 2026), verbatim. Skills and education live
+// on /cv. Evidence links point to the matching project page.
+
+const lens: { name: PhotoName; pos: string; alt: string; cls: string }[] = [
+  { name: 'plane-gate', pos: '50% 60%', alt: 'A plane at the gate at night, its engine and wing lit by the apron lights', cls: 'ph-plane' },
+  { name: 'cove-bw', pos: '50% 50%', alt: 'A rocky cove and beach in black and white', cls: 'ph-covebw' },
+  { name: 'aston', pos: '30% 80%', alt: 'A grey sports car parked beneath a tall residential block', cls: 'ph-aston' },
+  { name: 'headlight', pos: '60% 50%', alt: 'Close-up of a silver supercar headlight', cls: 'ph-head' },
+  { name: 'cove-colour', pos: '50% 60%', alt: 'Looking down a rocky slope to a cove and the sea', cls: 'ph-cove' },
+];
+
+const facts = [
+  { k: 'Studying', v: 'MSci Pharmacology, King’s College London' },
+  { k: 'Based', v: 'London | Dubai' },
+  { k: 'Year 2', v: 'Endocrinology, Drugs & Disease, Research Skills' },
+  { k: 'Looking for', v: 'A 2027/28 placement year in pharma' },
+];
+
+const journey = [
+  { d: '2025', text: 'Couldn’t write a line of Python. Started learning data — in public.' },
+  { d: 'Early 2026', text: 'First project: 20M+ adverse-event reports. Found a scary spike was litigation, not harm.' },
+  { d: 'Spring 2026', text: 'SQL, patient records, and a signal detector validated on a known warfarin risk.' },
+  { d: 'Mid 2026', text: 'ML, survival analysis in R, then AI reading medical text — the fanciest model came last.' },
+  { d: 'Late 2026', text: 'Causal inference: a painkiller that looked twice as safe as it was, and two methods that caught it.' },
+  { d: 'Next', text: 'A 2027/28 placement year in pharma: the same questions, asked of real clinical and safety data.' },
+];
+
+const positions = [
+  {
+    n: '01',
+    claim: 'A rise in reported side effects is treated as a rise in harm. It routinely is not.',
+    argument: 'Adverse-event reporting is voluntary, so the count measures who is paying attention — media coverage, lawyers advertising, a regulator asking questions. When one heartburn drug’s reports exploded in 2020, the cause was litigation, not new clinical harm. The reports moved before the evidence did.',
+    evidence: 'Twenty million FDA reports, and the Zantac timeline',
+    href: '/projects/faers-explorer',
+    falsifier: 'A spike that holds up after adjusting for prescriptions dispensed and media volume would be a real signal, and I would want to see that adjustment before dismissing any of them.',
+  },
+  {
+    n: '02',
+    claim: 'Life sciences is buying AI on sophistication. Sophistication is not what predicts performance.',
+    argument: 'I put four systems on the same task of finding drug side effects in medical text. A model trained on biomedical literature won. A plain keyword matcher beat a general-purpose AI model. A general LLM with no task-specific training came last, and invented details that were not in the source. The ranking tracked fit to the domain, not capability or cost.',
+    evidence: 'Four models, one test set, measured hallucination rate',
+    href: '/projects/adr-reader',
+    falsifier: 'This was a deliberately worst-case setup for the LLM — no fine-tuning, no examples. A few-shot version would likely close some of the gap, and I would want that comparison before generalising the claim to procurement.',
+  },
+  {
+    n: '03',
+    claim: 'When patients are not randomly assigned, the bias has a direction — and it flatters the drug.',
+    argument: 'Doctors steer frailer patients away from riskier drugs. That is good medicine and it quietly makes the risky drug look safe in the data afterwards. On a dataset where I had sealed the true answer in advance, the obvious comparison understated a real harm by 46%. Two independent methods recovered it. More data would not have helped: the problem was structural, not statistical.',
+    evidence: 'A sealed true effect of 2.20, and two ways of finding it',
+    href: '/projects/rwe-causal',
+    falsifier: 'The direction is not a law. Where the sicker patients get the newer drug, the same mechanism runs the other way and exaggerates harm instead — so the honest claim is that the bias is directional and knowable, not that it always favours the drug.',
+  },
+];
 ---
 
 <Base
   title="About — Belal Zaky"
-  description="Pharmacology BSc at King's College London, turning uncertain drug-safety evidence into decisions that hold up in front of a regulator, a court or a board."
+  description="If nothing fits, I build my own. MSci Pharmacology at King's College London, based in London and Dubai, looking for a 2027/28 placement year in pharma."
 >
-  <div class="page">
+  <section class="wrap page-head">
+    <p class="label">About</p>
+    <h1 class="page-h1">If nothing fits, <span class="muted">I build my own.</span></h1>
+    <p class="lead page-lead">That goes for the app I run my week on, and for the week itself. Something always needs to be happening: labs and workshops, the library after, runs in the park, coffee with someone, evenings perfecting what I’ve built. I do a lot, I do it my own way, and I make room for my health so it lasts.</p>
+  </section>
 
-    <!-- §3 · ABOUT — bio + facts card -->
-    <section class="about-intro container">
-      <header class="about-intro-head reveal">
-        <p class="page-eyebrow">03 · ABOUT</p>
-        <h1 class="page-title">About</h1>
-      </header>
-
-      <div class="about-grid">
-        <div class="about-bio reveal">
-          <p class="about-lead">
-            I'm a pharmacology student at King's who kept asking whether the
-            <span class="accent">answer</span> would survive someone checking it.
-          </p>
-          <p class="about-bio-text">
-            The scariest spike I ever found turned out to be a wave of lawsuits, not a new side
-            effect. It moved a share price and a legal strategy long before it moved a safety
-            conclusion — and separating those three is the whole job.
-          </p>
-          <p class="about-bio-text">
-            That is the work I want to do: taking evidence that is genuinely uncertain and turning
-            it into a <span class="accent">decision</span> somebody can act on and defend. Most
-            people in drug safety aren't strong on data; most data people don't know drug safety;
-            and the commercial question is usually asked by a third group who talk to neither.
-            I'm trying to be useful at the join.
-          </p>
-          <p class="about-bio-text">
-            I'm looking for a 2027/28 placement year in the pharma industry, in drug safety, real-world
-            evidence or clinical data —
-            the kind of work where the analysis has to hold up in front of a regulator, a court
-            or a board.
-          </p>
+  <section class="wrap sect" aria-label="Photos">
+    <div class="lens">
+      {lens.map((p, i) => (
+        <div class:list={['tile', 'tile--zoom', 'ph', p.cls]}>
+          <Photo name={p.name} alt={p.alt} pos={p.pos} sizes={p.cls === 'ph-plane' || p.cls === 'ph-aston' ? '(max-width: 640px) 50vw, 270px' : '(max-width: 640px) 100vw, 550px'} eager={i < 3} />
         </div>
-
-        <aside class="facts-card reveal" style="--reveal-delay:80ms">
-          <img
-            src="/headshot.jpg"
-            srcset="/headshot.jpg 1x, /headshot@2x.jpg 2x"
-            alt="Belal Zaky"
-            class="facts-photo"
-            width="280"
-            height="350"
-            loading="lazy"
-          />
-          <dl class="facts-list">
-            <div class="facts-row">
-              <dt class="facts-key">Studying</dt>
-              <dd class="facts-val">Pharmacology, King's College London</dd>
-            </div>
-            <div class="facts-row">
-              <dt class="facts-key">Based</dt>
-              <dd class="facts-val">London &amp; Dubai</dd>
-            </div>
-            <div class="facts-row">
-              <dt class="facts-key">Working on</dt>
-              <dd class="facts-val">Causal inference &amp; production AI for drug safety</dd>
-            </div>
-            <div class="facts-row">
-              <dt class="facts-key">Year 2</dt>
-              <dd class="facts-val">Epidemiology &amp; Population Sciences — study design, causal inference, critical appraisal</dd>
-            </div>
-            <div class="facts-row">
-              <dt class="facts-key">Looking for</dt>
-              <dd class="facts-val">2027/28 placement year — pharma industry</dd>
-            </div>
-          </dl>
-        </aside>
-      </div>
-    </section>
-
-    <!-- Journey, skills, education, contact -->
-    <div class="about-body container container--prose">
-
-      <!-- THE JOURNEY -->
-      <section class="about-section">
-        <h2 class="about-section-title">The journey</h2>
-
-        <ol class="timeline" role="list">
-          <li class="timeline-item reveal">
-            <span class="timeline-date">2025</span>
-            <div class="timeline-content">
-              <p class="timeline-desc">Couldn't write a line of Python. Started learning data — in public.</p>
-            </div>
-          </li>
-          <li class="timeline-item reveal">
-            <span class="timeline-date">Early 2026</span>
-            <div class="timeline-content">
-              <p class="timeline-desc">First project: 20M+ adverse-event reports. Found a scary spike was litigation, not harm.</p>
-            </div>
-          </li>
-          <li class="timeline-item reveal">
-            <span class="timeline-date">Spring 2026</span>
-            <div class="timeline-content">
-              <p class="timeline-desc">SQL, patient records, and a signal detector validated on a known warfarin risk.</p>
-            </div>
-          </li>
-          <li class="timeline-item reveal">
-            <span class="timeline-date">Mid 2026</span>
-            <div class="timeline-content">
-              <p class="timeline-desc">ML, survival analysis in R, then AI reading medical text — the fanciest model came last.</p>
-            </div>
-          </li>
-          <li class="timeline-item reveal">
-            <span class="timeline-date">Late 2026</span>
-            <div class="timeline-content">
-              <p class="timeline-desc">Causal inference: a painkiller that looked twice as safe as it was, and two methods that caught it.</p>
-            </div>
-          </li>
-          <li class="timeline-item timeline-item--accent reveal">
-            <span class="timeline-date">Next</span>
-            <div class="timeline-content">
-              <p class="timeline-desc timeline-desc--accent">A 2027/28 placement year in pharma: the same questions, asked of real clinical and safety data.</p>
-            </div>
-          </li>
-        </ol>
-      </section>
-
-      <!-- Skills & tools -->
-      <section class="about-section">
-        <h2 class="about-section-title">Skills &amp; tools</h2>
-        <p class="about-note">Built alongside the degree, and used on every project below.</p>
-
-        <dl class="skills-list">
-          <div class="skills-row">
-            <dt class="skills-label">Data</dt>
-            <dd class="skills-value">Python (pandas, scikit-learn, matplotlib), R, SQL &amp; SQLite</dd>
-          </div>
-          <div class="skills-row">
-            <dt class="skills-label">Methods</dt>
-            <dd class="skills-value">Causal inference (propensity scores, self-controlled case series), survival analysis, disproportionality signal detection, machine learning, NLP</dd>
-          </div>
-          <div class="skills-row">
-            <dt class="skills-label">Engineering</dt>
-            <dd class="skills-value">Git &amp; GitHub, unit testing, GitHub Actions CI, Docker, CLI tools, Astro, Streamlit</dd>
-          </div>
-          <div class="skills-row">
-            <dt class="skills-label">Domain</dt>
-            <dd class="skills-value">Pharmacology, pharmacovigilance, real-world evidence, EHR data, SNOMED CT coding, openFDA / FAERS</dd>
-          </div>
-          <div class="skills-row">
-            <dt class="skills-label">Communication</dt>
-            <dd class="skills-value">Data storytelling for non-specialists, technical writing, public speaking</dd>
-          </div>
-        </dl>
-      </section>
-
-      <!-- Education & activities -->
-      <section class="about-section">
-        <h2 class="about-section-title">Education &amp; activities</h2>
-
-        <ul class="edu-list" role="list">
-          <li class="edu-item">
-            <span class="edu-name">BSc Pharmacology (Hons), King's College London</span>
-            <span class="edu-detail">Expected 2028 · first-class marks in pharmacology and in research skills &amp; statistics</span>
-            <span class="edu-note">
-              Year 2 includes Epidemiology &amp; Population Sciences — study design, causal
-              inference, validity, and the critical appraisal of methodology, data quality and
-              interpretation. It is the formal version of what the projects on this site do
-              informally.
-            </span>
-          </li>
-          <li class="edu-item">
-            <span class="edu-name">Student Representative, BSc Pharmacology</span>
-            <span class="edu-detail">2025–present · Staff–Student Liaison Committee</span>
-            <span class="edu-note">
-              Turned scattered complaints about a module into one clear signal — it reached the
-              department, and the module changed.
-            </span>
-          </li>
-          <li class="edu-item">
-            <span class="edu-name">King's100 Leadership &amp; Employability Programme</span>
-            <span class="edu-detail">Selected, 2026</span>
-            <span class="edu-note">King's flagship leadership programme — selective, employer-led challenges.</span>
-          </li>
-          <li class="edu-item">
-            <span class="edu-name">Toastmasters International</span>
-            <span class="edu-detail">Member &amp; Sergeant at Arms</span>
-            <span class="edu-note">Regular public speaking; earned “Speech of the Meeting.”</span>
-          </li>
-          <li class="edu-item">
-            <span class="edu-name">Model United Nations</span>
-            <span class="edu-detail">Delegate</span>
-            <span class="edu-note">Awarded Delegate of the Conference — research, debate and negotiation.</span>
-          </li>
-        </ul>
-      </section>
-
-      <!-- Beyond the work -->
-      <section class="about-section">
-        <h2 class="about-section-title">Beyond the work</h2>
-        <p class="about-beyond">
-          Most of what I learn ends up explained somewhere — a Substack newsletter, project posts
-          on LinkedIn, and short films on Instagram about how a drug's harm was first spotted.
-          Explaining this work to people outside it is a skill I practise on purpose.
-        </p>
-        <p class="about-beyond">
-          Away from the screen: building <span class="accent">LIFTKCL</span>, a beginner-friendly
-          strength community at King's, and shooting photography — some of it below. London and
-          Dubai; English and Arabic.
-        </p>
-      </section>
-
+      ))}
     </div>
+    <p class="lens-note">Shot on iPhone 17 Pro.</p>
+  </section>
 
-    <!-- Photography strip — full width -->
-    <section class="lens-section" aria-label="Through the lens">
-      <div class="container container--prose">
-        <h2 class="lens-heading">Through the lens</h2>
-      </div>
-      <Photography />
-    </section>
-
-    <!-- Contact -->
-    <div class="about-contact container container--prose">
-      <ContactBlock />
+  <section class="wrap sect" aria-labelledby="why-h" data-fade>
+    <h2 id="why-h" class="label">Why drug safety</h2>
+    <p class="about-p about-p--strong">The scariest spike I ever found turned out to be a wave of lawsuits, not a new side effect. It moved a share price and a legal strategy long before it moved a safety conclusion — and separating those three is the whole job.</p>
+    <p class="about-p">Most people in drug safety aren’t strong on data; most data people don’t know drug safety; and the commercial question is usually asked by a third group who talk to neither. I’m trying to be useful at the join.</p>
+    <p class="about-p">I’m looking for a 2027/28 placement year in the pharma industry, in drug safety, real-world evidence or clinical data — the kind of work where the analysis has to hold up in front of a regulator, a court or a board.</p>
+    <div class="rows facts">
+      {facts.map((f) => (
+        <div class="row">
+          <span class="row-key">{f.k}</span>
+          <div><span class="row-val">{f.v}</span></div>
+        </div>
+      ))}
     </div>
+  </section>
 
-  </div>
+  <section class="wrap sect" aria-labelledby="journey-h" data-fade>
+    <p class="label">The journey</p>
+    <h2 id="journey-h" class="h2">How I got here.</h2>
+    <div class="rows journey">
+      {journey.map((t) => (
+        <div class="row">
+          <span class="row-key">{t.d}</span>
+          <div><span class="row-val">{t.text}</span></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap sect" aria-labelledby="think-h" data-fade>
+    <p class="label">What I think</p>
+    <h2 id="think-h" class="h2">Three things I’d argue for.</h2>
+    <div class="positions">
+      {positions.map((p) => (
+        <article class="pos">
+          <p class="pos-n">{p.n}</p>
+          <h3 class="pos-claim">{p.claim}</h3>
+          <p class="pos-arg">{p.argument}</p>
+          <div class="pos-boxes">
+            <a href={p.href} class="pos-evidence">
+              <span class="pos-box-label">Evidence</span>
+              <span class="pos-evidence-text">{p.evidence} <span class="arrow" aria-hidden="true">→</span></span>
+            </a>
+            <div class="pos-mind">
+              <span class="pos-box-label">What would change my mind</span>
+              <span class="pos-mind-text">{p.falsifier}</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+    <a href="/cv" class="text-link cv-link">Education, experience and skills are on the CV <span class="arrow" aria-hidden="true">→</span></a>
+  </section>
 </Base>
 
 <style>
-  .page {
-    padding-top: var(--space-16);
-    padding-bottom: var(--space-24);
-  }
-
-  /* Page header */
-  .page-header {
-    margin-bottom: var(--space-12);
-  }
-
-  .page-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    font-weight: 500;
-    color: var(--color-text-muted);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-3);
-    max-width: none;
-  }
-
-  .page-title {
-    font-family: var(--font-mono);
-    font-size: var(--text-3xl);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    line-height: 1.1;
-    color: var(--color-text);
-  }
-
-  @media (max-width: 640px) {
-    .page-title {
-      font-size: var(--text-2xl);
-    }
-  }
-
-  /* §3 intro: bio + facts card */
-  .about-intro {
-    padding-bottom: var(--space-16);
-  }
-
-  .about-intro-head {
-    margin-bottom: var(--space-10);
-  }
-
-  .about-grid {
+  /* Photos: desktop 4 columns (plane, wide B&W cove filling the row, Aston; then two wides) */
+  .lens {
     display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: var(--space-12);
-    align-items: start;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
   }
 
-  @media (max-width: 760px) {
-    .about-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-8);
-    }
+  .tile :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
-  .about-bio {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
+  .ph-plane,
+  .ph-aston {
+    aspect-ratio: 0.8;
   }
 
-  .about-lead {
-    font-size: var(--text-2xl);
+  .ph-covebw {
+    grid-column: span 2;
+  }
+
+  .ph-covebw :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .ph-head,
+  .ph-cove {
+    grid-column: span 2;
+    aspect-ratio: 1.6;
+  }
+
+  .lens-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--label);
+  }
+
+  .about-p {
+    margin-top: 16px;
+    max-width: 680px;
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: var(--body);
+  }
+
+  .about-p--strong {
+    margin-top: 20px;
+    color: var(--text);
+  }
+
+  .facts,
+  .journey,
+  .positions {
+    margin-top: 24px;
+  }
+
+  .facts .row-val,
+  .journey .row-val {
+    line-height: 1.55;
+  }
+
+  .positions {
+    border-top: 1px solid var(--border);
+  }
+
+  .pos {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pos-n {
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-    color: var(--color-text);
-    max-width: 30ch;
+    color: var(--accent);
+  }
+
+  .pos-claim {
+    margin-top: 8px;
+    max-width: 760px;
+    font-size: calc(var(--fs-body) + 4px);
+    line-height: 1.35;
+    font-weight: 500;
+  }
+
+  .pos-arg {
+    margin-top: 16px;
+    max-width: 680px;
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: var(--body);
+  }
+
+  .pos-boxes {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .pos-evidence {
+    display: block;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: var(--quiet);
+    text-decoration: none;
+  }
+
+  .pos-mind {
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .pos-box-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+
+  .pos-evidence-text {
+    display: block;
+    margin-top: 6px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--accent);
+  }
+
+  .pos-mind-text {
+    display: block;
+    margin-top: 6px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--body);
+  }
+
+  .cv-link {
+    margin-top: 24px;
   }
 
   @media (max-width: 640px) {
-    .about-lead {
-      font-size: var(--text-xl);
+    .lens {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
     }
-  }
-
-  .about-bio-text {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    line-height: 1.75;
-    max-width: 60ch;
-  }
-
-  .accent {
-    color: var(--color-accent);
-  }
-
-  /* Facts card */
-  .facts-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    position: sticky;
-    top: 80px;
-  }
-
-  @media (max-width: 760px) {
-    .facts-card {
+    .ph-covebw,
+    .ph-head,
+    .ph-cove {
+      grid-column: span 2;
+      aspect-ratio: 1.6;
+    }
+    .ph-covebw :global(picture) {
       position: static;
     }
-  }
+    /* phone order: plane, Aston, B&W cove, headlight, cove */
+    .ph-aston { order: 1; }
+    .ph-plane { order: 0; }
+    .ph-covebw { order: 2; }
+    .ph-head { order: 3; }
+    .ph-cove { order: 4; }
 
-  .facts-photo {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
-    display: block;
-  }
-
-  .facts-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .facts-row {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .facts-key {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-accent);
-  }
-
-  .facts-val {
-    font-size: var(--text-sm);
-    color: var(--color-text);
-    line-height: 1.5;
-  }
-
-  /* Body sections */
-  .about-body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-16);
-  }
-
-  .about-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-
-  .about-section-title {
-    font-family: var(--font-mono);
-    font-size: var(--text-xl);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    color: var(--color-text);
-  }
-
-  .about-section-tagline {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-    letter-spacing: 0.04em;
-    max-width: none;
-  }
-
-  .about-note {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    font-style: italic;
-  }
-
-  .about-beyond {
-    font-size: var(--text-base);
-    color: var(--color-text-muted);
-    line-height: 1.7;
-  }
-
-  .about-beyond + .about-beyond {
-    margin-top: var(--space-4);
-  }
-
-  .edu-note {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    line-height: 1.65;
-    max-width: 60ch;
-    margin-top: var(--space-1);
-  }
-
-  .about-contact {
-    padding-top: var(--space-4);
-  }
-
-  /* Timeline */
-  .timeline {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border-left: 1px solid var(--color-border);
-    margin-left: var(--space-4);
-  }
-
-  .timeline-item {
-    display: grid;
-    grid-template-columns: 7rem 1fr;
-    gap: var(--space-6);
-    padding: var(--space-4) 0 var(--space-4) var(--space-6);
-    position: relative;
-  }
-
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -4px;
-    top: calc(var(--space-4) + 6px);
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-border);
-  }
-
-  .timeline-item--accent::before {
-    background: var(--color-accent);
-    box-shadow: 0 0 0 4px var(--color-accent-soft);
-  }
-
-  .timeline-desc--accent {
-    color: var(--color-text);
-    font-weight: 500;
-  }
-
-  @media (max-width: 540px) {
-    .timeline-item {
+    .pos-boxes {
       grid-template-columns: 1fr;
-      gap: var(--space-2);
     }
-  }
-
-  .timeline-date {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-subtle);
-    letter-spacing: 0.02em;
-    padding-top: 2px;
-    white-space: nowrap;
-  }
-
-  .timeline-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .timeline-tag {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-accent);
-    background: var(--color-accent-soft);
-    padding: 1px 7px;
-    border-radius: var(--radius-sm);
-    width: fit-content;
-    font-weight: 500;
-  }
-
-  .timeline-project {
-    font-size: var(--text-base);
-    font-weight: 500;
-    color: var(--color-text);
-    text-decoration: none;
-    transition: color var(--dur) var(--ease);
-    line-height: 1.4;
-  }
-
-  .timeline-project:hover {
-    color: var(--color-accent);
-  }
-
-  .timeline-desc {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    max-width: 48ch;
-  }
-
-  /* Skills */
-  .skills-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-4);
-  }
-
-  .skills-row {
-    display: grid;
-    grid-template-columns: 5.5rem 1fr;
-    gap: var(--space-6);
-    align-items: baseline;
-  }
-
-  @media (max-width: 480px) {
-    .skills-row {
-      grid-template-columns: 1fr;
-      gap: var(--space-1);
-    }
-  }
-
-  .skills-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    font-weight: 500;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .skills-value {
-    font-size: var(--text-sm);
-    color: var(--color-text);
-    line-height: 1.6;
-  }
-
-  /* Education */
-  .edu-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-4);
-  }
-
-  .edu-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .edu-name {
-    font-size: var(--text-base);
-    font-weight: 500;
-    color: var(--color-text);
-    line-height: 1.4;
-  }
-
-  .edu-detail {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-    letter-spacing: 0.02em;
-  }
-
-  /* Photography strip */
-  .lens-section {
-    padding-top: var(--space-16);
-    padding-bottom: var(--space-12);
-  }
-
-  .lens-heading {
-    font-family: var(--font-mono);
-    font-size: var(--text-xl);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    color: var(--color-text);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--color-border);
-    margin-bottom: var(--space-6);
-  }
-
-  .about-contact {
-    padding-top: var(--space-12);
-    padding-bottom: var(--space-8);
   }
 </style>

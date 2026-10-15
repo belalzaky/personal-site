@@ -23,10 +23,10 @@ import samp from "../../data/faers-sql-samplings.json";
 </div>
 
 <style>
-  .sql3{ --off:#9ba1ad; --warn:#c0492f; font-family:var(--font-sans); color:var(--color-text);
+  .sql3{ --off:var(--label); --warn:#c0492f; font-family:var(--font-sans); color:var(--color-text);
     background:var(--color-surface); border:1px solid var(--color-border);
     border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
-  :global([data-theme="dark"]) .sql3{ --off:#5a5d64; --warn:#dd7a63; }
+  :global([data-theme="dark"]) .sql3{ --warn:#dd7a63; }
   .sql3 *{ box-sizing:border-box; }
   .sql3-sr{ position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0); }
   .sql3-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
@@ -35,7 +35,7 @@ import samp from "../../data/faers-sql-samplings.json";
   .sql3-toggle{ display:inline-flex; flex-wrap:wrap; border:1px solid var(--color-border); border-radius:9px; padding:4px; margin-bottom:22px; background:var(--color-bg); gap:4px; }
   .sql3-btn{ font-family:var(--font-mono); font-size:12px; font-weight:600; padding:8px 14px; border:0; background:transparent; color:var(--color-text-muted); border-radius:6px; cursor:pointer; transition:all .18s; }
   .sql3-btn:hover{ color:var(--color-text); }
-  .sql3-btn.active{ background:var(--color-accent); color:#fff; }
+  .sql3-btn.active{ background:var(--color-accent); color:var(--color-bg); }
   .sql3-plot{ position:relative; display:flex; gap:6px; align-items:stretch; height:180px; }
   .sql3-xaxis{ display:flex; gap:6px; padding:8px 0 0; border-top:1px solid var(--color-border); }
   .sql3-xaxis span{ flex:1; text-align:center; font-family:var(--font-mono); font-size:10px; color:var(--color-text-subtle); }

@@ -19,9 +19,9 @@ import trend from "../../data/zantac-trend.json";
 </div>
 
 <style>
-  .zx{ --dim:#c9cfdd; --warn:#c0492f; font-family:var(--font-sans); color:var(--color-text);
+  .zx{ --dim:var(--border2); --warn:#c0492f; font-family:var(--font-sans); color:var(--color-text);
     background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
-  :global([data-theme="dark"]) .zx{ --dim:#454951; --warn:#dd7a63; }
+  :global([data-theme="dark"]) .zx{ --warn:#dd7a63; }
   .zx *{ box-sizing:border-box; }
   .zx-sr{ position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0); }
   .zx-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }

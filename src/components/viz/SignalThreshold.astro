@@ -102,10 +102,10 @@ const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
 <style>
   /* ── Local vars (light / dark) ─────────────────────────────────── */
   .st {
-    --bar-off: #d3d6de;
+    --bar-off: var(--border2);
   }
   :global([data-theme="dark"]) .st {
-    --bar-off: #3a3a3d;
+    --bar-off: var(--border2);
   }
 
   /* ── Wrapper ────────────────────────────────────────────────────── */
@@ -281,7 +281,7 @@ const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
   .st-bar-val--in {
     right: 7px;
   }
-  .st-bar[data-signal="1"] .st-bar-val--in { color: #ffffff; }
+  .st-bar[data-signal="1"] .st-bar-val--in { color: var(--bg); }
   .st-bar[data-signal="0"] .st-bar-val--in { color: var(--color-text); }
 
   /* Outside: to the right of the bar, always muted */
