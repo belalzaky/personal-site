@@ -2,15 +2,14 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.belalzaky.uk" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.belalzaky.uk"
+        }
+      ],
       "destination": "https://belalzaky.uk/:path*",
       "permanent": true
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [{ "key": "Accept-Ranges", "value": "none" }]
     }
   ]
 }
