@@ -66,7 +66,7 @@ const posts = (await getCollection('posts'))
 
 <Base
   title="Belal Zaky — Health. Tech. Build. Lifestyle."
-  description="MSci Pharmacology at King's. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee. Open to a 2027/28 placement year in pharma."
+  description="MSci Pharmacology at King's. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee."
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
@@ -96,7 +96,6 @@ const posts = (await getCollection('posts'))
       <a href="/about" class="btn btn-primary">About me</a>
       <a href="/projects" class="btn btn-outline">See my work</a>
     </div>
-    <p class="hero-status"><span class="hero-dot" aria-hidden="true"></span>Open to a 2027/28 placement year in pharma</p>
   </section>
 
   <!-- LONDON | DUBAI -->
@@ -187,7 +186,7 @@ const posts = (await getCollection('posts'))
   <!-- WHAT I'VE FOUND -->
   <section class="wrap sect" id="work" aria-labelledby="work-h" data-fade>
     <p class="label">What I've found</p>
-    <h2 id="work-h" class="h2">Nine projects on drug-safety data. <span class="muted">Three results that surprised me.</span></h2>
+    <h2 id="work-h" class="h2">Projects on drug-safety data. <span class="muted">Three results that surprised me.</span></h2>
     <div class="finds">
       {finds.map((f) => (
         <a href={f.href} class="row-link find">
@@ -197,7 +196,7 @@ const posts = (await getCollection('posts'))
         </a>
       ))}
     </div>
-    <a href="/projects" class="text-link more">All 9 projects <span class="arrow" aria-hidden="true">→</span></a>
+    <a href="/projects" class="text-link more">All projects <span class="arrow" aria-hidden="true">→</span></a>
   </section>
 
   <!-- WRITING -->

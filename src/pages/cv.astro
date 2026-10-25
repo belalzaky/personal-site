@@ -6,7 +6,7 @@ import Base from '../layouts/Base.astro';
 // this page: the print styles at the foot give A4, light, no nav or footer.
 
 const education = [
-  { name: 'King’s College London — MSci Pharmacology (integrated master’s, with placement year)', meta: 'Expected 2029', desc: 'London, United Kingdom' },
+  { name: 'King’s College London — MSci (Hons) Pharmacology (integrated master’s, with placement year)', meta: 'Expected 2029', desc: 'London, United Kingdom' },
   { name: 'Emirates International School – Jumeirah — IB Diploma', meta: '2024', desc: 'Dubai, United Arab Emirates' },
 ];
 
@@ -29,10 +29,12 @@ const projects = [
   ] },
   { title: 'Mission Control — my own operations app', meta: '2026', stack: 'JavaScript · Electron · Node · Markdown · AI agents', bullets: [
     'A desktop app that runs my projects, study and deadlines from plain-text notes, with an AI assistant whose drafts I approve; 600+ automated tests, each written after a real failure.',
+    'Notch, a native macOS (SwiftUI) companion app, puts it in the MacBook notch; I use it every day.',
   ] },
 ];
 
 const experience = [
+  { name: 'King’s Sport, King’s College London — Casual Sports Ground Staff', meta: 'Oct 2026 – Present', desc: 'Front of house at the New Malden ground: opening up, pitch inspections, directing teams, coaches and referees, and the on-site contact with AFC Wimbledon for delays, cancellations and handovers.' },
   { name: 'Aster Pharmacy — Sales Intern', meta: 'Jul 2024', desc: 'Supported customer service and sales operations in a busy retail pharmacy environment, Dubai.' },
   { name: 'Modon Designs — Project Coordinator & Business Development Associate', meta: 'Jun 2022 – Apr 2023', desc: 'Coordinated client–team communication and documentation, built digital filing systems, and supported business development and social media.' },
   { name: 'M2 Supplements — Operations & Marketing Assistant', meta: 'Jan 2022 – Jun 2023', desc: 'Ran order fulfilment, customer communication and social-media campaigns, supporting product launches with the founders.' },
@@ -40,7 +42,8 @@ const experience = [
 
 const leadership = [
   { name: 'Student Representative — Pharmacology, King’s College London', meta: '2025 – Present', desc: 'Rep in Year 1 (BSc) and again in Year 2 (MSci). Represent coursemates on the Staff–Student Liaison Committee; consolidated scattered module feedback into one case that reached the department and changed the module.' },
-  { name: 'King’s100 — Leadership & Employability Programme', meta: '2026', desc: 'Selected for King’s flagship leadership programme — employer-led challenges.' },
+  { name: 'Subject Ambassador — Pharmacology, King’s College London', meta: 'Oct 2026 – Present', desc: 'Represent Pharmacology to prospective students and families at open days, applicant days, campus tours and school outreach.' },
+  { name: 'King’s100 — Leadership & Employability Programme', meta: 'Oct 2025 – Apr 2026', desc: 'Selected for King’s flagship leadership programme — employer-led challenges.' },
   { name: 'Toastmasters International — Member & Sergeant at Arms', meta: '2023 – Present', desc: 'Regular prepared and impromptu speaking; earned “Speech of the Meeting”.' },
   { name: 'Model United Nations — Delegate', meta: '2023', desc: 'Awarded Delegate of the Conference — research, debate and negotiation.' },
 ];
@@ -49,6 +52,7 @@ const skills = [
   { label: 'Data & technical', value: 'Python (pandas, scikit-learn, matplotlib), R (survival analysis), SQL, machine learning, NLP; Git/GitHub, pytest, GitHub Actions CI, Docker, Astro' },
   { label: 'Methods', value: 'Causal inference (propensity scores, self-controlled case series), survival analysis, disproportionality signal detection, statistical reasoning' },
   { label: 'Domain', value: 'Pharmacovigilance & drug-safety signal detection, real-world evidence, EHR data, SNOMED CT coding' },
+  { label: 'Certifications', value: 'Introduction to First Aid in Sport and Physical Activity (UK Coaching, 2026)' },
   { label: 'Communication', value: 'Scientific & report writing, data storytelling, public speaking. English (fluent), Arabic (native)' },
 ];
 
@@ -101,7 +105,7 @@ const entrySections = [
         </div>
       ))}
     </div>
-    <a href="/projects" class="text-link cv-more">All 9 projects <span class="arrow" aria-hidden="true">→</span></a>
+    <a href="/projects" class="text-link cv-more">All projects <span class="arrow" aria-hidden="true">→</span></a>
   </section>
 
   {entrySections.map((s, i) => (
