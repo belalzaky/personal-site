@@ -13,7 +13,7 @@ import trend from "../../data/zantac-trend.json";
   <div class="zx-slidewrap"><span class="zx-cap zx-lo">–</span><input class="zx-slider" type="range" min="0" max="1" step="1" value="0" aria-label="Year"><span class="zx-cap zx-hi">–</span></div>
 
   <div class="zx-event"><span class="zx-flag">⚑</span><span class="zx-etext"></span></div>
-  <p class="zx-foot">Report counts measure attention, not harm. The first question for any spike is "what else happened that year?"</p>
+  <p class="zx-foot">The first question for any spike is what else happened that year.</p>
 
   <script type="application/json" class="zx-data" set:html={JSON.stringify(trend)}></script>
 </div>
@@ -97,7 +97,7 @@ import trend from "../../data/zantac-trend.json";
         svg.querySelectorAll('.zx-dot').forEach(c=>c.setAttribute('class', +c.getAttribute('data-i')<=idx?'zx-dot zx-dotact':'zx-dot'));
         const on=p[0]>=2019;
         if(hasMk){ mkline.style.opacity=on?1:0; mklab.style.opacity=on?1:0; }
-        if(on){ event.classList.remove('hide'); etext.innerHTML='<b>Sept 2019</b> — the FDA found <b>NDMA</b> (a probable carcinogen) contaminating ranitidine → recall → <b>mass litigation</b>. The surge is claims generating reports, not new harm.'; }
+        if(on){ event.classList.remove('hide'); etext.innerHTML='In September 2019 the FDA found NDMA, a probable carcinogen, in ranitidine, which led to a recall and then mass litigation.'; }
         else { event.classList.add('hide'); etext.innerHTML='Before 2019: flat and unremarkable — a few thousand reports a year.'; }
         const pct=idx/(n-1)*100; slider.style.background='linear-gradient(90deg,var(--color-accent) 0%,var(--color-accent) '+pct+'%,var(--color-border) '+pct+'%)';
       }

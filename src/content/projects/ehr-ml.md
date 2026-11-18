@@ -1,6 +1,6 @@
 ---
 title: "EHR ML Risk Model"
-summary: "A machine-learning model predicting hypertension from Synthea EHR features — logistic regression and random forest, with honest treatment of data leakage, the precision/recall threshold trade-off, and the limits of synthetic-data performance."
+summary: "A machine-learning model predicting hypertension from Synthea EHR features — logistic regression and random forest, with careful treatment of data leakage, the precision/recall threshold trade-off, and the limits of synthetic-data performance."
 tags: ["Python", "scikit-learn", "pandas"]
 date: 2025-06-01
 featured: true

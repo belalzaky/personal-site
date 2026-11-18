@@ -15,11 +15,10 @@ interface Props {
   stats?: Stat[];
   finding?: string;
   method?: string;
-  decision?: string;
   next?: { name: string; href: string };
 }
 
-const { name, stake, description, tools, github, stats = [], finding, method, decision, next } = Astro.props;
+const { name, stake, description, tools, github, stats = [], finding, method, next } = Astro.props;
 
 // Mute the last sentence of the stake, when there is more than one.
 const parts = stake.split(/(?<=[.?!])\s+/);
@@ -53,7 +52,7 @@ const hasChart = Astro.slots.has('chart');
     </section>
   )}
 
-  {(finding || method || decision) && (
+  {(finding || method) && (
     <section class="wrap sect" aria-label="Finding, method and what it changes" data-fade>
       {finding && (
         <>
@@ -65,12 +64,6 @@ const hasChart = Astro.slots.has('chart');
         <>
           <h2 class="label case-label">Method</h2>
           <p class="case-p">{method}</p>
-        </>
-      )}
-      {decision && (
-        <>
-          <h2 class="label case-label">So what</h2>
-          <div class="sowhat"><p>{decision}</p></div>
         </>
       )}
     </section>

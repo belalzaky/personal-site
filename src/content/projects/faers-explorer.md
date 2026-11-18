@@ -16,7 +16,7 @@ You pick a drug and the dashboard returns:
 - Reports filed per year
 - Age and sex breakdown of reporters
 
-There is also a built-in panel explaining what these numbers actually measure. FAERS counts are driven by who files reports, not by how often an adverse event occurs in patients. More reports for a drug does not mean the drug is more dangerous — it can mean it is more widely used, more scrutinised, or that a safety signal has already been publicised. The dashboard makes that explicit.
+There is also a built-in panel explaining what these numbers measure: FAERS counts are driven by who files reports, so more reports can mean a drug is more widely used, more scrutinised or in the news.
 
 ## Why I built it
 

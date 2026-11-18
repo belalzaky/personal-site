@@ -15,20 +15,20 @@ const projects = [
     'Emulated a new-user, active-comparator study and validated the estimators against a sealed true effect: the crude comparison understated the harm by 46% (OR 1.19), while matching (2.05) and a self-controlled series (2.14) both recovered the truth (2.20).',
     'A simulation study by design — the only setting where you can score a causal method against a known answer. Same protocol queued for real clinical data (MIMIC-IV, credentialing in progress).',
   ] },
-  { title: 'PV Intake Assistant — production pharmacovigilance pipeline', meta: '2026', stack: 'Python · scikit-learn · scispaCy · SNOMED CT · pytest · GitHub Actions · Docker', bullets: [
+  { title: 'PV Intake Assistant: a pharmacovigilance intake pipeline', meta: '2026', stack: 'Python · scikit-learn · scispaCy · SNOMED CT · pytest · GitHub Actions · Docker', bullets: [
     'Three-stage pipeline: triage a medical abstract for a possible adverse drug event (F1 0.38 → 0.79), extract the drug and effect, then code the effect to SNOMED CT against a 461,000-term vocabulary.',
     'Built as a system, not a notebook — 32 unit tests, CI on every push, a Dockerfile and a CLI. Chose precision over coverage in coding: a wrong code corrupts a safety signal, a blank one does not.',
   ] },
   { title: 'Pharmacovigilance signal detection — FAERS (20M+ FDA reports)', meta: '2026', stack: 'Python · pandas · SQL · openFDA API · PRR / ROR / chi-squared / Evans criteria', bullets: [
-    'Built a disproportionality signal-detection pipeline over 20M+ adverse-event reports; validated on the known warfarin–haemorrhage signal (PRR ≈ 5), with negative controls to screen out confounders.',
+    'Built a disproportionality signal-detection pipeline over 20M+ adverse-event reports, validated on the known warfarin–haemorrhage signal (PRR ≈ 5) and checked against negative controls for false positives.',
     'Across companion projects (a live dashboard and a SQL reproduction), showed how notoriety and sampling distort conclusions — a heartburn drug’s 2020–21 report spike was litigation, not clinical harm.',
   ] },
   { title: 'Clinical NLP & EHR modelling — adverse events, risk and survival', meta: '2026', stack: 'R (survival) · Kaplan–Meier · Cox PH · Python · scikit-learn · PubMedBERT', bullets: [
     'Benchmarked four models for detecting adverse drug events in free text: the domain-tuned transformer won, a keyword model beat a general-purpose one, and a zero-shot LLM came last — domain fit beats model size.',
-    'Modelled time-to-hypertension in 1,100+ patients: diabetics progressed ~2.4× faster, and a seemingly null age effect proved time-varying.',
+    'Modelled time-to-hypertension in 1,100+ synthetic (Synthea) patients: diabetics progressed about 2.4× faster, and an age effect that looked null turned out to be time-varying.',
   ] },
   { title: 'Mission Control — my own operations app', meta: '2026', stack: 'JavaScript · Electron · Node · Markdown · AI agents', bullets: [
-    'A desktop app that runs my projects, study and deadlines from plain-text notes, with an AI assistant whose drafts I approve; 600+ automated tests, each written after a real failure.',
+    'A desktop app that runs my projects, study and deadlines from plain-text notes, with an AI assistant whose drafts I approve, and nearly 900 automated tests.',
     'Notch, a native macOS (SwiftUI) companion app, puts it in the MacBook notch; I use it every day.',
   ] },
 ];

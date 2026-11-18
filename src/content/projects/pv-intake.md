@@ -10,7 +10,7 @@ result: "Triage F1 0.79 · SNOMED coding 0.54 — precision over coverage."
 
 ## What I did
 
-Pharmacovigilance intake — reading the literature, spotting possible drug harms, and coding them into a standard vocabulary — is slow, manual, and high-stakes. I built the front half of that workflow as one pipeline, and measured every stage honestly against held-out data.
+Pharmacovigilance intake means reading the literature, spotting possible drug harms and coding them into a standard vocabulary, and it is slow manual work. I built the front half of it as one pipeline and measured every stage against held-out data.
 
 **Stage 1 — Triage.** A keyword rule (F1 0.38, recall 0.27) gave the floor; a TF-IDF + logistic-regression classifier lifted it to **F1 0.79, recall 0.86**. Recall is the number that matters — a missed adverse event is the costly error — and accuracy is a trap on this imbalanced set (an always-"no" model scores 0.72).
 
@@ -26,4 +26,4 @@ In drug safety a wrong code is worse than no code — a blank leaves a gap a hum
 
 ## Built as a system, not a notebook
 
-Clean package layout, **32 unit tests**, GitHub Actions CI that runs the tests *and* builds the Docker image, a CLI, and a container. The interactive above is the pipeline and its honest per-stage numbers.
+Clean package layout, **32 unit tests**, GitHub Actions CI that runs the tests *and* builds the Docker image, a CLI, and a container. The interactive above is the pipeline and its per-stage numbers.
