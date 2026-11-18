@@ -1,13 +1,5 @@
 ---
-// On-site email capture.
-//
-// ENDPOINT is the only line to change. Left empty, this renders a Substack fallback
-// rather than a form that goes nowhere — a dead form is worse than no form.
-//
-// To own the list rather than Substack's, set ENDPOINT to the form action of whichever
-// provider is signed up for (Buttondown, MailerLite, Kit, Listmonk — each gives a POST
-// URL taking an `email` field). Nothing else here needs to change.
-const ENDPOINT = '';
+// Email sign-up for new posts. Posts live on Substack, so this links there.
 
 const SUBSTACK = 'https://belalzaky.substack.com';
 
@@ -31,25 +23,9 @@ const {
     <p class="capture-blurb">{blurb}</p>
   </div>
 
-  {ENDPOINT ? (
-    <form class="capture-form" action={ENDPOINT} method="post">
-      <label class="sr-only" for="capture-email">Email address</label>
-      <input
-        class="capture-input"
-        id="capture-email"
-        type="email"
-        name="email"
-        placeholder="you@example.com"
-        autocomplete="email"
-        required
-      />
-      <button class="btn btn-primary" type="submit">Subscribe</button>
-    </form>
-  ) : (
-    <a class="btn btn-primary capture-link" href={SUBSTACK} target="_blank" rel="noopener noreferrer">
-      Subscribe on Substack
-    </a>
-  )}
+  <a class="btn btn-primary capture-link" href={SUBSTACK} target="_blank" rel="noopener noreferrer">
+    Subscribe on Substack
+  </a>
 </section>
 
 <style>
@@ -75,25 +51,7 @@ const {
     color: var(--body);
   }
 
-  .capture-form {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    flex: 0 1 420px;
-  }
 
-  .capture-input {
-    flex: 1 1 14rem;
-    min-width: 0;
-    min-height: 48px;
-    font: inherit;
-    font-size: 15px;
-    color: var(--text);
-    background: var(--bg);
-    border: 1px solid var(--border2);
-    border-radius: 999px;
-    padding: 0 18px;
-  }
 
   .capture-link {
     flex: 0 0 auto;
@@ -104,10 +62,6 @@ const {
       padding: 24px 20px;
       flex-direction: column;
       align-items: flex-start;
-    }
-    .capture-form {
-      flex: 1 1 auto;
-      width: 100%;
     }
   }
 </style>

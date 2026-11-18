@@ -5,7 +5,6 @@ tags: ["Python", "SQL", "SQLite", "openFDA API"]
 date: 2025-08-01
 featured: true
 github: "https://github.com/belalzaky/faers-sql"
-image: "/projects/faers-sql.png"
 ---
 
 ## What I did

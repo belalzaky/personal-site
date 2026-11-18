@@ -5,7 +5,6 @@ tags: ["Python", "pandas", "openFDA API"]
 date: 2025-09-01
 featured: true
 github: "https://github.com/belalzaky/faers-signal"
-image: "/projects/faers-signal.png"
 ---
 
 ## What it does

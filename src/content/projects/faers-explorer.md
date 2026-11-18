@@ -6,7 +6,6 @@ date: 2025-10-01
 featured: true
 link: "https://belalzaky-faers.streamlit.app/"
 github: "https://github.com/belalzaky/faers-explorer"
-image: "/projects/zantac_trend.png"
 ---
 
 ## What it does

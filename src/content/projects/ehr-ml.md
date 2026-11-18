@@ -5,7 +5,6 @@ tags: ["Python", "scikit-learn", "pandas"]
 date: 2025-06-01
 featured: true
 github: "https://github.com/belalzaky/ehr-ml"
-image: "/projects/ehr-ml.png"
 ---
 
 ## What it does

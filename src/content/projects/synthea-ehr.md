@@ -5,7 +5,6 @@ tags: ["Python", "SQL", "SQLite", "Synthea"]
 date: 2025-07-01
 featured: true
 github: "https://github.com/belalzaky/synthea-ehr"
-image: "/projects/synthea-ehr.png"
 ---
 
 ## What I did

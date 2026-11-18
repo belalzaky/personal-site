@@ -1,7 +1,7 @@
 // Case framing for every project card — the single source of truth for both the homepage
 // featured band and /projects. Keyed by project slug so the two can never drift.
 //
-// FOUR LAYERS, IN READING ORDER. The point is that a reader who stops at any layer still
+// THREE LAYERS, IN READING ORDER. The point is that a reader who stops at any layer still
 // leaves impressed, and that no layer contradicts a deeper one:
 //
 //   stake    — plain English, no jargon, no unexplained numbers. Must contain a surprise.
@@ -9,8 +9,6 @@
 //   finding  — the number, now that it has a frame to land in.
 //   method   — the named techniques, compressed. Rendered in a secondary treatment: a
 //              specialist scans it to check the work is real, a non-specialist's eye passes over.
-//   decision — therefore what. The line that turns a result into a judgement. This is the
-//              layer that separates a research student from a consulting candidate.
 //
 // Rule when editing: the stake must be true at the same standard as the method. Simplifying
 // the language is allowed; simplifying the claim is not.
