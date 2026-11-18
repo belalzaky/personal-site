@@ -1,550 +1,116 @@
 ---
 import Base from '../layouts/Base.astro';
-import Photo from '../components/Photo.astro';
-import McFlow from '../components/McFlow.astro';
-import { getCollection } from 'astro:content';
-import { now, nowUpdated } from '../data/now';
-import type { PhotoName } from '../data/photos';
-
-// Copy below is from the v2 Home boards (agreed 15 Oct 2026), verbatim.
-
-const triptych: { name: PhotoName; pos: string; alt: string; cap: string }[] = [
-  { name: 'regent-street', pos: '50% 55%', alt: 'Black-and-white London street with stone buildings and a black cab', cap: 'London' },
-  { name: 'plane-window', pos: '50% 50%', alt: 'A plane window at dusk, the last orange light on the horizon', cap: 'In between' },
-  { name: 'dubai-drive', pos: '50% 30%', alt: 'Driving through Dubai at night, towers ahead and the dashboard glowing', cap: 'Dubai' },
-];
-
-type Tile =
-  | { name: PhotoName; pos: string; alt: string; wide?: boolean; video?: undefined }
-  | { video: string; poster: string; pos: string; alt: string; wide?: undefined; name?: undefined };
-
-// Collage groups in reading order. Desktop places them on a 5-column grid in pairs
-// (Wellness + Coffee, then Food + Photography); phones show each group in turn.
-const groups: { label: string; cap: string; tiles: Tile[] }[] = [
-  {
-    label: 'Wellness', cap: 'Training most evenings.',
-    tiles: [
-      { name: 'gym-interior', pos: '50% 78%', alt: 'A gym floor with treadmills, racks and murals' },
-      { name: 'gym-mirror', pos: '50% 62%', alt: 'Mirror selfie in a gym, phone covering the face' },
-    ],
-  },
-  {
-    label: 'Coffee', cap: 'Coffee, and the places around it.',
-    tiles: [
-      { name: 'coffee-espresso', pos: '45% 50%', alt: 'An espresso and a pair of earphones on a grey table, seen from above' },
-      { name: 'laptop-espresso', pos: '60% 50%', wide: true, alt: 'A closed laptop and an espresso on a wooden café table, seen from above' },
-    ],
-  },
-  {
-    label: 'Food', cap: 'Meal prep for the week.',
-    tiles: [
-      { video: '/media/cooking-loop.mp4', poster: '/photos/cooking-poster.jpg', pos: '50% 70%', alt: 'Looping clip of a chopping board with gnocchi, salami, cherries and strawberries' },
-      { name: 'plate', pos: '50% 50%', alt: 'A plate of rice, spiced mince and roasted peppers' },
-    ],
-  },
-  {
-    label: 'Photography', cap: 'Shot on iPhone 17 Pro.',
-    tiles: [
-      { name: 'atrium', pos: '50% 50%', alt: 'Looking up through a glass atrium roof between dark steel-framed walls' },
-      { name: 'lambo', pos: '45% 65%', wide: true, alt: 'A dark grey Lamborghini on a London street' },
-    ],
-  },
-];
-
-const finds = [
-  { big: '46%', href: '/projects/rwe-causal', text: 'A painkiller looked barely riskier for your kidneys than paracetamol. It was twice as risky — the obvious analysis missed 46% of the harm.' },
-  { big: '80→54%', href: '/projects/pv-intake', text: 'I gave up coverage on purpose. The extra matches were wrong codes, and a wrong code looks exactly like evidence.' },
-  { big: '0.71', href: '/projects/adr-reader', text: 'The most advanced model finished last. Finding drug side effects in medical text, a zero-shot LLM scored 0.71; a specialist model won with 0.83.' },
-];
-
-const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-const posts = (await getCollection('posts'))
-  .filter((p) => !!p.data.url)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+import { now, placementStart } from '../data/now';
+import { words } from '../data/index-words';
+const first = words[0];
 ---
 
-<Base
-  title="Belal Zaky — Health. Tech. Build. Lifestyle."
-  description="MSci Pharmacology at King's. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee."
->
-  <Fragment slot="head">
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Belal Zaky",
-      "jobTitle": "Pharmacology student",
-      "url": "https://belalzaky.uk",
-      "alumniOf": {
-        "@type": "CollegeOrUniversity",
-        "name": "King's College London"
-      },
-      "sameAs": [
-        "https://linkedin.com/in/belalzaky",
-        "https://instagram.com/belalzakyuk",
-        "https://github.com/belalzaky",
-        "https://belalzaky.substack.com"
-      ]
-    })} />
-  </Fragment>
-
-  <!-- HERO -->
-  <section class="hero wrap" id="top">
-    <h1 class="hero-h1">Health. Tech. Build. Lifestyle.<br /><span class="muted">London | Dubai.</span></h1>
-    <p class="hero-sub lead">MSci Pharmacology at King's. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee.</p>
-    <div class="btn-row hero-ctas">
-      <a href="/about" class="btn btn-primary">About me</a>
-      <a href="/projects" class="btn btn-outline">See my work</a>
-    </div>
-  </section>
-
-  <!-- LONDON | DUBAI -->
-  <section class="wrap sect" aria-label="London, in between, Dubai">
-    <div class="tri">
-      {triptych.map((t) => (
-        <figure class="tri-fig">
-          <div class="tile tri-tile">
-            <Photo name={t.name} alt={t.alt} pos={t.pos} sizes="(max-width: 640px) 33vw, 340px" eager />
-          </div>
-          <figcaption class="tri-cap">{t.cap}</figcaption>
-        </figure>
-      ))}
-    </div>
-  </section>
-
-  <!-- NOW -->
-  <section class="wrap sect" aria-labelledby="now-h" data-fade>
-    <div class="now-head">
-      <p class="label">Now</p>
-      <p class="now-updated">{nowUpdated}</p>
-    </div>
-    <h2 id="now-h" class="h2">This month.</h2>
-    <div class="rows now-rows">
+<Base title="Belal Zaky" shape="screen" current="index"
+  meta={first.meta.map(([k, v, href]) => ({ k, v, href }))}>
+  <main class="main main--col idx">
+    <h1 class="sr-only">Belal Zaky: health, tech, build, lifestyle. London | Dubai.</h1>
+    <div class="info in-anim">
       {now.map((r) => (
-        <div class="row">
-          <span class="row-key">{r.k}</span>
-          <span class="row-val">{r.v}</span>
-        </div>
+        <div class="c half"><span class="lbl top">now · {r.k}</span><p class="small">{r.v}</p></div>
       ))}
-    </div>
-  </section>
-
-  <!-- MISSION CONTROL -->
-  <section class="wrap sect" id="mc" aria-labelledby="mc-h" data-fade>
-    <div class="mc-intro">
-      <div class="mc-text">
-        <p class="label">Mission Control</p>
-        <h2 id="mc-h" class="h2">Every productivity app I tried was built for someone else. <span class="muted">So I built my own.</span></h2>
-        <p class="copy mc-copy">Mission Control is the desktop app I run my week on. My notes are the source of truth; an assistant prepares drafts and tasks, and nothing goes out until I approve it.</p>
+      <div class="c wide" data-cd={placementStart}>
+        <span class="lbl top">until the placement year starts · sep 2027</span>
+        <div class="cd"><b data-u="d">0</b><span>days</span><b data-u="h">00</b><span>h</span><b data-u="m">00</b><span>m</span></div>
       </div>
-      <figure class="tile mc-fig">
-        <Photo name="working-portrait" alt="Belal at his desk at night in headphones, working across two monitors and a laptop" sizes="(max-width: 900px) 100vw, 440px" />
-      </figure>
     </div>
-    <div class="mc-flow">
-      <McFlow />
-    </div>
-    <a href="/mission-control" class="text-link more">How it works <span class="arrow" aria-hidden="true">→</span></a>
-  </section>
-
-  <!-- OUTSIDE WORK -->
-  <section class="wrap sect" id="life" aria-labelledby="life-h" data-fade>
-    <p class="label">Outside work</p>
-    <h2 id="life-h" class="h2">The rest of the week.</h2>
-    <div class="collage">
-      {groups.map((g, gi) => (
-        <>
-          <p class:list={['c-label', `c-label--${gi}`]}><span class="c-label-name">{g.label}</span> · {g.cap}</p>
-          {g.tiles.map((t, ti) => (
-            <div class:list={['tile', 'tile--zoom', 'c-tile', `c-tile--${gi}-${ti}`, { 'c-tile--wide': t.wide }]}>
-              {t.video ? (
-                <video
-                  src={t.video}
-                  poster={t.poster}
-                  autoplay
-                  muted
-                  loop
-                  playsinline
-                  preload="metadata"
-                  width="540"
-                  height="960"
-                  aria-label={t.alt}
-                  data-loop
-                  style={`object-position: ${t.pos};`}
-                ></video>
-              ) : (
-                <Photo name={t.name!} alt={t.alt} pos={t.pos} sizes={t.wide ? '(max-width: 640px) 50vw, 440px' : '(max-width: 640px) 50vw, 220px'} />
-              )}
-            </div>
-          ))}
-        </>
-      ))}
-    </div>
-    <a href="/about" class="text-link more">More about me <span class="arrow" aria-hidden="true">→</span></a>
-  </section>
-
-  <!-- WHAT I'VE FOUND -->
-  <section class="wrap sect" id="work" aria-labelledby="work-h" data-fade>
-    <p class="label">What I've found</p>
-    <h2 id="work-h" class="h2">Projects on drug-safety data. <span class="muted">Three results that surprised me.</span></h2>
-    <div class="finds">
-      {finds.map((f) => (
-        <a href={f.href} class="row-link find">
-          <span class="find-big">{f.big}</span>
-          <span class="find-text">{f.text}</span>
-          <span class="find-cta">Read the case <span class="arrow" aria-hidden="true">→</span></span>
+    <div class="words in-anim">
+      {words.map((w, i) => (
+        <a class:list={['wrow', { on: i === 0 }]} href={w.href} data-w={i} data-meta={JSON.stringify(w.meta)} data-n={w.photos.length}>
+          <span class="bg" aria-hidden="true">
+            {w.photos.map((p, n) => (
+              <picture>
+                <source media="(max-width: 700px)" srcset={`/photos/index/${p}-p.jpg`} />
+                <img src={`/photos/index/${p}-d.jpg`} alt="" class:list={{ show: n === 0 }} loading={i === 0 && n === 0 ? 'eager' : 'lazy'} decoding="async" />
+              </picture>
+            ))}
+          </span>
+          <span class="lbl sub">0{i + 1} · {w.sub}</span>
+          <span class="w" aria-hidden="true">{[...(w.w + '.')].map((x, j) => <span class="ch" style={`--i:${j}`} data-c={x}>{x}</span>)}</span>
+          <span class="sr-only">{w.w}: {w.sub}. Go to {w.go}.</span>
+          <span class="lbl gol">{w.go} <span class="arr">→</span></span>
+          <span class="lbl cap"></span>
         </a>
       ))}
     </div>
-    <a href="/projects" class="text-link more">All projects <span class="arrow" aria-hidden="true">→</span></a>
-  </section>
-
-  <!-- WRITING -->
-  <section class="wrap sect" id="writing" aria-labelledby="writing-h" data-fade>
-    <h2 id="writing-h" class="label">Writing</h2>
-    <div class="posts">
-      {posts.map((p) => (
-        <a href={p.data.url} class="row-link post" target="_blank" rel="noopener noreferrer">
-          <span class="post-date">{fmt(p.data.date)}</span>
-          <span class="post-title">{p.data.title}</span>
-          <span class="post-where">Substack ↗</span>
-        </a>
-      ))}
-    </div>
-    <a href="/writing" class="text-link more">All writing <span class="arrow" aria-hidden="true">→</span></a>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="wrap sect" id="contact" aria-labelledby="contact-h" data-fade>
-    <div class="card contact">
-      <h2 id="contact-h" class="contact-h">Looking for a 2027/28 placement year in pharma.</h2>
-      <p class="copy contact-copy">Drug safety, real-world evidence, clinical data. Happy to talk, or to show you Mission Control running.</p>
-      <div class="btn-row contact-ctas">
-        <a href="mailto:hello@belalzaky.uk" class="btn btn-primary">hello@belalzaky.uk</a>
-        <a href="https://linkedin.com/in/belalzaky" class="btn btn-outline btn-social" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href="https://instagram.com/belalzakyuk" class="btn btn-outline btn-social" target="_blank" rel="noopener noreferrer">Instagram</a>
-      </div>
-    </div>
-  </section>
+  </main>
 </Base>
 
 <style>
-  /* Hero */
-  .hero {
-    padding-top: 120px;
-    padding-bottom: 88px;
-  }
-
-  .hero-h1 {
-    max-width: 860px;
-    font-size: var(--fs-home-h1);
-    line-height: 1.08;
-    font-weight: 500;
-    letter-spacing: -0.025em;
-  }
-
-  .hero-sub {
-    margin-top: 20px;
-    max-width: 560px;
-  }
-
-  .hero-ctas {
-    margin-top: 32px;
-  }
-
-  .hero-status {
-    margin-top: 24px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--label);
-  }
-
-  .hero-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    flex: 0 0 auto;
-  }
-
-  /* Triptych */
-  .tri {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .tri-fig {
-    flex: 1 1 0%;
-    min-width: 0;
-  }
-
-  .tri-tile {
-    aspect-ratio: 0.8;
-  }
-
-  .tri-cap {
-    margin-top: 8px;
-    font-size: 13px;
-    color: var(--label);
-  }
-
-  .tile :global(picture) {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Now */
-  .now-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .now-updated {
-    font-size: 13px;
-    color: var(--label);
-  }
-
-  .now-rows {
-    margin-top: 24px;
-  }
-
-  /* Mission Control */
-  .mc-intro {
-    display: flex;
-    gap: 48px;
-    align-items: center;
-  }
-
-  .mc-text {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .mc-copy {
-    margin-top: 16px;
-    max-width: 640px;
-  }
-
-  .mc-fig {
-    flex: 0 0 440px;
-    aspect-ratio: 16 / 10;
-  }
-
-  .mc-flow {
-    margin-top: 28px;
-  }
-
-  .more {
-    margin-top: 24px;
-  }
-
-  #mc .more {
-    margin-top: 20px;
-  }
-
-  /* Collage: desktop is a 5-column grid placed explicitly, pairs of groups side by side */
-  .collage {
-    margin-top: 28px;
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .c-label {
-    align-self: end;
-    font-size: 15px;
-    line-height: 1.45;
-    color: var(--body);
-  }
-
-  .c-label-name {
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .c-tile {
-    aspect-ratio: 0.8;
-    min-width: 0;
-  }
-
-  .c-tile--wide {
-    aspect-ratio: auto;
-  }
-
-  .c-tile--wide :global(picture),
-  .c-tile--wide video {
-    position: absolute;
-    inset: 0;
-  }
-
-  .c-label--0 { grid-area: 1 / 1 / 2 / 3; }
-  .c-label--1 { grid-area: 1 / 3 / 2 / 6; }
-  .c-tile--0-0 { grid-area: 2 / 1; }
-  .c-tile--0-1 { grid-area: 2 / 2; }
-  .c-tile--1-0 { grid-area: 2 / 3; }
-  .c-tile--1-1 { grid-area: 2 / 4 / 3 / 6; }
-  .c-label--2 { grid-area: 3 / 1 / 4 / 3; margin-top: 20px; }
-  .c-label--3 { grid-area: 3 / 3 / 4 / 6; margin-top: 20px; }
-  .c-tile--2-0 { grid-area: 4 / 1; }
-  .c-tile--2-1 { grid-area: 4 / 2; }
-  .c-tile--3-0 { grid-area: 4 / 3; }
-  .c-tile--3-1 { grid-area: 4 / 4 / 5 / 6; }
-
-  /* Findings */
-  .finds,
-  .posts {
-    border-top: 1px solid var(--border);
-  }
-
-  .finds {
-    margin-top: 28px;
-  }
-
-  .find {
-    display: grid;
-    grid-template-columns: 200px 1fr auto;
-    align-items: baseline;
-    gap: 32px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .find-big {
-    font-size: 40px;
-    line-height: 1;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--accent);
-  }
-
-  .find-text {
-    font-size: var(--fs-body);
-    line-height: 1.55;
-    color: var(--text);
-  }
-
-  .find-cta {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--accent);
-    white-space: nowrap;
-  }
-
-  /* Writing */
-  .posts {
-    margin-top: 16px;
-  }
-
-  .post {
-    display: grid;
-    grid-template-columns: 120px 1fr auto;
-    align-items: baseline;
-    gap: 24px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .post-date {
-    font-size: 13px;
-    color: var(--label);
-    white-space: nowrap;
-  }
-
-  .post-title {
-    font-size: var(--fs-body);
-    line-height: 1.5;
-    color: var(--text);
-  }
-
-  .post-where {
-    font-size: 14px;
-    color: var(--label);
-  }
-
-  /* Contact */
-  .contact {
-    padding: 48px;
-  }
-
-  .contact-h {
-    max-width: 640px;
-    font-size: var(--fs-h2);
-    line-height: 1.2;
-  }
-
-  .contact-copy {
-    margin-top: 12px;
-    max-width: 600px;
-  }
-
-  .contact-ctas {
-    margin-top: 24px;
-  }
-
-  .btn-social {
-    padding: 0 20px;
-    font-weight: 400;
-  }
-
-  @media (max-width: 900px) {
-    .mc-intro {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 24px;
-    }
-    .mc-fig {
-      flex: none;
-      width: 100%;
-      aspect-ratio: 1.6;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .hero {
-      padding-top: 56px;
-      padding-bottom: 48px;
-    }
-
-    .tri { gap: 8px; }
-
-    .collage {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-    .collage .c-tile { grid-area: auto; }
-    .collage .c-label {
-      grid-area: auto;
-      grid-column: 1 / -1;
-      margin-top: 16px;
-    }
-    .collage .c-label--0 { margin-top: 0; }
-    .c-tile,
-    .c-tile--wide {
-      aspect-ratio: 1;
-    }
-
-    .find {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 22px 0;
-    }
-    .find-big { font-size: 34px; }
-
-    .post {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 16px 0;
-    }
-
-    .contact { padding: 24px 20px; }
+  .idx { gap: 1px; }
+  .info { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; flex: 0 0 104px; }
+  .info .wide { grid-column: span 2; }
+  .cd { display: flex; align-items: baseline; gap: 10px; font-variant-numeric: tabular-nums; flex-wrap: wrap; }
+  .cd b { font-size: clamp(26px, 2.9vw, 42px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
+  .cd span { font-family: var(--mono); font-size: 12px; color: var(--mute); }
+  .words { flex: 1; display: flex; flex-direction: column; gap: 1px; min-height: 0; }
+  .wrow { position: relative; flex: 0 0 clamp(56px, 6.2vw, 84px); min-height: 0; width: 100%; background: var(--cell); display: grid; grid-template-columns: minmax(150px, 16.6%) 1fr auto; gap: 12px; align-items: center; padding: 0 12px; overflow: hidden; transition: flex-grow .7s var(--out); }
+  .wrow.on { flex-grow: 1; }
+  .bg { position: absolute; left: 0; right: 0; top: 50%; aspect-ratio: 3 / 1; transform: translateY(-50%); background: var(--photo); opacity: 0; transition: opacity .5s ease; }
+  .bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.1s ease; }
+  .bg img.show { opacity: 1; }
+  .bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.1) 70%); }
+  .wrow.on .bg { opacity: 1; }
+  .wrow > .lbl, .w { position: relative; z-index: 1; transition: color .3s ease; }
+  .w { font-size: clamp(30px, 4.4vw, 64px); font-weight: 560; letter-spacing: -.045em; line-height: 1.14; display: flex; overflow: hidden; height: 1.14em; white-space: nowrap; }
+  .ch { display: inline-block; position: relative; transition: transform .55s var(--out); transition-delay: calc(var(--i) * 22ms); }
+  .ch::after { content: attr(data-c); position: absolute; left: 0; top: 100%; }
+  .wrow.on .ch { transform: translateY(-100%); }
+  .wrow.on .w, .wrow.on > .lbl { color: var(--onph); }
+  .wrow > .cap { position: absolute; right: 12px; bottom: 10px; z-index: 1; opacity: 0; transition: opacity .3s ease; }
+  .wrow.on > .cap { opacity: .85; }
+  .wrow:focus-visible { outline-offset: -3px; }
+  @media (max-width: 700px) {
+    .info { grid-template-columns: 1fr 1fr; flex: 0 0 auto; }
+    .info .c { min-height: 96px; }
+    .wrow { flex: 0 0 80px; grid-template-columns: 1fr auto; gap: 0 8px; align-content: center; align-items: end; }
+    .wrow > .sub { grid-column: 1 / -1; }
+    .wrow.on { flex: 0 0 75vw; }
+    .bg { aspect-ratio: 4 / 3; }
+    .w { font-size: 11vw; }
   }
 </style>
+
+<script>
+  import { setMeta, reduced } from '../scripts/site';
+  // countdown, a minute at a time
+  const cd = document.querySelector<HTMLElement>('[data-cd]');
+  if (cd) {
+    const target = new Date(cd.dataset.cd!).getTime();
+    const tick = () => {
+      const ms = Math.max(0, target - Date.now());
+      const set = (u: string, v: string) => { const e = cd.querySelector(`[data-u="${u}"]`); if (e) e.textContent = v; };
+      set('d', String(Math.floor(ms / 864e5)));
+      set('h', String(Math.floor(ms / 36e5) % 24).padStart(2, '0'));
+      set('m', String(Math.floor(ms / 6e4) % 60).padStart(2, '0'));
+    };
+    tick(); setInterval(tick, 20000);
+  }
+  // the four words: hover or focus opens a row onto its photos, which fade every 3 s;
+  // on a phone the first tap opens the row and the second follows the link
+  const rows = [...document.querySelectorAll<HTMLAnchorElement>('.wrow')];
+  const idx = rows.map(() => 0);
+  let open = 0, iv = 0;
+  const cap = (r: HTMLElement) => { const i = +r.dataset.w!, n = +r.dataset.n!; r.querySelector('.cap')!.textContent = `${idx[i] + 1}/${n}`; };
+  const show = (r: HTMLElement) => { const i = +r.dataset.w!; r.querySelectorAll('.bg img').forEach((im, n) => im.classList.toggle('show', n === idx[i])); cap(r); };
+  const tick = () => { const r = rows[open], n = +r.dataset.n!; if (n < 2) return; idx[open] = (idx[open] + 1) % n; show(r); };
+  const cycle = () => { clearInterval(iv); if (!reduced) iv = window.setInterval(tick, 3000); };
+  const activate = (r: HTMLElement) => {
+    const i = +r.dataset.w!;
+    if (open === i && r.classList.contains('on')) return;
+    open = i; rows.forEach((x) => x.classList.toggle('on', x === r));
+    idx[i] = 0; show(r); setMeta(JSON.parse(r.dataset.meta!)); cycle();
+  };
+  const touch = window.matchMedia('(hover: none)').matches;
+  rows.forEach((r) => {
+    cap(r);
+    r.addEventListener('mouseenter', () => activate(r));
+    r.addEventListener('focus', () => activate(r));
+    r.addEventListener('click', (e) => { if (touch && !r.classList.contains('on')) { e.preventDefault(); activate(r); } });
+  });
+  cycle();
+</script>

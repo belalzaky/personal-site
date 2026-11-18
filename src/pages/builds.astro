@@ -1,0 +1,198 @@
+---
+import Base from '../layouts/Base.astro';
+// Builds: Mission Control and Notch as two rows, like the four words on the index. The open
+// row holds one sentence, the steps, and the app running. The apps are drawn here, not
+// recorded. /builds#notch opens Notch.
+const apps = [
+  { k: 'mission-control', name: 'Mission Control', kind: 'desktop app',
+    big: 'Every productivity app I tried was built around someone else’s way of working, so I built my own.',
+    lead: 'It reads my notes, an assistant prepares drafts and tasks from them, and nothing goes out until I approve it.',
+    steps: [['my notes', 'plain text files'], ['local server', 'reads them, on my mac'], ['dashboard', 'today and projects'], ['assistant', 'drafts, never sends']],
+    meta: [['app', 'mission control'], ['runs on', 'my mac'], ['reads', 'my notes'], ['sends', 'nothing without approval'], ['since', '2026'], ['code', 'private']] },
+  { k: 'notch', name: 'Notch', kind: 'macos app',
+    big: 'A notch app of my own, wired to Mission Control.',
+    lead: 'Closed, it shows only a running focus timer and what’s playing. Open, it has my day, music, what’s next, a focus timer and my calendar.',
+    steps: [['closed', 'a timer, nothing else'], ['home', 'my day'], ['music', 'what’s playing'], ['focus', 'a timer ring'], ['calendar', 'what’s next']],
+    meta: [['app', 'notch'], ['runs on', 'macos'], ['built in', 'swift'], ['talks to', 'mission control'], ['since', 'oct 2026'], ['code', 'private']] },
+];
+const tabs = (k: string) => ['home', 'music', 'up next', 'focus', 'calendar'].map((t) => (t === k ? `<b>${t}</b>` : `<span>${t}</span>`)).join('');
+---
+
+<Base title="Builds · Belal Zaky" description="Mission Control and Notch: the two apps I built to run my week." shape="screen" current="builds"
+  meta={apps[0].meta.map(([k, v]) => ({ k, v }))}>
+  <main class="main main--col in-anim" id="builds">
+    <h1 class="sr-only">Builds</h1>
+    {apps.map((a, i) => (
+      <section class:list={['arow', 'anim', { on: i === 0 }]} id={a.k} data-app={a.k} data-meta={JSON.stringify(a.meta)} aria-labelledby={`h-${a.k}`}>
+        <button type="button" class="ahead" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`b-${a.k}`}>
+          <span class="lbl">0{i + 1} · {a.kind}</span><span class="w" id={`h-${a.k}`}>{a.name}.</span><span class="lbl st">{i === 0 ? 'playing' : 'open →'}</span>
+        </button>
+        <div class="abody" id={`b-${a.k}`}>
+          <div>
+            <div class="intro"><p class="big">{a.big}</p><p class="small">{a.lead}</p></div>
+            <div class="lines slide steps"><span class="bar"></span>
+              {a.steps.map(([t, s], n) => (
+                <button type="button" class="ln sm" data-step={n}><span class="lbl">0{n + 1}</span><span class="mm"><span class="t">{t}</span><span class="lbl">{s}</span></span></button>
+              ))}
+            </div>
+          </div>
+          <div><div class="host">
+            {a.k === 'mission-control' ? (
+              <div class="win" role="img" aria-label="A drawing of Mission Control: notes are read, tasks appear, an assistant drafts a reply and waits for approval.">
+                <div class="wbar"><span>mission control</span><span class="lbl wstate"></span></div>
+                <div class="wbody">
+                  <div class="wside"><span>notes</span><span>server</span><span>today</span><span>assistant</span></div>
+                  <div class="wmain">
+                    <div class="pane"><span class="lbl">today.md</span><p class="note">— reply to the course feedback thread<br />— book a shift this week<br />— read 20 pages<span class="caret"></span></p></div>
+                    <div class="pane"><span class="lbl">local server · on my mac</span><div class="prow"><span>today.md</span><span class="lbl">read</span></div><div class="prow"><span>projects</span><span class="lbl">read</span></div><div class="prow"><span>3 tasks found</span><span class="lbl">1 needs a reply</span></div></div>
+                    <div class="pane"><span class="lbl">today</span><div class="prow"><span>☐ Reply to the course feedback thread</span><span class="lbl">draft</span></div><div class="prow"><span>☐ Book a shift this week</span><span class="lbl">today</span></div><div class="prow"><span>☐ Read 20 pages</span><span class="lbl">tonight</span></div></div>
+                    <div class="pane"><span class="lbl">assistant · draft, never sends</span><div class="pdraft">Hi all, thanks for the feedback so far. I’ll take the points on lab timings to the staff–student committee next month.</div><div class="apr"><span class="lbl apst" aria-live="polite">■ waiting for me</span><button type="button" class="approve">approve</button></div></div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div class="mac" role="img" aria-label="A drawing of Notch: a black shape at the top of a Mac screen that opens to show the day, music, a focus timer and the calendar.">
+                <div class="mbar"><span>finder &nbsp; file &nbsp; edit &nbsp; view</span><span>wifi &nbsp; battery</span></div>
+                <div class="nt" data-s="0">
+                  <div class="np closed"><span>▶</span><span class="tm">24:13</span></div>
+                  <div class="np"><div class="tabs" set:html={tabs('home')} /><div class="r"><span>Focus</span><span class="lbl"><span class="tm">24:13</span> left</span></div><div class="r"><span>Read · 20 pages</span><span class="lbl">not yet</span></div><div class="r"><span>Lab, 10:00</span><span class="lbl">tomorrow</span></div></div>
+                  <div class="np"><div class="tabs" set:html={tabs('music')} /><div class="mus"><div class="cover"></div><div style="flex:1"><div>Now playing</div><span class="lbl">from any app</span></div><span class="bars"><i></i><i></i><i></i></span></div></div>
+                  <div class="np"><div class="tabs" set:html={tabs('focus')} /><div class="ring"><span class="tm">24:13</span></div></div>
+                  <div class="np"><div class="tabs" set:html={tabs('calendar')} /><div class="r"><span>Lab</span><span class="lbl">tue 10:00</span></div><div class="r"><span>Deadline</span><span class="lbl">thu 16:00</span></div><div class="r"><span>Class test</span><span class="lbl">fri 13:30</span></div></div>
+                </div>
+                <span class="lbl mcap"></span>
+              </div>
+            )}
+          </div></div>
+        </div>
+      </section>
+    ))}
+  </main>
+</Base>
+
+<style>
+  #builds { gap: 1px; }
+  .arow { position: relative; display: flex; flex-direction: column; flex: 0 0 clamp(64px, 6.2vw, 84px); min-height: 0; background: var(--cell); overflow: hidden; transition: flex-grow .7s var(--out); }
+  .arow.on { flex-grow: 1; }
+  .ahead { flex: 0 0 clamp(64px, 6.2vw, 84px); display: grid; grid-template-columns: minmax(150px, 16.6%) 1fr auto; gap: 12px; align-items: center; padding: 0 12px; width: 100%; }
+  .ahead .w { font-size: clamp(30px, 4.4vw, 64px); font-weight: 560; letter-spacing: -.045em; line-height: 1.14; white-space: nowrap; transition: transform .6s var(--out); }
+  .arow:not(.on) .ahead:hover .w { transform: translateX(6px); }
+  .abody { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); gap: 1px; background: var(--gap); border-top: 1px solid var(--gap); opacity: 0; transition: opacity .4s ease; }
+  .arow.on .abody { opacity: 1; transition-delay: .25s; }
+  .abody > div { background: var(--cell); min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+  .intro { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .intro .big { font-size: 19px; }
+  .intro .small { color: var(--mute); }
+  .steps { flex: 1; min-height: 0; border-top: 1px solid var(--gap); }
+  .host { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 20px; background: var(--cell2); }
+  .win { width: min(100%, 600px); height: min(100%, 380px); background: var(--inv); color: var(--invfg); display: flex; flex-direction: column; font-size: 14px; }
+  .wbar { display: flex; justify-content: space-between; gap: 8px; padding: 8px 12px; border-bottom: 1px solid color-mix(in srgb, var(--invfg) 18%, transparent); font-family: var(--mono); font-size: 11px; }
+  .win .lbl { color: inherit; opacity: .6; }
+  .wbody { flex: 1; display: grid; grid-template-columns: 104px 1fr; min-height: 0; }
+  .wside { display: flex; flex-direction: column; border-right: 1px solid color-mix(in srgb, var(--invfg) 18%, transparent); font-family: var(--mono); font-size: 11px; padding: 6px 0; }
+  .wside span { padding: 6px 12px; opacity: .5; transition: opacity .2s ease, background .2s ease; }
+  .wside span.on { opacity: 1; background: color-mix(in srgb, var(--invfg) 14%, transparent); }
+  .wmain { position: relative; min-height: 0; overflow: hidden; }
+  .pane { position: absolute; inset: 0; padding: 14px; display: flex; flex-direction: column; gap: 8px; opacity: 0; transform: translateY(6px); transition: opacity .35s ease, transform .5s var(--out); pointer-events: none; }
+  .pane.on { opacity: 1; transform: none; pointer-events: auto; }
+  .note { font-family: var(--mono); font-size: 13px; line-height: 1.8; margin: 0; }
+  .prow { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid color-mix(in srgb, var(--invfg) 18%, transparent); }
+  .pane.on .prow { animation: cellin .5s var(--out) both; }
+  .pane.on .prow:nth-of-type(2) { animation-delay: .18s; }
+  .pane.on .prow:nth-of-type(3) { animation-delay: .36s; }
+  .pdraft { border: 1px solid color-mix(in srgb, var(--invfg) 35%, transparent); padding: 10px 12px; }
+  .apr { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: auto; }
+  .approve { font-size: 14px; border: 1px solid var(--invfg); color: var(--invfg); padding: 8px 12px; transition: background .15s ease, color .15s ease, transform 90ms ease; }
+  .approve:hover { background: var(--invfg); color: var(--inv); }
+  .approve:active { transform: scale(.97); }
+  .approve[disabled] { opacity: .35; pointer-events: none; }
+  .caret { display: inline-block; width: 7px; height: 1em; background: currentColor; vertical-align: -2px; margin-left: 3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .mac { position: relative; width: min(100%, 620px); height: min(100%, 360px); background: var(--cell); box-shadow: 0 0 0 1px var(--faint); overflow: hidden; }
+  .mbar { height: 27px; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; font-family: var(--mono); font-size: 11px; color: var(--mute); border-bottom: 1px solid var(--gap); }
+  .nt { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #0B0C0D; color: #FFFFFF; border-radius: 0 0 12px 12px; width: 190px; height: 27px; overflow: hidden; box-shadow: 0 0 0 1px var(--faint); transition: width .6s var(--out), height .6s var(--out), border-radius .6s var(--out); }
+  .nt[data-s="1"], .nt[data-s="4"] { width: 62%; height: 176px; border-radius: 0 0 20px 20px; }
+  .nt[data-s="2"] { width: 62%; height: 128px; border-radius: 0 0 20px 20px; }
+  .nt[data-s="3"] { width: 62%; height: 190px; border-radius: 0 0 20px 20px; }
+  .np { position: absolute; inset: 0; opacity: 0; transition: opacity .2s ease; padding: 10px 16px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; pointer-events: none; }
+  .np.on { opacity: 1; transition-delay: .22s; }
+  .np.closed { flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 0; font-family: var(--mono); font-size: 11.5px; }
+  .tabs { display: flex; gap: 12px; font-family: var(--mono); font-size: 11px; opacity: .55; }
+  .tabs :global(b) { font-weight: 400; text-decoration: underline; text-underline-offset: .25em; }
+  .r { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid rgba(255, 255, 255, .16); }
+  .nt .lbl { color: inherit; opacity: .6; }
+  .mus { display: flex; gap: 12px; align-items: center; }
+  .cover { width: 56px; height: 56px; flex: none; background: rgba(255, 255, 255, .2); }
+  .bars { display: flex; gap: 3px; align-items: flex-end; height: 14px; }
+  .bars i { width: 3px; background: currentColor; animation: bar 1s ease-in-out infinite alternate; }
+  .bars i:nth-child(2) { animation-delay: -.4s; }
+  .bars i:nth-child(3) { animation-delay: -.7s; }
+  @keyframes bar { from { height: 3px; } to { height: 14px; } }
+  .ring { width: 104px; height: 104px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .22); border-top-color: #FFFFFF; display: grid; place-items: center; align-self: center; font-family: var(--mono); font-size: 16px; }
+  .mcap { position: absolute; left: 12px; bottom: 10px; }
+  @media (max-width: 700px) {
+    .arow, .ahead { flex-basis: 64px; }
+    .arow.on { flex: 0 0 auto; }
+    .ahead { grid-template-columns: 1fr auto; }
+    .ahead > .lbl:first-child { display: none; }
+    .ahead .w { font-size: 9vw; }
+    .abody { grid-template-columns: 1fr; }
+    .steps { flex: 0 0 auto; }
+    .host { min-height: 340px; padding: 12px; }
+    .wbody { grid-template-columns: 84px 1fr; }
+    .nt[data-s]:not([data-s="0"]) { width: 88%; }
+  }
+</style>
+
+<script>
+  import { setMeta, slideTo, settle, reduced } from '../scripts/site';
+  const MCSTATE = ['reading my notes', 'local server', 'today', 'a draft is waiting'];
+  const NCAP = ['closed: a running timer, nothing else', 'open: home', 'open: music', 'open: focus', 'open: calendar'];
+  type Demo = { start(): void; stop(): void };
+  function bindDemo(row: HTMLElement): Demo {
+    const app = row.dataset.app!, host = row.querySelector('.host')!;
+    const btns = [...row.querySelectorAll<HTMLElement>('[data-step]')], box = row.querySelector('.steps')!, n = btns.length;
+    let i = -1, t = 0, sent = false, timers: number[] = [];
+    const show = (k: number) => {
+      i = k;
+      if (app === 'mission-control') {
+        host.querySelectorAll('.pane').forEach((p, j) => p.classList.toggle('on', j === k));
+        host.querySelectorAll('.wside span').forEach((s, j) => s.classList.toggle('on', j === k));
+        host.querySelector('.wstate')!.textContent = MCSTATE[k];
+      } else {
+        const nt = host.querySelector<HTMLElement>('.nt')!; nt.dataset.s = String(k);
+        nt.querySelectorAll('.np').forEach((p, j) => p.classList.toggle('on', j === k));
+        host.querySelector('.mcap')!.textContent = NCAP[k];
+      }
+      slideTo(box, btns[k]);
+    };
+    const loop = () => { clearTimeout(t); if (reduced) return; t = window.setTimeout(() => { show((i + 1) % n); loop(); }, app === 'mission-control' && i === 3 ? 5200 : 2600); };
+    btns.forEach((b) => { const on = () => { if (+b.dataset.step! !== i) show(+b.dataset.step!); loop(); }; b.addEventListener('mouseenter', on); b.addEventListener('focus', on); b.addEventListener('click', on); });
+    const ap = host.querySelector<HTMLButtonElement>('.approve');
+    ap?.addEventListener('click', () => {
+      if (sent) return; sent = true;
+      const st = host.querySelector('.apst')!; st.textContent = '□ approved, sent'; ap.textContent = 'sent'; ap.disabled = true; clearTimeout(t);
+      timers.push(window.setTimeout(() => { sent = false; st.textContent = '■ waiting for me'; ap.textContent = 'approve'; ap.disabled = false; show(0); loop(); }, 2600));
+    });
+    if (app === 'notch') { let s = 24 * 60 + 13; setInterval(() => { s = Math.max(0, s - 1); const v = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; host.querySelectorAll('.tm').forEach((e) => (e.textContent = v)); }, 1000); }
+    return { start() { show(0); loop(); }, stop() { clearTimeout(t); timers.forEach(clearTimeout); timers = []; } };
+  }
+  const rows = [...document.querySelectorAll<HTMLElement>('.arow')];
+  const demos = new Map(rows.map((r) => [r.dataset.app!, bindDemo(r)]));
+  let cur: string | null = null, wait = 0;
+  const open = (k: string, first = false) => {
+    if (cur === k) return; cur = k;
+    rows.forEach((r) => {
+      const on = r.dataset.app === k;
+      r.classList.toggle('on', on); demos.get(r.dataset.app!)!.stop();
+      r.querySelector('.st')!.textContent = on ? 'playing' : 'open →';
+      r.querySelector('.ahead')!.setAttribute('aria-expanded', String(on));
+      if (on && !first) setMeta(JSON.parse(r.dataset.meta!));
+    });
+    clearTimeout(wait); wait = window.setTimeout(() => { if (cur === k) demos.get(k)!.start(); }, first ? settle : 500);
+  };
+  rows.forEach((r) => { const h = r.querySelector('.ahead')!, k = r.dataset.app!; h.addEventListener('mouseenter', () => open(k)); h.addEventListener('focus', () => open(k)); h.addEventListener('click', () => open(k)); });
+  const fromHash = location.hash.slice(1);
+  if (fromHash === 'notch') { open('notch', true); setMeta(JSON.parse(rows[1].dataset.meta!)); } else open('mission-control', true);
+  addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h === 'notch' || h === 'mission-control') open(h); });
+</script>

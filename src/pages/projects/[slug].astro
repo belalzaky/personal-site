@@ -38,6 +38,7 @@ const c = projectCases[entry.slug];
   description={entry.data.summary}
   tools={entry.data.tags.join(' · ')}
   github={entry.data.github}
+  year={entry.data.date.getFullYear()}
   stats={d?.stats}
   finding={c?.finding}
   method={c?.method}

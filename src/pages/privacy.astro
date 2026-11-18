@@ -1,152 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
-
-const updated = '25 July 2026';
+const updated = '18 November 2026';
 ---
 
-<Base
-  title="Privacy Policy · Belal Zaky"
-  description="How Mission Control, a personal single-user desktop dashboard, handles the bank statement files it reads."
->
-  <article class="legal container container--prose">
-    <header class="legal-header">
-      <p class="legal-kicker">Legal</p>
-      <h1 class="legal-title">Privacy Policy</h1>
-      <p class="legal-dek">
-        This policy covers <strong>Mission Control</strong>, a personal desktop application I built
-        and use myself. It explains what account data the application handles, where that data is
-        stored, and who can see it.
-      </p>
-      <p class="legal-updated">Last updated {updated}</p>
-    </header>
-
-    <div class="prose">
-      <h2>Who this is</h2>
-      <p>
-        Mission Control is written and operated by Belal Zaky, an individual based in London, United
-        Kingdom. It is not a company, a product, or a service offered to anyone else. Questions about
-        this policy go to <a href="mailto:hello@belalzaky.uk">hello@belalzaky.uk</a>.
-      </p>
-
-      <h2>Who uses the application</h2>
-      <p>
-        I am the only user. There are no accounts, no sign-up, and no way for another person to put
-        their data into it. The only financial records it holds are ones I have exported from my own
-        bank and opened on my own computer. If that ever changes, this policy will be rewritten
-        before it changes, not after.
-      </p>
-
-      <h2>What data is handled</h2>
-      <p>
-        The application has <strong>no connection to any bank</strong>. It cannot log in to an
-        account, request data from one, or reach a bank's systems in any way. Data arrives only when
-        I download a CSV statement from my own online banking and open that file in the application
-        myself. From those files it reads the date, amount, description and running balance of each
-        transaction, and the account it belongs to.
-      </p>
-      <p>
-        There is no payment capability of any kind. The application cannot move money, initiate
-        transfers, or alter anything at a bank, because it has no route to a bank at all.
-      </p>
-
-      <h2>Where the data is stored</h2>
-      <p>
-        Imported transactions are written to a local database file on my own computer. Nothing is
-        uploaded to a server, synced to cloud storage, or backed up off-device. There is no hosted
-        component to this application — no website, no API, no remote database operated by me or by
-        anyone else.
-      </p>
-      <p>
-        That data folder is excluded from version control, so no financial record can be published
-        with the source code if the code is ever made public.
-      </p>
-
-      <h2>Who the data is shared with</h2>
-      <p>
-        Nobody. It is not sold, not shared, not sent to advertisers, and not used to train anything.
-        The application contains no analytics, no telemetry, and no third-party trackers. No
-        processor, intermediary or service provider is involved in the flow, because the flow is a
-        file moving from my downloads folder into an application on the same machine.
-      </p>
-
-      <h2>Retention and deletion</h2>
-      <p>
-        Transaction data stays in the local database until I delete it. The application includes a
-        function that erases the entire local store in one action, and deleting its data folder has
-        the same effect. Because nothing is stored remotely, deletion is final — there is no copy
-        elsewhere to be removed.
-      </p>
-
-      <h2>Rights</h2>
-      <p>
-        I am the sole data subject and the sole operator, so the usual rights of access, correction,
-        portability and erasure are exercised directly: the data is on my machine, in an open format,
-        and I can read, export or destroy it at will. Rights against my bank are exercised through
-        the bank's own processes.
-      </p>
-
-      <h2>Changes</h2>
-      <p>
-        If what the application does with data changes materially, this page is updated and the date
-        at the top changes with it. An earlier version of this policy described access to bank data
-        through a licensed account information provider; that route was never used and has been
-        removed from the application entirely.
-      </p>
-
-      <h2>Contact</h2>
-      <p>
-        Belal Zaky — <a href="mailto:hello@belalzaky.uk">hello@belalzaky.uk</a>
-      </p>
-    </div>
-  </article>
+<Base title="Privacy · Belal Zaky" description="What this website collects, which is very little.">
+  <main class="sheet">
+    <section class="wrap page-head">
+      <p class="label">privacy</p>
+      <h1 class="page-h1">What this site collects</h1>
+      <p class="page-meta">updated {updated}</p>
+    </section>
+    <section class="wrap sect prose" style="padding-top:0">
+      <p>This is my personal website. There are no accounts, forms or cookies, and no advertising.</p>
+      <p>The site counts visits with Vercel Web Analytics, which records the page, the referring site, and the country and device type of each visit, without cookies and without identifying you. I use it to see which pages people read.</p>
+      <p>If you switch between light and dark mode, your browser remembers that choice on your own device. It isn't sent anywhere.</p>
+      <p>If you email me, I use your address only to reply. Questions about any of this go to <a href="mailto:hello@belalzaky.uk">hello@belalzaky.uk</a>.</p>
+    </section>
+  </main>
 </Base>
-
-<style>
-  .legal {
-    padding-top: var(--space-16);
-    padding-bottom: var(--space-24);
-  }
-
-  .legal-header {
-    margin-bottom: var(--space-12);
-    padding-bottom: var(--space-8);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .legal-kicker {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-4);
-  }
-
-  .legal-title {
-    font-size: var(--text-3xl);
-    font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    margin-bottom: var(--space-4);
-  }
-
-  @media (max-width: 640px) {
-    .legal-title {
-      font-size: var(--text-2xl);
-    }
-  }
-
-  .legal-dek {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    max-width: 55ch;
-  }
-
-  .legal-updated {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-    margin-top: var(--space-4);
-  }
-</style>

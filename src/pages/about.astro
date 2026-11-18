@@ -1,305 +1,67 @@
 ---
 import Base from '../layouts/Base.astro';
-import Photo from '../components/Photo.astro';
-import type { PhotoName } from '../data/photos';
-
-// Copy from the V2-About boards (agreed 15 Oct 2026), verbatim. Skills and education live
-// on /cv. Evidence links point to the matching project page.
-
-const lens: { name: PhotoName; pos: string; alt: string; cls: string }[] = [
-  { name: 'plane-gate', pos: '50% 60%', alt: 'A plane at the gate at night, its engine and wing lit by the apron lights', cls: 'ph-plane' },
-  { name: 'cove-bw', pos: '50% 50%', alt: 'A rocky cove and beach in black and white', cls: 'ph-covebw' },
-  { name: 'aston', pos: '30% 80%', alt: 'A grey sports car parked beneath a tall residential block', cls: 'ph-aston' },
-  { name: 'headlight', pos: '60% 50%', alt: 'Close-up of a silver supercar headlight', cls: 'ph-head' },
-  { name: 'cove-colour', pos: '50% 60%', alt: 'Looking down a rocky slope to a cove and the sea', cls: 'ph-cove' },
+// About: a wall of four photos with the About text in three small cells between them.
+// These four photos are used nowhere else on the site (Belal's rule, 18 Nov).
+const sent = [
+  'I’m in my second year of MSci Pharmacology at King’s, and I split my time between London and Dubai.',
+  'Most of my work is on drug-safety data, looking for where the obvious analysis gives the wrong answer, and outside the degree I build the tools I use to run my week.',
+  'I train most evenings, I’m setting up LIFTKCL as a beginner-friendly gym society at King’s, and I take photos wherever I am.',
 ];
-
-const facts = [
-  { k: 'Studying', v: 'MSci (Hons) Pharmacology, King’s College London' },
-  { k: 'Based', v: 'London | Dubai' },
-  { k: 'Year 2', v: 'Endocrinology, Drugs & Disease, Research Skills' },
+const ph = { work: '50% 40%', night: '52% 50%', coffee: '40% 45%', sky: '50% 48%' } as const;
+const alt = { work: 'Me at my laptop at night, in headphones and orange-tinted glasses', night: 'A low-angle selfie at night in a black puffer jacket', coffee: 'Looking down at an iced coffee in my hand, black puffer and jeans', sky: 'A low-angle shot of me against a grey sky, earphones in' } as const;
+const meta = [
+  { k: 'based', v: 'london | dubai' }, { k: 'studying', v: 'msci pharmacology' }, { k: 'training', v: 'most evenings' },
+  { k: 'looking for', v: '2027/28 placement, pharma' }, { k: 'cv', v: 'pdf', href: '/Belal-Zaky-CV.pdf' }, { k: 'email', v: 'hello@belalzaky.uk', href: 'mailto:hello@belalzaky.uk' },
 ];
-
-const journey = [
-  { d: '2025', text: 'Couldn’t write a line of Python. Started learning data — in public.' },
-  { d: 'Early 2026', text: 'First project: 20M+ adverse-event reports. Found a scary spike was litigation, not harm.' },
-  { d: 'Spring 2026', text: 'SQL, patient records, and a signal detector validated on a known warfarin risk.' },
-  { d: 'Mid 2026', text: 'ML, survival analysis in R, then AI reading medical text — the fanciest model came last.' },
-  { d: 'Late 2026', text: 'Causal inference: a painkiller that looked twice as safe as it was, and two methods that caught it.' },
-  { d: 'Next', text: 'A 2027/28 placement year in pharma: the same questions, asked of real clinical and safety data.' },
-];
-
-const positions = [
-  {
-    n: '01',
-    claim: 'A rise in reported side effects is treated as a rise in harm. It routinely is not.',
-    argument: 'Adverse-event reporting is voluntary, so the count measures who is paying attention — media coverage, lawyers advertising, a regulator asking questions. When one heartburn drug’s reports exploded in 2020, the cause was litigation, not new clinical harm. The reports moved before the evidence did.',
-    evidence: 'Twenty million FDA reports, and the Zantac timeline',
-    href: '/projects/faers-explorer',
-    falsifier: 'A spike that holds up after adjusting for prescriptions dispensed and media volume would be a real signal, and I would want to see that adjustment before dismissing any of them.',
-  },
-  {
-    n: '02',
-    claim: 'Life sciences is buying AI on sophistication. Sophistication is not what predicts performance.',
-    argument: 'I put four systems on the same task of finding drug side effects in medical text. A model trained on biomedical literature won. A plain keyword matcher beat a general-purpose AI model. A general LLM with no task-specific training came last, and invented details that were not in the source. The ranking tracked fit to the domain, not capability or cost.',
-    evidence: 'Four models, one test set, measured hallucination rate',
-    href: '/projects/adr-reader',
-    falsifier: 'This was a deliberately worst-case setup for the LLM — no fine-tuning, no examples. A few-shot version would likely close some of the gap, and I would want that comparison before generalising the claim to procurement.',
-  },
-  {
-    n: '03',
-    claim: 'When patients are not randomly assigned, the bias has a direction — and it flatters the drug.',
-    argument: 'Doctors steer frailer patients away from riskier drugs. That is good medicine and it quietly makes the risky drug look safe in the data afterwards. On a dataset where I had sealed the true answer in advance, the obvious comparison understated a real harm by 46%. Two independent methods recovered it. More data would not have helped: the problem was structural, not statistical.',
-    evidence: 'A sealed true effect of 2.20, and two ways of finding it',
-    href: '/projects/rwe-causal',
-    falsifier: 'The direction is not a law. Where the sicker patients get the newer drug, the same mechanism runs the other way and exaggerates harm instead — so the honest claim is that the bias is directional and knowable, not that it always favours the drug.',
-  },
+const P = (k: keyof typeof ph, col: string, row: string, o: number, cls = '') => ({ k, style: `grid-column:${col};grid-row:${row};--o:${o}`, cls });
+const photos = [P('work', '1 / 3', '1 / 4', 0, 'tall'), P('night', '3', '1 / 3', 1, 'half'), P('coffee', '4', '2 / 4', 1, 'half'), P('sky', '5 / 7', '1 / 3', 3, 'tall')];
+const texts = [
+  { i: 0, l: 'degree', style: 'grid-column:3;grid-row:3;--o:2' },
+  { i: 1, l: 'work', style: 'grid-column:4;grid-row:1;--o:2' },
+  { i: 2, l: 'outside', style: 'grid-column:5;grid-row:3;--o:4' },
 ];
 ---
 
-<Base
-  title="About — Belal Zaky"
-  description="If nothing fits, I build my own. MSci Pharmacology at King's College London, based in London and Dubai."
->
-  <section class="wrap page-head">
-    <p class="label">About</p>
-    <h1 class="page-h1">If nothing fits, <span class="muted">I build my own.</span></h1>
-    <p class="lead page-lead">That goes for the app I run my week on, and for the week itself. Something always needs to be happening: labs and workshops, the library after, runs in the park, coffee with someone, evenings perfecting what I’ve built. I do a lot, I do it my own way, and I make room for my health so it lasts.</p>
-  </section>
-
-  <section class="wrap sect" aria-label="Photos">
-    <div class="lens">
-      {lens.map((p, i) => (
-        <div class:list={['tile', 'tile--zoom', 'ph', p.cls]}>
-          <Photo name={p.name} alt={p.alt} pos={p.pos} sizes={p.cls === 'ph-plane' || p.cls === 'ph-aston' ? '(max-width: 640px) 50vw, 270px' : '(max-width: 640px) 100vw, 550px'} eager={i < 3} />
-        </div>
-      ))}
+<Base title="About · Belal Zaky" description="Second-year MSci Pharmacology at King's, between London and Dubai. Drug-safety data, tools I build, lifting and photos." shape="screen" current="about" meta={meta}>
+  <main class="main wall in-anim" id="wall">
+    <h1 class="sr-only">About me</h1>
+    {photos.map((p) => (
+      <div class:list={['c', 'pad0', 'ph2', p.cls]} style={p.style} data-ph={p.k} tabindex="0">
+        <img src={`/photos/about/${p.k}.jpg`} style={`object-position:${ph[p.k]}`} alt={alt[p.k]} loading="eager" decoding="async" />
+        <span class="lbl">{p.k}.jpg</span>
+      </div>
+    ))}
+    {texts.map((t) => (
+      <div class="c txt" style={t.style}><span class="lbl top">0{t.i + 1} · {t.l}</span><p>{sent[t.i]}</p></div>
+    ))}
+    <div class="c" style="grid-column:6;grid-row:3;--o:5">
+      <span class="lbl top">contact</span>
+      <a class="go" href="mailto:hello@belalzaky.uk">hello@belalzaky.uk</a>
+      <a class="go" href="/Belal-Zaky-CV.pdf">cv (pdf) <span class="arr">→</span></a>
+      <a class="go" href="/writing">writing <span class="arr">→</span></a>
     </div>
-    <p class="lens-note">Shot on iPhone 17 Pro.</p>
-  </section>
-
-  <section class="wrap sect" aria-labelledby="why-h" data-fade>
-    <h2 id="why-h" class="label">Why drug safety</h2>
-    <p class="about-p about-p--strong">The scariest spike I ever found turned out to be a wave of lawsuits, not a new side effect. It moved a share price and a legal strategy long before it moved a safety conclusion — and separating those three is the whole job.</p>
-    <p class="about-p">Most people in drug safety aren’t strong on data; most data people don’t know drug safety; and the commercial question is usually asked by a third group who talk to neither. I’m trying to be useful at the join.</p>
-    <p class="about-p">I’m looking for a 2027/28 placement year in the pharma industry, in drug safety, real-world evidence or clinical data — the kind of work where the analysis has to hold up in front of a regulator, a court or a board.</p>
-    <div class="rows facts">
-      {facts.map((f) => (
-        <div class="row">
-          <span class="row-key">{f.k}</span>
-          <div><span class="row-val">{f.v}</span></div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="wrap sect" aria-labelledby="journey-h" data-fade>
-    <p class="label">The journey</p>
-    <h2 id="journey-h" class="h2">How I got here.</h2>
-    <div class="rows journey">
-      {journey.map((t) => (
-        <div class="row">
-          <span class="row-key">{t.d}</span>
-          <div><span class="row-val">{t.text}</span></div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="wrap sect" aria-labelledby="think-h" data-fade>
-    <p class="label">What I think</p>
-    <h2 id="think-h" class="h2">Three things I’d argue for.</h2>
-    <div class="positions">
-      {positions.map((p) => (
-        <article class="pos">
-          <p class="pos-n">{p.n}</p>
-          <h3 class="pos-claim">{p.claim}</h3>
-          <p class="pos-arg">{p.argument}</p>
-          <div class="pos-boxes">
-            <a href={p.href} class="pos-evidence">
-              <span class="pos-box-label">Evidence</span>
-              <span class="pos-evidence-text">{p.evidence} <span class="arrow" aria-hidden="true">→</span></span>
-            </a>
-            <div class="pos-mind">
-              <span class="pos-box-label">What would change my mind</span>
-              <span class="pos-mind-text">{p.falsifier}</span>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-    <a href="/cv" class="text-link cv-link">Education, experience and skills are on the CV <span class="arrow" aria-hidden="true">→</span></a>
-  </section>
+  </main>
 </Base>
 
 <style>
-  /* Photos: desktop 4 columns (plane, wide B&W cove filling the row, Aston; then two wides) */
-  .lens {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .tile :global(picture) {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .ph-plane,
-  .ph-aston {
-    aspect-ratio: 0.8;
-  }
-
-  .ph-covebw {
-    grid-column: span 2;
-  }
-
-  .ph-covebw :global(picture) {
-    position: absolute;
-    inset: 0;
-  }
-
-  .ph-head,
-  .ph-cove {
-    grid-column: span 2;
-    aspect-ratio: 1.6;
-  }
-
-  .lens-note {
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--label);
-  }
-
-  .about-p {
-    margin-top: 16px;
-    max-width: 680px;
-    font-size: var(--fs-body);
-    line-height: 1.65;
-    color: var(--body);
-  }
-
-  .about-p--strong {
-    margin-top: 20px;
-    color: var(--text);
-  }
-
-  .facts,
-  .journey,
-  .positions {
-    margin-top: 24px;
-  }
-
-  .facts .row-val,
-  .journey .row-val {
-    line-height: 1.55;
-  }
-
-  .positions {
-    border-top: 1px solid var(--border);
-  }
-
-  .pos {
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .pos-n {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--accent);
-  }
-
-  .pos-claim {
-    margin-top: 8px;
-    max-width: 760px;
-    font-size: calc(var(--fs-body) + 4px);
-    line-height: 1.35;
-    font-weight: 500;
-  }
-
-  .pos-arg {
-    margin-top: 16px;
-    max-width: 680px;
-    font-size: var(--fs-body);
-    line-height: 1.65;
-    color: var(--body);
-  }
-
-  .pos-boxes {
-    margin-top: 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .pos-evidence {
-    display: block;
-    padding: 16px 18px;
-    border-radius: 14px;
-    background: var(--quiet);
-    text-decoration: none;
-  }
-
-  .pos-mind {
-    padding: 16px 18px;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-  }
-
-  .pos-box-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--label);
-  }
-
-  .pos-evidence-text {
-    display: block;
-    margin-top: 6px;
-    font-size: 15px;
-    line-height: 1.5;
-    color: var(--accent);
-  }
-
-  .pos-mind-text {
-    display: block;
-    margin-top: 6px;
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--body);
-  }
-
-  .cv-link {
-    margin-top: 24px;
-  }
-
-  @media (max-width: 640px) {
-    .lens {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-    .ph-covebw,
-    .ph-head,
-    .ph-cove {
-      grid-column: span 2;
-      aspect-ratio: 1.6;
-    }
-    .ph-covebw :global(picture) {
-      position: static;
-    }
-    /* phone order: plane, Aston, B&W cove, headlight, cove */
-    .ph-aston { order: 1; }
-    .ph-plane { order: 0; }
-    .ph-covebw { order: 2; }
-    .ph-head { order: 3; }
-    .ph-cove { order: 4; }
-
-    .pos-boxes {
-      grid-template-columns: 1fr;
-    }
+  .ph2 { background: var(--photo); }
+  .ph2 img { width: 100%; height: 100%; object-fit: cover; transition: opacity .3s ease, transform .8s var(--out); }
+  .ph2 .lbl { position: absolute; left: 8px; bottom: 8px; background: var(--cell); color: var(--ink); padding: 1px 6px; opacity: 0; transition: opacity .2s ease; }
+  .ph2.hot .lbl { opacity: 1; }
+  .ph2.hot img { transform: scale(1.04); }
+  .wall.dim .ph2:not(.hot) img { opacity: .28; }
+  .txt p { font-size: 14px; line-height: 1.4; margin: 0; }
+  @media (max-width: 700px) {
+    .wall > .c { order: var(--o, 0); }
+    .ph2 { aspect-ratio: 3 / 4; }
   }
 </style>
+
+<script>
+  import { setMeta, resetMeta } from '../scripts/site';
+  const wall = document.getElementById('wall')!;
+  const ph = [...wall.querySelectorAll<HTMLElement>('.ph2')];
+  const on = (p: HTMLElement) => { wall.classList.add('dim'); ph.forEach((x) => x.classList.toggle('hot', x === p)); setMeta([['photo', p.dataset.ph + '.jpg']]); };
+  const off = () => { wall.classList.remove('dim'); ph.forEach((x) => x.classList.remove('hot')); resetMeta(); };
+  ph.forEach((p) => { p.addEventListener('mouseenter', () => on(p)); p.addEventListener('focus', () => on(p)); p.addEventListener('mouseleave', off); p.addEventListener('blur', off); });
+</script>

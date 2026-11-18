@@ -1,0 +1,227 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { records, kinds, areaHub } from '../../data/records';
+// Everything I've made or do, as a graph (four words → areas → records) and as a table.
+// Hollow dots are ideas that aren't built: small projects that would join two areas.
+const years = Object.fromEntries((await getCollection('projects')).map((e) => [e.slug, e.data.date.getFullYear()]));
+const recs = records.map((r) => ({ ...r, year: r.slug ? years[r.slug] : r.year, href: r.slug ? `/projects/${r.slug}` : r.href }));
+const real = recs.filter((r) => r.kind !== 'idea');
+const count = (k: string) => recs.filter((r) => r.kind === k).length;
+const meta = [
+  { k: 'records', v: String(real.length) }, { k: 'data projects', v: String(count('data')) }, { k: 'builds', v: String(count('build')) },
+  { k: 'roles', v: String(count('role')) }, { k: 'coursework', v: String(count('coursework')) }, { k: 'ideas', v: `${count('idea')}, not built yet` },
+];
+---
+
+<Base title="Everything · Belal Zaky" description="Every project, app, role and piece of coursework, as a graph and a table." shape="screen" current="work" meta={meta}>
+  <main class="main in-anim" id="all" data-recs={JSON.stringify(recs)} data-hubs={JSON.stringify(areaHub)}>
+    <h1 class="sr-only">Everything I've made or do</h1>
+    <div class="c pad0 graphc" style="grid-column:1 / 5;grid-row:1 / 4" id="gcell">
+      <canvas id="kg" aria-hidden="true"></canvas>
+      <svg class="graph" id="graph" viewBox="0 0 840 640" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Graph: four words, the areas under them, and each record"></svg>
+      <div class="tbl" id="tbl" hidden>
+        <table class="rec" id="rec">
+          <thead><tr><th data-k="no">no.</th><th data-k="name">record</th><th data-k="what" class="hide">method or role</th><th data-k="out" class="hide">output</th><th data-k="kind">kind</th><th data-k="year" class="hide">year</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="c pad0 panel" style="grid-column:5 / 7;grid-row:1 / 4">
+      <div class="hd">
+        <div class="hdtop"><span class="lbl">all projects · {real.length} records</span>
+          <div class="seg2" role="group" aria-label="View"><button type="button" data-rec="graph" aria-pressed="true">graph</button><button type="button" data-rec="table" aria-pressed="false">table</button></div>
+        </div>
+        <div id="det"></div>
+      </div>
+      <div class="lst slide" id="lst"><span class="bar"></span>
+        {kinds.map(([k, t]) => {
+          const rs = recs.filter((r) => r.kind === k);
+          return (<>
+            <div class="lbl gh">{t} · {rs.length}</div>
+            {rs.map((r) => (
+              r.href
+                ? <a class:list={['it', { idea: k === 'idea' }]} data-r={r.no} href={r.href} target={r.href.startsWith('http') ? '_blank' : undefined} rel={r.href.startsWith('http') ? 'noopener noreferrer' : undefined}><span class="nm">{r.name}</span><span class="lbl">{r.out}</span></a>
+                : <button type="button" class:list={['it', { idea: k === 'idea' }]} data-r={r.no}><span class="nm">{r.name}</span><span class="lbl">{r.out}</span></button>
+            ))}
+          </>);
+        })}
+      </div>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .graphc canvas, .graph { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .graph :global(line) { stroke: var(--faint); stroke-width: 1; transition: opacity .2s ease, stroke .2s ease; }
+  .graph :global(line.idea) { stroke-dasharray: 3 4; }
+  .graph :global(g.n) { cursor: pointer; transition: opacity .2s ease; outline: none; }
+  .graph :global(.dot) { fill: var(--ink); }
+  .graph :global(.dot.idea) { fill: var(--cell); stroke: var(--ink); stroke-width: 1.4; }
+  .graph :global(.hit) { fill: transparent; }
+  .graph :global(text) { font-family: var(--mono); font-size: 11px; fill: var(--ink); pointer-events: none; paint-order: stroke; stroke: var(--cell); stroke-width: 4px; stroke-linejoin: round; }
+  .graph :global(text.hub) { font-family: var(--sans); font-size: 27px; font-weight: 560; letter-spacing: -.04em; }
+  .graph :global(text.rec) { opacity: 0; transition: opacity .2s ease; }
+  .graph :global(g.n:focus-visible .dot) { stroke: var(--ink); stroke-width: 3; }
+  .graph:global(.focus) :global(g.n) { opacity: .16; }
+  .graph:global(.focus) :global(g.n.on) { opacity: 1; }
+  .graph :global(g.n.lab text.rec) { opacity: 1; }
+  .graph:global(.focus) :global(line) { opacity: .12; }
+  .graph:global(.focus) :global(line.on) { opacity: 1; stroke: var(--ink); }
+  .panel .hd { padding: 12px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--gap); min-height: 150px; }
+  .hdtop { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  #det { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+  .lst { overflow: auto; flex: 1; min-height: 0; }
+  .gh { padding: 10px 12px 4px; }
+  .it { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; width: 100%; padding: 5px 12px; font-size: 14px; transition: color .15s ease; }
+  .it .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .it.idea .nm { font-style: italic; }
+  .tbl { position: absolute; inset: 0; overflow: auto; background: var(--cell); }
+  .tbl[hidden] { display: none; }
+  table.rec { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  .rec th, .rec td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--gap); font-size: 14px; white-space: nowrap; }
+  .rec th { position: sticky; top: 0; background: var(--cell); font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--mute); cursor: pointer; user-select: none; padding-top: 12px; }
+  .rec th:hover { color: var(--ink); }
+  .rec th[aria-sort]::after { content: " ↓"; }
+  .rec th[aria-sort="ascending"]::after { content: " ↑"; }
+  .rec :global(td.m) { font-family: var(--mono); font-size: 12px; color: var(--mute); }
+  .rec :global(tbody tr) { transition: background .15s ease; }
+  .rec :global(tbody tr:hover), .rec :global(tbody tr.on) { background: var(--inv); color: var(--invfg); }
+  .rec :global(tbody tr:hover td.m), .rec :global(tbody tr.on td.m) { color: var(--invfg); opacity: .7; }
+  .rec :global(tbody tr[data-href]) { cursor: pointer; }
+  @media (max-width: 700px) {
+    .graphc { display: none; }
+    .lst { overflow: visible; }
+  }
+</style>
+
+<script>
+  import { setMeta, resetMeta, slideTo, reduced } from '../../scripts/site';
+  type Rec = { no: string; name: string; what: string; out: string; kind: string; year?: number; href?: string; areas: string[] };
+  const main = document.getElementById('all')!;
+  const R: Rec[] = JSON.parse(main.dataset.recs!);
+  const HUBOF: Record<string, string> = JSON.parse(main.dataset.hubs!);
+  const det = document.getElementById('det')!, lst = document.getElementById('lst')!;
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+  let pinned: string | null = null;
+  let gfocus: (id: string | null) => void = () => {};
+  const recMeta = (r: Rec): [string, string, string?][] => [['no.', r.no], ['record', r.name.toLowerCase()], [r.kind === 'role' ? 'role' : r.kind === 'idea' ? 'idea' : 'what', r.what], [r.kind === 'coursework' || r.kind === 'idea' ? 'status' : 'output', r.out], ['kind', r.kind], ['year', r.year ? String(r.year) : 'not built']];
+  const showDet = (r: Rec | null) => {
+    if (!r) { det.innerHTML = `<p class="big" style="font-size:20px">Hover a dot or a name.</p><p class="small" style="color:var(--mute)">Hollow dots are ideas I haven’t built, small projects that would join two areas.</p>`; resetMeta(); return; }
+    const path = r.areas.map((a) => `${HUBOF[a].toLowerCase()} → ${a}`).join(' · ');
+    det.innerHTML = `<span class="lbl">${esc(r.no)} · ${esc(r.kind)}${r.out === r.kind ? '' : ' · ' + esc(r.out)}</span><p class="big" style="font-size:20px">${esc(r.name)}</p><p class="small">${esc(r.what)}</p><span class="lbl">${esc(path)}</span>${r.href ? `<a class="go" href="${esc(r.href)}"${r.href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : ''}>open <span class="arr">→</span></a>` : ''}`;
+    setMeta(recMeta(r));
+  };
+  const focus = (no: string | null) => {
+    const r = R.find((x) => x.no === no) || null;
+    showDet(r); slideTo(lst, r ? lst.querySelector<HTMLElement>(`[data-r="${r.no}"]`) : null); gfocus(no);
+    document.querySelectorAll('#rec tbody tr').forEach((tr) => tr.classList.toggle('on', (tr as HTMLElement).dataset.n === no));
+  };
+  const rest = () => focus(pinned);
+  lst.querySelectorAll<HTMLElement>('.it').forEach((b) => {
+    b.addEventListener('mouseenter', () => focus(b.dataset.r!)); b.addEventListener('focus', () => focus(b.dataset.r!));
+    if (b.tagName === 'BUTTON') b.addEventListener('click', () => { pinned = pinned === b.dataset.r ? null : b.dataset.r!; focus(b.dataset.r!); });
+  });
+  lst.addEventListener('mouseleave', rest);
+  showDet(null);
+
+  // ---- graph / table switch
+  const svg = document.getElementById('graph') as unknown as SVGSVGElement, tbl = document.getElementById('tbl')!, cv = document.getElementById('kg') as HTMLCanvasElement;
+  document.querySelectorAll<HTMLButtonElement>('[data-rec]').forEach((b) => b.addEventListener('click', () => {
+    const t = b.dataset.rec === 'table';
+    document.querySelectorAll('[data-rec]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    tbl.hidden = !t; (svg as unknown as HTMLElement).style.display = t ? 'none' : ''; cv.style.display = t ? 'none' : '';
+    if (t) drawTable();
+  }));
+
+  // ---- table
+  let sortK: keyof Rec | null = null, asc = true;
+  const tb = document.querySelector('#rec tbody')!;
+  function drawTable() {
+    const rows = [...R];
+    if (sortK) rows.sort((a, b) => { const x = String(a[sortK!] ?? ''), y = String(b[sortK!] ?? ''); return (x > y ? 1 : x < y ? -1 : 0) * (asc ? 1 : -1); });
+    tb.innerHTML = rows.map((r) => `<tr data-n="${esc(r.no)}"${r.href ? ` data-href="${esc(r.href)}"` : ''}><td class="m">${esc(r.no)}</td><td>${r.kind === 'idea' ? `<i>${esc(r.name)}</i>` : esc(r.name)}</td><td class="m hide">${esc(r.what)}</td><td class="hide">${esc(r.out)}</td><td class="m">${esc(r.kind)}</td><td class="m hide">${r.year ?? '—'}</td></tr>`).join('');
+    document.querySelectorAll('#rec th').forEach((th) => { (th as HTMLElement).dataset.k === sortK ? th.setAttribute('aria-sort', asc ? 'ascending' : 'descending') : th.removeAttribute('aria-sort'); });
+    tb.querySelectorAll<HTMLElement>('tr').forEach((tr) => {
+      tr.addEventListener('mouseenter', () => focus(tr.dataset.n!));
+      tr.addEventListener('click', () => { if (tr.dataset.href) location.href = tr.dataset.href; });
+    });
+  }
+  document.querySelectorAll<HTMLElement>('#rec th').forEach((th) => th.addEventListener('click', () => { const k = th.dataset.k as keyof Rec; if (sortK === k) asc = !asc; else { sortK = k; asc = true; } drawTable(); }));
+  document.getElementById('rec')!.addEventListener('mouseleave', rest);
+
+  // ---- graph: words pinned near the corners, everything else settles by springs and repulsion
+  type N = { id: string; label: string; type: 'hub' | 'area' | 'rec'; kind?: string; x: number; y: number; vx: number; vy: number; ax?: number; ay?: number; p?: N };
+  const W = 840, H = 640;
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const HUB: Record<string, [number, number]> = { Health: [170, 150], Tech: [650, 135], Build: [670, 500], Lifestyle: [170, 505] };
+  const nodes: N[] = [], links: { a: string; b: string; len: number; idea?: boolean }[] = [], by: Record<string, N> = {};
+  const add = (n: N) => { nodes.push(n); by[n.id] = n; return n; };
+  Object.entries(HUB).forEach(([h, [x, y]]) => add({ id: h, label: h, type: 'hub', x, y, ax: x, ay: y, vx: 0, vy: 0 }));
+  Object.entries(HUBOF).forEach(([a, h]) => { const p = by[h]; add({ id: a, label: a, type: 'area', x: p.x + (rnd() - .5) * 140, y: p.y + (rnd() - .5) * 140, vx: 0, vy: 0 }); links.push({ a: h, b: a, len: 125 }); });
+  R.forEach((r) => { const ps = r.areas.map((a) => by[a]); add({ id: r.no, label: r.name, type: 'rec', kind: r.kind, p: ps[0], x: ps.reduce((s, p) => s + p.x, 0) / ps.length + (rnd() - .5) * 90, y: ps.reduce((s, p) => s + p.y, 0) / ps.length + (rnd() - .5) * 90, vx: 0, vy: 0 });
+    r.areas.forEach((a) => links.push({ a, b: r.no, len: 66, idea: r.kind === 'idea' })); });
+  const areas = nodes.filter((n) => n.type === 'area'), hubs = nodes.filter((n) => n.type === 'hub');
+  const nb: Record<string, Set<string>> = {}; nodes.forEach((n) => (nb[n.id] = new Set([n.id]))); links.forEach((l) => { nb[l.a].add(l.b); nb[l.b].add(l.a); });
+  const rad = (n: N) => (n.type === 'hub' ? 7 : n.type === 'area' ? 4.5 : n.kind === 'idea' ? 4.5 : 3.5);
+  const NS = 'http://www.w3.org/2000/svg';
+  const lineEls = links.map((l) => { const e = document.createElementNS(NS, 'line'); if (l.idea) e.setAttribute('class', 'idea'); svg.appendChild(e); return e; });
+  const gEls: Record<string, SVGGElement> = {};
+  nodes.forEach((n) => {
+    const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'n'); g.dataset.id = n.id; g.setAttribute('tabindex', '0'); g.setAttribute('role', 'button'); g.setAttribute('aria-label', n.label);
+    const hit = document.createElementNS(NS, 'circle'); hit.setAttribute('class', 'hit'); hit.setAttribute('r', '14');
+    const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class', 'dot' + (n.kind === 'idea' ? ' idea' : '')); dot.setAttribute('r', String(rad(n)));
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', n.type); t.setAttribute('dy', String(n.type === 'hub' ? -14 : n.type === 'area' ? -10 : 4)); t.textContent = n.label;
+    g.append(hit, dot, t); svg.appendChild(g); gEls[n.id] = g;
+  });
+  const paint = () => {
+    links.forEach((l, i) => { const a = by[l.a], b = by[l.b], e = lineEls[i]; e.setAttribute('x1', a.x.toFixed(1)); e.setAttribute('y1', a.y.toFixed(1)); e.setAttribute('x2', b.x.toFixed(1)); e.setAttribute('y2', b.y.toFixed(1)); });
+    nodes.forEach((n) => { const g = gEls[n.id], t = g.querySelector('text')!; g.setAttribute('transform', `translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})`);
+      if (n.type !== 'rec') { t.setAttribute('text-anchor', 'middle'); t.setAttribute('x', '0'); }
+      else { const right = n.x < 60 ? true : n.x > W - 150 ? false : n.x >= n.p!.x; t.setAttribute('text-anchor', right ? 'start' : 'end'); t.setAttribute('x', right ? '9' : '-9'); } });
+  };
+  const tick = (alpha: number) => {
+    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { const a = nodes[i], b = nodes[j]; let dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy + .01; const k = (a.type === 'hub' || b.type === 'hub' ? 6500 : a.type === 'area' && b.type === 'area' ? 9000 : a.type === 'area' || b.type === 'area' ? 3000 : 2100) * alpha / d2, d = Math.sqrt(d2); dx /= d; dy /= d; a.vx -= dx * k; a.vy -= dy * k; b.vx += dx * k; b.vy += dy * k; }
+    links.forEach((l) => { const a = by[l.a], b = by[l.b]; let dx = b.x - a.x, dy = b.y - a.y; const d = Math.sqrt(dx * dx + dy * dy) + .01, f = (d - l.len) * .07 * alpha; dx /= d; dy /= d; a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f; });
+    for (let i = 0; i < areas.length; i++) { const a = areas[i];
+      for (let j = i + 1; j < areas.length; j++) { const b = areas[j]; let dx = b.x - a.x, dy = b.y - a.y; const d = Math.sqrt(dx * dx + dy * dy) + .01; if (d < 150) { const f = (150 - d) * .5; dx /= d; dy /= d; a.x -= dx * f; a.y -= dy * f; b.x += dx * f; b.y += dy * f; } }
+      hubs.forEach((h) => { const dx = a.x - h.x, dy = a.y - h.y; const d = Math.sqrt(dx * dx + dy * dy) + .01; if (d < 130) { const f = 130 - d; a.x += dx / d * f; a.y += dy / d * f; } }); }
+    nodes.forEach((n) => { if (n.type === 'hub') { n.vx += (n.ax! - n.x) * .25 * alpha; n.vy += (n.ay! - n.y) * .25 * alpha; } n.vx *= .8; n.vy *= .8;
+      n.x = Math.max(n.type === 'area' ? 80 : 30, Math.min(W - (n.type === 'area' ? 80 : 30), n.x + n.vx)); n.y = Math.max(40, Math.min(H - 22, n.y + n.vy)); });
+  };
+  if (reduced) { for (let i = 0; i < 320; i++) tick(Math.max(.05, 1 - i / 320)); paint(); }
+  else { for (let i = 0; i < 120; i++) tick(1); let f = 0; const run = () => { for (let i = 0; i < 3; i++) tick(Math.max(.04, 1 - f / 110)); paint(); if (++f < 110) requestAnimationFrame(run); }; paint(); requestAnimationFrame(run); }
+  gfocus = (id) => {
+    const n = id ? by[id] : null; svg.classList.toggle('focus', !!n);
+    if (!n) { svg.querySelectorAll('.on,.lab').forEach((e) => e.classList.remove('on', 'lab')); return; }
+    const set = new Set(nb[n.id]);
+    if (n.type === 'hub') [...set].forEach((a) => nb[a].forEach((x) => { if (by[x].type !== 'hub') set.add(x); }));
+    if (n.type === 'rec') [...nb[n.id]].forEach((a) => { const h = HUBOF[a]; if (h) set.add(h); });
+    Object.entries(gEls).forEach(([k, g]) => { g.classList.toggle('on', set.has(k)); g.classList.toggle('lab', k === n.id); });
+    links.forEach((l, i) => lineEls[i].classList.toggle('on', set.has(l.a) && set.has(l.b)));
+  };
+  const hov = (id: string) => {
+    const n = by[id];
+    if (n.type === 'rec') { focus(id); return; }
+    showDet(null); slideTo(lst, null); gfocus(id);
+    const names = [...nb[n.id]].filter((x) => by[x].type === (n.type === 'hub' ? 'area' : 'rec')).map((x) => by[x].label).join(', ');
+    det.innerHTML = `<span class="lbl">${n.type === 'hub' ? 'word' : 'area · ' + esc(HUBOF[n.id].toLowerCase())}</span><p class="big" style="font-size:20px">${esc(n.label)}</p><p class="small">${esc(names)}</p>`;
+  };
+  Object.values(gEls).forEach((g) => {
+    g.addEventListener('mouseenter', () => hov(g.dataset.id!)); g.addEventListener('focus', () => hov(g.dataset.id!));
+    g.addEventListener('click', () => { const n = by[g.dataset.id!]; if (n.type !== 'rec') return; const r = R.find((x) => x.no === n.id)!; if (r.href && pinned === n.id) { location.href = r.href; return; } pinned = pinned === n.id ? null : n.id; focus(n.id); });
+  });
+  svg.addEventListener('mouseleave', rest);
+
+  // ---- a dot grid behind the graph that leans toward the pointer
+  const host = document.getElementById('gcell')!, ctx = cv.getContext('2d')!; let px = -999, py = -999;
+  const drawGrid = () => {
+    const r = host.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+    if (cv.width !== Math.round(r.width * dpr)) { cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, r.width, r.height); ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--faint');
+    for (let y = 14; y < r.height; y += 26) for (let x = 14; x < r.width; x += 26) { const dx = px - x, dy = py - y, d = Math.sqrt(dx * dx + dy * dy); let ox = 0, oy = 0, s = 1; if (d < 130) { const k = 1 - d / 130; ox = dx * k * .28; oy = dy * k * .28; s = 1 + k * 1.4; } ctx.fillRect(x + ox - s / 2, y + oy - s / 2, s, s); }
+  };
+  drawGrid();
+  if (!reduced) { host.addEventListener('pointermove', (e) => { const r = host.getBoundingClientRect(); px = e.clientX - r.left; py = e.clientY - r.top; drawGrid(); }); host.addEventListener('pointerleave', () => { px = py = -999; drawGrid(); }); }
+  addEventListener('resize', drawGrid); addEventListener('modechange', () => setTimeout(drawGrid, 50));
+</script>

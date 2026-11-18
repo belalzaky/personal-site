@@ -1,123 +1,48 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getCollection } from 'astro:content';
-import { projectCases } from '../data/project-cases';
-import { projectDisplay } from '../data/projects-v2';
-
-// Copy from the V2-Projects boards; stakes from project-cases.ts. Order: newest first,
-// as /projects has always been.
-const projects = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const rows = projects.map((p, i) => {
-  const d = projectDisplay[p.slug];
-  return {
-    n: String(i + 1).padStart(2, '0'),
-    name: d?.name ?? p.data.title,
-    big: d?.big ?? '',
-    stake: projectCases[p.slug]?.stake ?? p.data.summary,
-    tools: d?.tools ?? p.data.tags.join(' · '),
-    href: `/projects/${p.slug}`,
-  };
-});
+import { records } from '../data/records';
+// The work page: the five headline pieces as giant lines. Hovering a line fills the strip;
+// clicking opens the case, or the builds page for the two apps.
+const real = records.filter((r) => r.kind !== 'idea').length;
+const lines = [
+  { no: '08', a: 'rwe causal safety', b: '2026 · causal inference', t: 'Causal Safety · 46% missed', href: '/projects/rwe-causal',
+    meta: [['project', 'rwe causal safety'], ['method', 'propensity scores, sccs'], ['data', 'simulated, true effect sealed'], ['result', 'crude missed 46%'], ['year', '2026'], ['link', 'read the case', '/projects/rwe-causal']] },
+  { no: '09', a: 'pv intake assistant', b: '2026 · coding, nlp', t: 'PV Intake · 80% → 54%', href: '/projects/pv-intake',
+    meta: [['project', 'pv intake assistant'], ['method', 'triage, extraction, coding'], ['data', 'free-text reports'], ['result', '80% → 54% coverage'], ['year', '2026'], ['link', 'read the case', '/projects/pv-intake']] },
+  { no: '07', a: 'adr reader', b: '2026 · 4 models', t: 'ADR Reader · 0.71 vs 0.83', href: '/projects/adr-reader',
+    meta: [['project', 'adr reader'], ['method', 'nlp, 4 models'], ['data', 'medical text'], ['result', 'llm 0.71, specialist 0.83'], ['year', '2026'], ['link', 'read the case', '/projects/adr-reader']] },
+  { no: 'b1', a: 'mission control', b: '2026 · build', t: 'Mission Control', href: '/builds#mission-control',
+    meta: [['app', 'mission control'], ['runs on', 'my mac'], ['reads', 'my notes'], ['sends', 'nothing without approval'], ['since', '2026'], ['link', 'how it works', '/builds#mission-control']] },
+  { no: 'b2', a: 'notch', b: '2026 · build', t: 'Notch for macOS', href: '/builds#notch',
+    meta: [['app', 'notch'], ['runs on', 'macos'], ['built in', 'swift'], ['talks to', 'mission control'], ['since', 'oct 2026'], ['link', 'how it works', '/builds#notch']] },
+];
 ---
 
-<Base
-  title="Work — Belal Zaky"
-  description="Projects on drug-safety data. Each one ends in a finding and a decision it should change."
->
-  <section class="wrap page-head">
-    <p class="label">Work</p>
-    <h1 class="page-h1">Projects on drug-safety data. <span class="muted">Each one ends in a finding and a decision it should change.</span></h1>
-    <p class="lead page-lead">Every project leads with what surprised me. The method and the code are one click further in.</p>
-  </section>
-
-  <section class="wrap sect" aria-label="All projects">
-    <div class="list">
-      {rows.map((r) => (
-        <a href={r.href} class="row-link proj">
-          <span class="proj-big">{r.big}</span>
-          <span class="proj-main">
-            <span class="proj-title">{r.n} · {r.name}</span>
-            <span class="proj-stake">{r.stake}</span>
-            <span class="proj-tools">{r.tools}</span>
-          </span>
-          <span class="proj-cta">Read <span class="arrow" aria-hidden="true">→</span></span>
+<Base title="Work · Belal Zaky" description="Drug-safety data projects and two apps I built, with the one number each one turned on." shape="screen" current="work"
+  meta={lines[0].meta.map(([k, v, href]) => ({ k, v, href }))}>
+  <main class="main in-anim">
+    <h1 class="sr-only">Work</h1>
+    <div class="c pad0 lines slide" style="grid-column:1 / 7;grid-row:1 / 4" id="work">
+      <span class="bar"></span>
+      {lines.map((l) => (
+        <a class="ln" href={l.href} data-meta={JSON.stringify(l.meta)}>
+          <span class="mm"><span class="lbl">{l.no} · {l.a}</span><span class="lbl">{l.b}</span></span>
+          <span class="t">{l.t}</span>
         </a>
       ))}
+      <a class="ln foot" href="/projects/all"><span class="lbl">all · {real}</span><span class="t">Everything, as a graph and a table <span class="arr">→</span></span></a>
     </div>
-  </section>
+  </main>
 </Base>
 
-<style>
-  .list {
-    border-top: 1px solid var(--border);
-  }
-
-  .proj {
-    display: grid;
-    grid-template-columns: 200px 1fr auto;
-    align-items: baseline;
-    gap: 32px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .proj-big {
-    font-size: 40px;
-    line-height: 1;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--accent);
-    white-space: nowrap;
-  }
-
-  .proj-main {
-    display: block;
-    min-width: 0;
-  }
-
-  .proj-title {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: var(--label);
-  }
-
-  .proj-stake {
-    display: block;
-    margin-top: 6px;
-    font-size: var(--fs-body);
-    line-height: 1.55;
-    color: var(--text);
-  }
-
-  .proj-tools {
-    display: block;
-    margin-top: 8px;
-    font-size: 13px;
-    color: var(--label);
-  }
-
-  .proj-cta {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--accent);
-    white-space: nowrap;
-  }
-
-  @media (max-width: 1000px) {
-    .proj-big { font-size: 34px; }
-    .proj { grid-template-columns: 170px 1fr auto; }
-  }
-
-  @media (max-width: 640px) {
-    .proj {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 22px 0;
-    }
-    .proj-big { font-size: 34px; }
-    .proj-big:empty { display: none; }
-  }
-</style>
+<script>
+  import { setMeta, slideTo, settle } from '../scripts/site';
+  const box = document.getElementById('work')!;
+  const lines = [...box.querySelectorAll<HTMLAnchorElement>('.ln')];
+  lines.forEach((l) => {
+    const on = () => { slideTo(box, l); if (l.dataset.meta) setMeta(JSON.parse(l.dataset.meta)); };
+    l.addEventListener('mouseenter', on); l.addEventListener('focus', on);
+  });
+  setTimeout(() => slideTo(box, lines[0]), settle);
+  let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = window.setTimeout(() => slideTo(box, box.querySelector('.is')), 150); });
+</script>

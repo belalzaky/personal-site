@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+import Meta, { type MetaRow } from '../components/Meta.astro';
 import Analytics from '@vercel/analytics/astro';
 
 interface Props {
@@ -9,19 +9,33 @@ interface Props {
   description?: string;
   ogImage?: string;
   ogType?: 'website' | 'article';
+  /** 'screen' fits one screen on desktop (index, work, builds, about); 'page' scrolls. */
+  shape?: 'screen' | 'page';
+  current?: string;
+  meta?: MetaRow[];
 }
+
+const DEFAULT_META: MetaRow[] = [
+  { k: 'based', v: 'london | dubai' },
+  { k: 'studying', v: 'msci pharmacology, king’s' },
+  { k: 'looking for', v: '2027/28 placement, pharma' },
+  { k: 'email', v: 'hello@belalzaky.uk', href: 'mailto:hello@belalzaky.uk' },
+  { k: 'instagram', v: '@belalzakyuk', href: 'https://instagram.com/belalzakyuk' },
+  { k: 'linkedin', v: 'belal zaky', href: 'https://linkedin.com/in/belalzaky' },
+];
 
 const {
   title,
   description = 'MSci Pharmacology at King\'s. Drug-safety data, a system I built to run my week, and plenty of lifting, photos and coffee.',
   ogImage = '/og-image-2026-10.png',
   ogType = 'website',
+  shape = 'page',
+  current,
+  meta = DEFAULT_META,
 } = Astro.props;
 
 const SITE = Astro.site ?? new URL('https://belalzaky.uk');
-
 const ogImageUrl = new URL(ogImage, SITE).toString();
-
 const canonicalURL = new URL(Astro.url.pathname, SITE);
 ---
 
@@ -29,9 +43,9 @@ const canonicalURL = new URL(Astro.url.pathname, SITE);
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title="Belal Zaky — Writing" href={new URL('/rss.xml', SITE)} />
+    <link rel="alternate" type="application/rss+xml" title="Belal Zaky: writing" href={new URL('/rss.xml', SITE)} />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
@@ -55,41 +69,33 @@ const canonicalURL = new URL(Astro.url.pathname, SITE);
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&family=Fragment+Mono&display=swap" rel="stylesheet" />
 
     <slot name="head" />
 
-    <!-- Theme: follows the device. data-theme mirrors prefers-color-scheme (set before
-         first paint, updated live) so any viz that reads it keeps working. No toggle. -->
+    <!-- Mode: the visitor's own choice if they made one, else the device. Set before first
+         paint so nothing flashes; data-theme is also what the interactives read. -->
     <script is:inline>
       (function () {
-        var root = document.documentElement;
+        var root = document.documentElement, stored = null;
         root.classList.add('js');
+        try { stored = localStorage.getItem('mode'); } catch (e) {}
         var mq = window.matchMedia('(prefers-color-scheme: dark)');
-        function apply() {
-          if (mq.matches) root.setAttribute('data-theme', 'dark');
-          else root.removeAttribute('data-theme');
-        }
+        function apply() { root.setAttribute('data-theme', stored || (mq.matches ? 'dark' : 'light')); }
         apply();
-        if (mq.addEventListener) mq.addEventListener('change', apply);
-        else if (mq.addListener) mq.addListener(apply);
+        if (mq.addEventListener) mq.addEventListener('change', function () { try { stored = localStorage.getItem('mode'); } catch (e) {} apply(); });
       })();
     </script>
   </head>
   <body>
-    <Nav />
-    <main>
+    <div class:list={['scr', { 'scr--screen': shape === 'screen' }]}>
+      <Nav current={current} />
       <slot />
-    </main>
-    <Footer />
-
+      <Meta rows={meta} />
+    </div>
     <Analytics />
-
     <script>
-      import '../scripts/motion';
+      import '../scripts/site';
     </script>
   </body>
 </html>

@@ -42,13 +42,13 @@ const samples = data.samples;
     border-radius:var(--radius,12px); padding:26px 28px 22px; max-width:720px; box-sizing:border-box; }
   .pvd *{ box-sizing:border-box; }
   .pvd-sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
-  .pvd-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
+  .pvd-eyebrow{ font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; color:var(--color-accent); margin-bottom:8px; }
   .pvd-title{ font-size:24px; font-weight:700; letter-spacing:-.02em; margin:0 0 6px; }
   .pvd-sub{ font-size:13.5px; line-height:1.6; color:var(--color-text-muted); margin:0 0 18px; max-width:58ch; }
   .pvd-sub b{ color:var(--color-text); font-weight:600; }
   .pvd-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
   .pvd-chip{ font-family:var(--font-mono); font-size:12px; color:var(--color-text-muted); background:var(--color-bg);
-    border:1px solid var(--color-border); border-radius:6px; padding:7px 12px; cursor:pointer; transition:all .18s var(--ease,ease); }
+    border:1px solid var(--color-border); border-radius:0; padding:7px 12px; cursor:pointer; transition:all .18s var(--ease,ease); }
   .pvd-chip:hover:not([aria-selected="true"]){ border-color:var(--color-accent); color:var(--color-text); }
   .pvd-chip[aria-selected="true"]{ background:var(--color-accent); border-color:var(--color-accent); color:var(--color-bg); }
   .pvd-chip[aria-selected="true"]:hover{ background:var(--color-accent); color:var(--color-bg); }
@@ -58,12 +58,12 @@ const samples = data.samples;
   .pvd-flow{ display:flex; flex-direction:column; gap:12px; }
   .pvd-step{ opacity:0; transform:translateY(6px); transition:opacity .35s var(--ease,ease), transform .35s var(--ease,ease); }
   .pvd-step.in{ opacity:1; transform:none; }
-  .pvd-step-k{ font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; color:var(--color-text-subtle); margin-bottom:6px; }
-  .pvd-badge{ display:inline-block; font-size:13px; font-weight:600; padding:5px 12px; border-radius:6px; }
+  .pvd-step-k{ font-family:var(--font-mono); font-size:12px; letter-spacing:.12em; color:var(--color-text-subtle); margin-bottom:6px; }
+  .pvd-badge{ display:inline-block; font-size:13px; font-weight:600; padding:5px 12px; border-radius:0; }
   .pvd-badge[data-case="1"]{ background:var(--color-accent-soft); color:var(--color-accent); }
   .pvd-badge[data-case="0"]{ background:var(--color-bg); color:var(--color-text-muted); border:1px solid var(--color-border); }
   .pvd-pills{ display:flex; flex-wrap:wrap; gap:8px; }
-  .pvd-pill{ font-size:13px; padding:5px 12px; border-radius:6px; border:1px solid var(--color-border); }
+  .pvd-pill{ font-size:13px; padding:5px 12px; border-radius:0; border:1px solid var(--color-border); }
   .pvd-drug{ background:var(--color-accent-soft); color:var(--color-accent); border-color:transparent; }
   .pvd-effect{ background:var(--color-bg); color:var(--color-text); }
   .pvd-code{ font-family:var(--font-mono); font-size:13px; }

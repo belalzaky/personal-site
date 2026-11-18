@@ -1,11 +1,14 @@
-// The homepage "Now" section. Edit this file once a month: change the rows and the
-// `updated` line, nothing else.
+// The "now" cells across the top of the index. Edit this file when what you're doing
+// changes: the rows and the `updated` month, nothing else.
 
-export const nowUpdated = 'Updated October 2026';
+export const nowUpdated = 'November 2026';
 
 export const now: { k: string; v: string }[] = [
-  { k: 'Studying', v: 'Year 2, MSci Pharmacology — Endocrinology, Drugs & Disease, Research Skills' },
-  { k: 'Building', v: 'Mission Control: an assistant that prepares my day, and Notch, which puts it in my MacBook notch' },
-  { k: 'Wellness', v: 'Running in the mornings, lifting in the evenings, and setting up liftKCL' },
-  { k: 'Working', v: 'Front of house at King’s Sport, New Malden · Subject Ambassador' },
+  { k: 'studying', v: 'Year 2 pharmacology: a lab mini-project and a debate on statins' },
+  { k: 'building', v: 'A reading habit in Mission Control, and Notch' },
+  { k: 'working', v: 'King’s Sport front of house, and Student Ambassador' },
+  { k: 'training', v: 'Evenings lifting. LIFTKCL launches in February.' },
 ];
+
+// The countdown cell: the start of the 2027/28 placement year.
+export const placementStart = '2027-09-01T09:00:00+01:00';

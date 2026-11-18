@@ -118,7 +118,7 @@ const examples = data.examples.map(ex => ({
     gap: var(--space-6);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius:0;
     padding: var(--space-8);
     font-family: var(--font-sans);
   }
@@ -165,7 +165,7 @@ const examples = data.examples.map(ex => ({
     color: var(--color-text-muted);
     background: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
+    border-radius:0;
     padding: 6px 12px;
     cursor: pointer;
     transition: all 0.18s ease;
@@ -197,7 +197,7 @@ const examples = data.examples.map(ex => ({
     color: var(--color-text);
     background: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
+    border-radius:0;
     padding: var(--space-5);
   }
 
@@ -205,7 +205,7 @@ const examples = data.examples.map(ex => ({
      so they never get Astro's scoped data-astro-cid attribute — these rules
      must be :global() or they silently no-op and fall back to the UA yellow. */
   .adrx-text :global(mark) {
-    border-radius: 3px;
+    border-radius:0;
     padding: 0 3px;
     background: none;
     color: inherit;
@@ -247,7 +247,7 @@ const examples = data.examples.map(ex => ({
     gap: var(--space-1);
     text-align: center;
     padding: var(--space-3) var(--space-2);
-    border-radius: var(--radius-sm);
+    border-radius:0;
     border: 1px solid var(--color-border);
   }
 
@@ -279,7 +279,7 @@ const examples = data.examples.map(ex => ({
 
   .adrx-verdict-model {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 12px;
     letter-spacing: 0.04em;
     color: var(--color-text-muted);
   }
@@ -294,7 +294,7 @@ const examples = data.examples.map(ex => ({
     font-size: var(--text-sm);
     color: var(--color-text-muted);
     border: 1px dashed var(--color-border);
-    border-radius: var(--radius-sm);
+    border-radius:0;
     padding: var(--space-3) var(--space-4);
   }
 

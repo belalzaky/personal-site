@@ -1,0 +1,19 @@
+---
+// The metadata strip along the bottom of every page. Pages pass their own six fields;
+// interactive pages swap them as you hover (see setMeta in scripts/site.ts).
+export interface MetaRow { k: string; v: string; href?: string }
+interface Props { rows: MetaRow[] }
+const { rows } = Astro.props;
+const ext = (h?: string) => !!h && /^https?:/.test(h);
+---
+
+<footer class="meta" id="meta">
+  {rows.map((r) => (
+    <div>
+      <span class="lbl">{r.k}</span>
+      {r.href
+        ? <a class="v" href={r.href} target={ext(r.href) ? '_blank' : undefined} rel={ext(r.href) ? 'noopener noreferrer' : undefined}>{r.v}</a>
+        : <span class="v">{r.v}</span>}
+    </div>
+  ))}
+</footer>

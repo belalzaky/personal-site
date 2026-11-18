@@ -10,6 +10,8 @@
       ],
       "destination": "https://belalzaky.uk/:path*",
       "permanent": true
-    }
+    },
+    { "source": "/mission-control", "destination": "/builds", "permanent": true },
+    { "source": "/terms", "destination": "/privacy", "permanent": true }
   ]
 }

@@ -115,7 +115,7 @@ const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
     gap: var(--space-6);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius:0;
     padding: var(--space-8);
     font-family: var(--font-sans);
     overflow: hidden;
@@ -173,7 +173,7 @@ const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
     font-size: var(--text-xs);
     font-weight: 500;
     padding: 2px 10px;
-    border-radius: 999px;
+    border-radius:0;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
@@ -236,7 +236,7 @@ const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
     position: relative;
     height: 26px;
     width: 0;                          /* entrance starts at 0 */
-    border-radius: 3px;
+    border-radius:0;
     background-color: var(--color-accent);
     /* width animates on .st[data-ready]; background transitions on threshold change */
     transition:
@@ -307,12 +307,12 @@ const sliderId = `st-slider-${Math.random().toString(36).slice(2, 8)}`;
     top: -22px;
     left: 5px;
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 12px;
     color: var(--color-text-subtle);
     white-space: nowrap;
     background: var(--color-surface);
     padding: 1px 5px;
-    border-radius: var(--radius-sm);
+    border-radius:0;
   }
 
   /* ── Slider ─────────────────────────────────────────────────────── */

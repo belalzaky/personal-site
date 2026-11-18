@@ -63,17 +63,18 @@ const entrySections = [
 ---
 
 <Base
-  title="CV — Belal Zaky"
+  title="CV · Belal Zaky"
   description="MSci Pharmacology, King's College London · London | Dubai. Education, selected projects, experience, leadership and skills."
 >
+  <main class="sheet">
   <section class="wrap page-head cv-head">
-    <p class="label">Curriculum vitae</p>
+    <p class="label">curriculum vitae</p>
     <h1 class="page-h1">Belal Zaky</h1>
     <p class="lead page-lead cv-sub">MSci Pharmacology, King’s College London · London | Dubai</p>
     <p class="cv-print-contact">hello@belalzaky.uk · belalzaky.uk · linkedin.com/in/belalzaky · github.com/belalzaky</p>
     <div class="btn-row cv-actions">
       <a href="/Belal-Zaky-CV.pdf" class="btn btn-primary">Download PDF</a>
-      <a href="mailto:hello@belalzaky.uk" class="btn btn-outline cv-mail">hello@belalzaky.uk</a>
+      <a href="mailto:hello@belalzaky.uk" class="btn cv-mail">hello@belalzaky.uk</a>
     </div>
   </section>
 
@@ -133,6 +134,7 @@ const entrySections = [
       ))}
     </div>
   </section>
+  </main>
 </Base>
 
 <style>
@@ -190,16 +192,13 @@ const entrySections = [
 
   @media print {
     :global(:root) {
-      --bg: #FFFFFF;
-      --card: #FFFFFF;
-      --quiet: #F2F2F0;
-      --border: #E4E4E0;
-      --border2: #D6D6D1;
-      --text: #1E1E1E;
-      --body: #45453F;
-      --label: #5E5E5A;
-      --accent: #86683A;
+      --gap: #D9DBDE;
+      --cell: #FFFFFF;
+      --cell2: #F4F4F5;
+      --ink: #111214;
+      --mute: #5E6166;
       --padx: 0px;
+      --sect: 5mm;
       color-scheme: light;
     }
 
@@ -208,16 +207,16 @@ const entrySections = [
       font-size: 10pt;
     }
 
-    :global(.nav),
-    :global(.footer),
+    :global(.navrow),
+    :global(.meta),
     .cv-actions,
     .cv-more {
       display: none !important;
     }
 
-    :global(.fade-pending) {
-      opacity: 1 !important;
-      transform: none !important;
+    :global(.scr) {
+      display: block;
+      min-height: 0;
     }
 
     .cv-head {

@@ -10,11 +10,12 @@ const posts = (await getCollection('posts')).sort((a, b) => b.data.date.valueOf(
 ---
 
 <Base
-  title="Writing — Belal Zaky"
+  title="Writing · Belal Zaky"
   description="Drug-safety evidence, written for people outside it."
 >
+  <main class="sheet">
   <section class="wrap page-head">
-    <p class="label">Writing</p>
+    <p class="label">writing</p>
     <h1 class="page-h1">Drug-safety evidence, <span class="muted">written for people outside it.</span></h1>
   </section>
 
@@ -41,9 +42,10 @@ const posts = (await getCollection('posts')).sort((a, b) => b.data.date.valueOf(
     </div>
   </section>
 
-  <section class="wrap sect" data-fade>
+  <section class="wrap sect">
     <EmailCapture />
   </section>
+  </main>
 </Base>
 
 <style>
@@ -61,7 +63,8 @@ const posts = (await getCollection('posts')).sort((a, b) => b.data.date.valueOf(
   }
 
   .post-date {
-    font-size: 13px;
+    font-family: var(--mono);
+    font-size: 12px;
     color: var(--label);
     white-space: nowrap;
   }
