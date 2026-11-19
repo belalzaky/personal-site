@@ -34,7 +34,7 @@ const texts = [
     {texts.map((t) => (
       <div class="c txt" style={t.style}><span class="lbl top">0{t.i + 1} · {t.l}</span><p>{sent[t.i]}</p></div>
     ))}
-    <div class="c" style="grid-column:6;grid-row:3;--o:5">
+    <div class="c contact" style="grid-column:6;grid-row:3;--o:5">
       <span class="lbl top">contact</span>
       <a class="go" href="mailto:hello@belalzaky.uk">hello@belalzaky.uk</a>
       <a class="go" href="/Belal-Zaky-CV.pdf">cv (pdf) <span class="arr">→</span></a>
@@ -54,6 +54,11 @@ const texts = [
   @media (max-width: 700px) {
     .wall > .c { order: var(--o, 0); }
     .ph2 { aspect-ratio: 3 / 4; }
+  }
+  @media (max-width: 700px) {
+    .contact { gap: 0; padding: 14px 16px 6px; }
+    .contact .go { display: flex; align-items: center; min-height: 44px; font-size: 16px; border-top: 1px solid var(--gap); }
+    .contact .lbl.top { margin-bottom: 8px; }
   }
 </style>
 

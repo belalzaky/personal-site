@@ -27,7 +27,7 @@ const lines = [
       {lines.map((l) => (
         <a class="ln" href={l.href} data-meta={JSON.stringify(l.meta)}>
           <span class="mm"><span class="lbl">{l.no} · {l.a}</span><span class="lbl">{l.b}</span></span>
-          <span class="t">{l.t}</span>
+          <span class="t">{l.t.split(' · ').map((part, j) => (<>{j > 0 && <span class="sep"> · </span>}<span class="tp">{part}</span></>))}</span>
         </a>
       ))}
       <a class="ln foot" href="/projects/all"><span class="lbl">all · {real}</span><span class="t">Everything, as a graph and a table <span class="arr">→</span></span></a>
@@ -35,14 +35,25 @@ const lines = [
   </main>
 </Base>
 
+<style>
+  /* phone: the name and its number each take a line, so the number is never cut */
+  @media (max-width: 700px) {
+    .ln .tp { display: block; }
+    .ln .sep { display: none; }
+    .ln .t { line-height: .98; }
+  }
+</style>
+
 <script>
   import { setMeta, slideTo, settle } from '../scripts/site';
   const box = document.getElementById('work')!;
   const lines = [...box.querySelectorAll<HTMLAnchorElement>('.ln')];
   lines.forEach((l) => {
     const on = () => { slideTo(box, l); if (l.dataset.meta) setMeta(JSON.parse(l.dataset.meta)); };
-    l.addEventListener('mouseenter', on); l.addEventListener('focus', on);
+    if (matchMedia('(hover: hover)').matches) l.addEventListener('mouseenter', on);
+    l.addEventListener('focus', on);
   });
   setTimeout(() => slideTo(box, lines[0]), settle);
+  document.fonts?.ready.then(() => setTimeout(() => slideTo(box, box.querySelector('.is')), settle));
   let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = window.setTimeout(() => slideTo(box, box.querySelector('.is')), 150); });
 </script>

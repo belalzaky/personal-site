@@ -183,6 +183,9 @@ const entrySections = [
   .cv-more {
     margin-top: 24px;
   }
+  @media (max-width: 700px) {
+    .cv-more { display: inline-flex; align-items: center; min-height: 44px; margin-top: 12px; }
+  }
 
   /* ---- Print: the public PDF. A4, always light, no nav, footer or buttons. ---- */
   @page {

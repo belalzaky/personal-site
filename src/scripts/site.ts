@@ -6,18 +6,28 @@ export const reduced = RM;
 
 // ---- mode: device setting until the switch picks one; the choice is kept per browser
 const root = document.documentElement;
-const modeBtn = document.getElementById('mode');
-const modeV = document.getElementById('mode-v');
 function current(): 'light' | 'dark' { return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
-function paint() { if (modeV) modeV.textContent = `(${current()})`; }
+function paint() { document.querySelectorAll('[data-mode-v]').forEach((v) => (v.textContent = `(${current()})`)); }
 paint();
-modeBtn?.addEventListener('click', () => {
+document.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => {
   const next = current() === 'dark' ? 'light' : 'dark';
   root.setAttribute('data-theme', next);
   try { localStorage.setItem('mode', next); } catch (_) {}
   paint();
   window.dispatchEvent(new CustomEvent('modechange', { detail: next }));
-});
+}));
+
+// ---- phone menu: the links full-screen under the nav row
+const menu = document.getElementById('menu'), menuBtn = document.getElementById('menu-btn');
+const setMenu = (open: boolean) => {
+  if (!menu || !menuBtn) return;
+  menu.hidden = !open; menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.textContent = open ? 'close' : 'menu';
+  root.classList.toggle('menu-open', open);
+};
+menuBtn?.addEventListener('click', () => setMenu(menu!.hidden));
+addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+matchMedia('(min-width: 701px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
+addEventListener('pageshow', () => setMenu(false));
 
 // ---- the strip: values scramble through glyphs, then settle
 const GLY = 'abcdefghijklmnopqrstuvwxyz0123456789/|·';

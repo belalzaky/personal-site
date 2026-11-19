@@ -64,14 +64,21 @@ const first = words[0];
   .wrow > .cap { position: absolute; right: 12px; bottom: 10px; z-index: 1; opacity: 0; transition: opacity .3s ease; }
   .wrow.on > .cap { opacity: .85; }
   .wrow:focus-visible { outline-offset: -3px; }
+  /* phone: the words come first, each a photo-sized row, and the one in the middle of the
+     screen opens as you scroll past; rows keep their height so nothing jumps */
   @media (max-width: 700px) {
+    .words { order: -1; flex: 0 0 auto; }
     .info { grid-template-columns: 1fr 1fr; flex: 0 0 auto; }
-    .info .c { min-height: 96px; }
-    .wrow { flex: 0 0 80px; grid-template-columns: 1fr auto; gap: 0 8px; align-content: center; align-items: end; }
-    .wrow > .sub { grid-column: 1 / -1; }
-    .wrow.on { flex: 0 0 75vw; }
-    .bg { aspect-ratio: 4 / 3; }
-    .w { font-size: 11vw; }
+    .info .c { min-height: 96px; padding: 14px 16px; }
+    .wrow, .wrow.on { flex: 0 0 auto; height: 75vw; grid-template-columns: 1fr auto; grid-template-rows: 1fr auto auto; gap: 2px 8px; align-items: end; padding: 14px 16px; }
+    .wrow > .sub { grid-column: 1 / -1; grid-row: 2; }
+    .wrow > .w { grid-row: 3; }
+    .wrow > .gol { grid-row: 3; align-self: center; }
+    .wrow > .cap { top: 14px; bottom: auto; right: 16px; }
+    .bg { top: 0; bottom: 0; transform: none; aspect-ratio: auto; opacity: .1; filter: grayscale(1); transition: opacity .6s ease, filter .6s ease; }
+    .wrow.on .bg { opacity: 1; filter: none; }
+    .bg::after { background: linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.18) 45%, rgba(0,0,0,0) 70%); }
+    .w { font-size: 17vw; }
   }
 </style>
 
@@ -90,8 +97,8 @@ const first = words[0];
     };
     tick(); setInterval(tick, 20000);
   }
-  // the four words: hover or focus opens a row onto its photos, which fade every 3 s;
-  // on a phone the first tap opens the row and the second follows the link
+  // the four words: hover or focus opens a row onto its photos, which fade every 3 s.
+  // On a phone the row in the middle of the screen opens as you scroll, and a tap follows the link.
   const rows = [...document.querySelectorAll<HTMLAnchorElement>('.wrow')];
   const idx = rows.map(() => 0);
   let open = 0, iv = 0;
@@ -105,12 +112,13 @@ const first = words[0];
     open = i; rows.forEach((x) => x.classList.toggle('on', x === r));
     idx[i] = 0; show(r); setMeta(JSON.parse(r.dataset.meta!)); cycle();
   };
-  const touch = window.matchMedia('(hover: none)').matches;
+  const phone = window.matchMedia('(max-width: 700px)');
   rows.forEach((r) => {
     cap(r);
-    r.addEventListener('mouseenter', () => activate(r));
+    r.addEventListener('mouseenter', () => { if (!phone.matches && matchMedia('(hover: hover)').matches) activate(r); });
     r.addEventListener('focus', () => activate(r));
-    r.addEventListener('click', (e) => { if (touch && !r.classList.contains('on')) { e.preventDefault(); activate(r); } });
   });
+  const mid = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && phone.matches) activate(e.target as HTMLElement); }), { rootMargin: '-48% 0px -48% 0px' });
+  rows.forEach((r) => mid.observe(r));
   cycle();
 </script>

@@ -15,7 +15,7 @@ const apps = [
     steps: [['closed', 'a timer, nothing else'], ['home', 'my day'], ['music', 'what’s playing'], ['focus', 'a timer ring'], ['calendar', 'what’s next']],
     meta: [['app', 'notch'], ['runs on', 'macos'], ['built in', 'swift'], ['talks to', 'mission control'], ['since', 'oct 2026'], ['code', 'private']] },
 ];
-const tabs = (k: string) => ['home', 'music', 'up next', 'focus', 'calendar'].map((t) => (t === k ? `<b>${t}</b>` : `<span>${t}</span>`)).join('');
+const tabs = (k: string) => ['home', 'music', 'up next', 'focus', 'calendar'].map((t) => (t === k ? `<b>${t}</b>` : `<span${t === 'up next' ? ' class="up"' : ''}>${t}</span>`)).join('');
 ---
 
 <Base title="Builds · Belal Zaky" description="Mission Control and Notch: the two apps I built to run my week." shape="screen" current="builds"
@@ -52,7 +52,7 @@ const tabs = (k: string) => ['home', 'music', 'up next', 'focus', 'calendar'].ma
               </div>
             ) : (
               <div class="mac" role="img" aria-label="A drawing of Notch: a black shape at the top of a Mac screen that opens to show the day, music, a focus timer and the calendar.">
-                <div class="mbar"><span>finder &nbsp; file &nbsp; edit &nbsp; view</span><span>wifi &nbsp; battery</span></div>
+                <div class="mbar"><span>finder<span class="hide-sm"> &nbsp; file &nbsp; edit &nbsp; view</span></span><span><span class="hide-sm">wifi &nbsp; </span>battery</span></div>
                 <div class="nt" data-s="0">
                   <div class="np closed"><span>▶</span><span class="tm">24:13</span></div>
                   <div class="np"><div class="tabs" set:html={tabs('home')} /><div class="r"><span>Focus</span><span class="lbl"><span class="tm">24:13</span> left</span></div><div class="r"><span>Read · 20 pages</span><span class="lbl">not yet</span></div><div class="r"><span>Lab, 10:00</span><span class="lbl">tomorrow</span></div></div>
@@ -130,17 +130,27 @@ const tabs = (k: string) => ['home', 'music', 'up next', 'focus', 'calendar'].ma
   @keyframes bar { from { height: 3px; } to { height: 14px; } }
   .ring { width: 104px; height: 104px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .22); border-top-color: #FFFFFF; display: grid; place-items: center; align-self: center; font-family: var(--mono); font-size: 16px; }
   .mcap { position: absolute; left: 12px; bottom: 10px; }
+  /* phone: both apps open, one after the other; each drawing plays when it's on screen */
   @media (max-width: 700px) {
-    .arow, .ahead { flex-basis: 64px; }
-    .arow.on { flex: 0 0 auto; }
-    .ahead { grid-template-columns: 1fr auto; }
+    .arow, .arow.on { flex: 0 0 auto; }
+    .ahead { flex-basis: auto; min-height: 72px; padding: 0 16px; grid-template-columns: 1fr auto; cursor: default; }
     .ahead > .lbl:first-child { display: none; }
-    .ahead .w { font-size: 9vw; }
-    .abody { grid-template-columns: 1fr; }
+    .ahead .st { display: none; }
+    .ahead .w { font-size: 13vw; }
+    .abody, .arow.on .abody { opacity: 1; grid-template-columns: 1fr; }
+    .intro { padding: 14px 16px; }
     .steps { flex: 0 0 auto; }
-    .host { min-height: 340px; padding: 12px; }
-    .wbody { grid-template-columns: 84px 1fr; }
-    .nt[data-s]:not([data-s="0"]) { width: 88%; }
+    .host { min-height: 0; padding: 16px; }
+    .win { height: auto; }
+    .wbody { grid-template-columns: 1fr; }
+    .wside { display: none; }
+    .wmain { min-height: 214px; }
+    .mac { width: 100%; height: 236px; }
+    .mbar { font-size: 11px; padding: 0 8px; }
+    .mbar .hide-sm { display: none; }
+    .nt[data-s]:not([data-s="0"]) { width: 84%; }
+    .tabs { gap: 8px; font-size: 11px; }
+    .tabs :global(.up) { display: none; }
   }
 </style>
 
@@ -191,8 +201,15 @@ const tabs = (k: string) => ['home', 'music', 'up next', 'focus', 'calendar'].ma
     });
     clearTimeout(wait); wait = window.setTimeout(() => { if (cur === k) demos.get(k)!.start(); }, first ? settle : 500);
   };
-  rows.forEach((r) => { const h = r.querySelector('.ahead')!, k = r.dataset.app!; h.addEventListener('mouseenter', () => open(k)); h.addEventListener('focus', () => open(k)); h.addEventListener('click', () => open(k)); });
+  const phone = matchMedia('(max-width: 700px)');
+  rows.forEach((r) => { const h = r.querySelector('.ahead')!, k = r.dataset.app!; h.addEventListener('mouseenter', () => { if (!phone.matches) open(k); }); h.addEventListener('focus', () => { if (!phone.matches) open(k); }); h.addEventListener('click', () => { if (!phone.matches) open(k); }); });
   const fromHash = location.hash.slice(1);
-  if (fromHash === 'notch') { open('notch', true); setMeta(JSON.parse(rows[1].dataset.meta!)); } else open('mission-control', true);
-  addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h === 'notch' || h === 'mission-control') open(h); });
+  if (phone.matches) {
+    // both open; a drawing plays only while it's on screen
+    const seen = new IntersectionObserver((es) => es.forEach((e) => { const d = demos.get((e.target as HTMLElement).closest<HTMLElement>('.arow')!.dataset.app!)!; e.isIntersecting ? d.start() : d.stop(); }), { threshold: .25 });
+    rows.forEach((r) => seen.observe(r.querySelector('.host')!));
+  } else {
+    if (fromHash === 'notch') { open('notch', true); setMeta(JSON.parse(rows[1].dataset.meta!)); } else open('mission-control', true);
+    addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h === 'notch' || h === 'mission-control') open(h); });
+  }
 </script>

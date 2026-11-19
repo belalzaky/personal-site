@@ -93,5 +93,14 @@ const meta = [
   .writeup { margin-top: 16px; max-width: 720px; }
   .writeup :global(h2:first-child) { margin-top: 0; }
   .case-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
-  @media (max-width: 700px) { .facts { grid-template-columns: 1fr; } }
+  /* phone: no boxes inside boxes. The facts and the interactive run edge to edge, and the
+     method reads as text rather than code. */
+  @media (max-width: 700px) {
+    .facts { grid-template-columns: 1fr; margin-inline: calc(-1 * var(--padx)); border-inline: 0; }
+    .fact { padding: 18px var(--padx); }
+    .case-method { font-family: var(--sans); font-size: 15px; line-height: 1.55; color: var(--ink); }
+    .chart { margin-inline: calc(-1 * var(--padx)); }
+    .chart > :global(*) { max-width: none !important; border-inline: 0 !important; padding-inline: var(--padx) !important; }
+    .case-nav .btn { min-height: 44px; }
+  }
 </style>

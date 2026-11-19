@@ -20,6 +20,7 @@ const meta = [
     <div class="c pad0 graphc" style="grid-column:1 / 5;grid-row:1 / 4" id="gcell">
       <canvas id="kg" aria-hidden="true"></canvas>
       <svg class="graph" id="graph" viewBox="0 0 840 640" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Graph: four words, the areas under them, and each record"></svg>
+      <div class="zoom" id="zoom"><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="fit">reset</button><span class="lbl">pinch to zoom · drag to move</span></div>
       <div class="tbl" id="tbl" hidden>
         <table class="rec" id="rec">
           <thead><tr><th data-k="no">no.</th><th data-k="name">record</th><th data-k="what" class="hide">method or role</th><th data-k="out" class="hide">output</th><th data-k="kind">kind</th><th data-k="year" class="hide">year</th></tr></thead>
@@ -89,9 +90,32 @@ const meta = [
   .rec :global(tbody tr:hover), .rec :global(tbody tr.on) { background: var(--inv); color: var(--invfg); }
   .rec :global(tbody tr:hover td.m), .rec :global(tbody tr.on td.m) { color: var(--invfg); opacity: .7; }
   .rec :global(tbody tr[data-href]) { cursor: pointer; }
+  .zoom { display: none; }
+  :global(.inl) { display: grid; gap: 4px; padding: 4px 16px 14px; border-bottom: 1px solid var(--gap); }
+  /* phone: the graph keeps its own box. Pinch or the buttons zoom, a finger drags once zoomed,
+     and labels stay 12px on screen however far in you go. */
   @media (max-width: 700px) {
-    .graphc { display: none; }
+    .graphc { aspect-ratio: 840 / 760; }
+    .graph { touch-action: pan-y; }
+    .graph :global(text) { font-size: calc(var(--u, 1) * 11px); stroke-width: calc(var(--u, 1) * 4px); }
+    .graph :global(text.hub) { font-size: calc(var(--u, 1) * 19px); }
+    .graph:global(.near) :global(text) { font-size: calc(var(--u, 1) * 12px); }
+    .graph:global(.near) :global(text.hub) { font-size: calc(var(--u, 1) * 22px); }
+    .graph :global(line) { vector-effect: non-scaling-stroke; }
+    .graph:global(.near) :global(g.n text.rec) { opacity: 1; }
+    .graph:global(.near.focus) :global(g.n:not(.on) text.rec) { opacity: 0; }
+    .zoom { display: flex; align-items: center; gap: 1px; position: absolute; left: 0; bottom: 0; z-index: 2; background: var(--gap); border-top: 1px solid var(--gap); border-right: 1px solid var(--gap); }
+    .zoom button { background: var(--cell); min-width: 44px; height: 44px; padding: 0 12px; text-align: center; font-family: var(--mono); font-size: 15px; }
+    .zoom button[data-z="fit"] { font-size: 12px; }
+    .zoom .lbl { background: var(--cell); height: 44px; display: flex; align-items: center; padding: 0 12px; }
+    .zoom.zoomed .lbl { display: none; }
+    .graphc:has(.tbl:not([hidden])) .zoom { display: none; }
+    .panel .hd { padding: 14px 16px; min-height: 0; }
     .lst { overflow: visible; }
+    .gh { padding: 18px 16px 6px; }
+    .it { padding: 0 16px; min-height: 48px; align-items: center; }
+    .rec th, .rec td { padding: 12px 10px; }
+    .rec th.hide, .rec :global(td.hide) { display: none; }
   }
 </style>
 
@@ -104,10 +128,11 @@ const meta = [
   const det = document.getElementById('det')!, lst = document.getElementById('lst')!;
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
   let pinned: string | null = null;
+  const ph = matchMedia('(max-width: 700px)'), canHover = matchMedia('(hover: hover)').matches;
   let gfocus: (id: string | null) => void = () => {};
   const recMeta = (r: Rec): [string, string, string?][] => [['no.', r.no], ['record', r.name.toLowerCase()], [r.kind === 'role' ? 'role' : r.kind === 'idea' ? 'idea' : 'what', r.what], [r.kind === 'coursework' || r.kind === 'idea' ? 'status' : 'output', r.out], ['kind', r.kind], ['year', r.year ? String(r.year) : 'not built']];
   const showDet = (r: Rec | null) => {
-    if (!r) { det.innerHTML = `<p class="big" style="font-size:20px">Hover a dot or a name.</p><p class="small" style="color:var(--mute)">Hollow dots are ideas I haven’t built, small projects that would join two areas.</p>`; resetMeta(); return; }
+    if (!r) { det.innerHTML = canHover ? `<p class="big" style="font-size:20px">Hover a dot or a name.</p><p class="small" style="color:var(--mute)">Hollow dots are ideas I haven’t built, small projects that would join two areas.</p>` : `<p class="big" style="font-size:20px">Tap a dot or a name.</p><p class="small" style="color:var(--mute)">Pinch the graph to zoom in. Hollow dots are ideas I haven’t built, small projects that would join two areas.</p>`; resetMeta(); return; }
     const path = r.areas.map((a) => `${HUBOF[a].toLowerCase()} → ${a}`).join(' · ');
     det.innerHTML = `<span class="lbl">${esc(r.no)} · ${esc(r.kind)}${r.out === r.kind ? '' : ' · ' + esc(r.out)}</span><p class="big" style="font-size:20px">${esc(r.name)}</p><p class="small">${esc(r.what)}</p><span class="lbl">${esc(path)}</span>${r.href ? `<a class="go" href="${esc(r.href)}"${r.href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : ''}>open <span class="arr">→</span></a>` : ''}`;
     setMeta(recMeta(r));
@@ -118,9 +143,21 @@ const meta = [
     document.querySelectorAll('#rec tbody tr').forEach((tr) => tr.classList.toggle('on', (tr as HTMLElement).dataset.n === no));
   };
   const rest = () => focus(pinned);
+  // on a phone, a record without its own page opens its details right under its name
+  const inline = (b: HTMLElement | null) => {
+    lst.querySelectorAll('.inl').forEach((x) => x.remove());
+    const r = b && R.find((x) => x.no === b.dataset.r);
+    if (!b || !r) return;
+    const path = r.areas.map((a) => `${HUBOF[a].toLowerCase()} → ${a}`).join(' · ');
+    b.insertAdjacentHTML('afterend', `<div class="inl"><span class="lbl">${esc(r.no)} · ${esc(r.kind)}${r.out === r.kind ? '' : ' · ' + esc(r.out)}</span><p class="small">${esc(r.what)}</p><span class="lbl">${esc(path)}</span></div>`);
+  };
   lst.querySelectorAll<HTMLElement>('.it').forEach((b) => {
-    b.addEventListener('mouseenter', () => focus(b.dataset.r!)); b.addEventListener('focus', () => focus(b.dataset.r!));
-    if (b.tagName === 'BUTTON') b.addEventListener('click', () => { pinned = pinned === b.dataset.r ? null : b.dataset.r!; focus(b.dataset.r!); });
+    if (canHover) b.addEventListener('mouseenter', () => focus(b.dataset.r!));
+    b.addEventListener('focus', () => focus(b.dataset.r!));
+    if (b.tagName === 'BUTTON') b.addEventListener('click', () => {
+      pinned = pinned === b.dataset.r ? null : b.dataset.r!; focus(b.dataset.r!);
+      if (ph.matches) { inline(pinned ? b : null); slideTo(lst, pinned ? b : null); }
+    });
   });
   lst.addEventListener('mouseleave', rest);
   showDet(null);
@@ -143,7 +180,7 @@ const meta = [
     tb.innerHTML = rows.map((r) => `<tr data-n="${esc(r.no)}"${r.href ? ` data-href="${esc(r.href)}"` : ''}><td class="m">${esc(r.no)}</td><td>${r.kind === 'idea' ? `<i>${esc(r.name)}</i>` : esc(r.name)}</td><td class="m hide">${esc(r.what)}</td><td class="hide">${esc(r.out)}</td><td class="m">${esc(r.kind)}</td><td class="m hide">${r.year ?? '—'}</td></tr>`).join('');
     document.querySelectorAll('#rec th').forEach((th) => { (th as HTMLElement).dataset.k === sortK ? th.setAttribute('aria-sort', asc ? 'ascending' : 'descending') : th.removeAttribute('aria-sort'); });
     tb.querySelectorAll<HTMLElement>('tr').forEach((tr) => {
-      tr.addEventListener('mouseenter', () => focus(tr.dataset.n!));
+      if (canHover) tr.addEventListener('mouseenter', () => focus(tr.dataset.n!));
       tr.addEventListener('click', () => { if (tr.dataset.href) location.href = tr.dataset.href; });
     });
   }
@@ -164,6 +201,8 @@ const meta = [
   const areas = nodes.filter((n) => n.type === 'area'), hubs = nodes.filter((n) => n.type === 'hub');
   const nb: Record<string, Set<string>> = {}; nodes.forEach((n) => (nb[n.id] = new Set([n.id]))); links.forEach((l) => { nb[l.a].add(l.b); nb[l.b].add(l.a); });
   const rad = (n: N) => (n.type === 'hub' ? 7 : n.type === 'area' ? 4.5 : n.kind === 'idea' ? 4.5 : 3.5);
+  const am = ph.matches ? 140 : 80; // area labels are wider on a phone, so they keep further from the edges
+  let ku = 1; // graph units per screen pixel on a phone (1 on a desktop, where the graph is drawn as it was)
   const NS = 'http://www.w3.org/2000/svg';
   const lineEls = links.map((l) => { const e = document.createElementNS(NS, 'line'); if (l.idea) e.setAttribute('class', 'idea'); svg.appendChild(e); return e; });
   const gEls: Record<string, SVGGElement> = {};
@@ -171,14 +210,21 @@ const meta = [
     const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'n'); g.dataset.id = n.id; g.setAttribute('tabindex', '0'); g.setAttribute('role', 'button'); g.setAttribute('aria-label', n.label);
     const hit = document.createElementNS(NS, 'circle'); hit.setAttribute('class', 'hit'); hit.setAttribute('r', '14');
     const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class', 'dot' + (n.kind === 'idea' ? ' idea' : '')); dot.setAttribute('r', String(rad(n)));
-    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', n.type); t.setAttribute('dy', String(n.type === 'hub' ? -14 : n.type === 'area' ? -10 : 4)); t.textContent = n.label;
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', n.type); t.textContent = n.label;
     g.append(hit, dot, t); svg.appendChild(g); gEls[n.id] = g;
   });
+  const sizeMarks = () => nodes.forEach((n) => {
+    const g = gEls[n.id], k = ph.matches ? ku * 1.25 : 1;
+    g.querySelector('.dot')!.setAttribute('r', (rad(n) * k).toFixed(2));
+    g.querySelector('.hit')!.setAttribute('r', String(ph.matches ? 15 * ku : 14));
+    g.querySelector('text')!.setAttribute('dy', ((n.type === 'hub' ? -14 : n.type === 'area' ? -10 : 4) * (ph.matches ? ku : 1)).toFixed(1));
+  });
+  sizeMarks();
   const paint = () => {
     links.forEach((l, i) => { const a = by[l.a], b = by[l.b], e = lineEls[i]; e.setAttribute('x1', a.x.toFixed(1)); e.setAttribute('y1', a.y.toFixed(1)); e.setAttribute('x2', b.x.toFixed(1)); e.setAttribute('y2', b.y.toFixed(1)); });
     nodes.forEach((n) => { const g = gEls[n.id], t = g.querySelector('text')!; g.setAttribute('transform', `translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})`);
       if (n.type !== 'rec') { t.setAttribute('text-anchor', 'middle'); t.setAttribute('x', '0'); }
-      else { const right = n.x < 60 ? true : n.x > W - 150 ? false : n.x >= n.p!.x; t.setAttribute('text-anchor', right ? 'start' : 'end'); t.setAttribute('x', right ? '9' : '-9'); } });
+      else { const right = n.x < 60 ? true : n.x > W - 150 ? false : n.x >= n.p!.x, o = 9 * (ph.matches ? ku : 1); t.setAttribute('text-anchor', right ? 'start' : 'end'); t.setAttribute('x', (right ? o : -o).toFixed(1)); } });
   };
   const tick = (alpha: number) => {
     for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { const a = nodes[i], b = nodes[j]; let dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy + .01; const k = (a.type === 'hub' || b.type === 'hub' ? 6500 : a.type === 'area' && b.type === 'area' ? 9000 : a.type === 'area' || b.type === 'area' ? 3000 : 2100) * alpha / d2, d = Math.sqrt(d2); dx /= d; dy /= d; a.vx -= dx * k; a.vy -= dy * k; b.vx += dx * k; b.vy += dy * k; }
@@ -187,7 +233,7 @@ const meta = [
       for (let j = i + 1; j < areas.length; j++) { const b = areas[j]; let dx = b.x - a.x, dy = b.y - a.y; const d = Math.sqrt(dx * dx + dy * dy) + .01; if (d < 150) { const f = (150 - d) * .5; dx /= d; dy /= d; a.x -= dx * f; a.y -= dy * f; b.x += dx * f; b.y += dy * f; } }
       hubs.forEach((h) => { const dx = a.x - h.x, dy = a.y - h.y; const d = Math.sqrt(dx * dx + dy * dy) + .01; if (d < 130) { const f = 130 - d; a.x += dx / d * f; a.y += dy / d * f; } }); }
     nodes.forEach((n) => { if (n.type === 'hub') { n.vx += (n.ax! - n.x) * .25 * alpha; n.vy += (n.ay! - n.y) * .25 * alpha; } n.vx *= .8; n.vy *= .8;
-      n.x = Math.max(n.type === 'area' ? 80 : 30, Math.min(W - (n.type === 'area' ? 80 : 30), n.x + n.vx)); n.y = Math.max(40, Math.min(H - 22, n.y + n.vy)); });
+      n.x = Math.max(n.type === 'area' ? am : 30, Math.min(W - (n.type === 'area' ? am : 30), n.x + n.vx)); n.y = Math.max(ph.matches ? 80 : 40, Math.min(H - 22, n.y + n.vy)); });
   };
   if (reduced) { for (let i = 0; i < 320; i++) tick(Math.max(.05, 1 - i / 320)); paint(); }
   else { for (let i = 0; i < 120; i++) tick(1); let f = 0; const run = () => { for (let i = 0; i < 3; i++) tick(Math.max(.04, 1 - f / 110)); paint(); if (++f < 110) requestAnimationFrame(run); }; paint(); requestAnimationFrame(run); }
@@ -207,11 +253,75 @@ const meta = [
     const names = [...nb[n.id]].filter((x) => by[x].type === (n.type === 'hub' ? 'area' : 'rec')).map((x) => by[x].label).join(', ');
     det.innerHTML = `<span class="lbl">${n.type === 'hub' ? 'word' : 'area · ' + esc(HUBOF[n.id].toLowerCase())}</span><p class="big" style="font-size:20px">${esc(n.label)}</p><p class="small">${esc(names)}</p>`;
   };
+  const keepInView = () => { if (!ph.matches) return; const b = det.getBoundingClientRect().bottom - innerHeight; if (b > 0) scrollBy({ top: b + 12, behavior: reduced ? 'auto' : 'smooth' }); };
   Object.values(gEls).forEach((g) => {
-    g.addEventListener('mouseenter', () => hov(g.dataset.id!)); g.addEventListener('focus', () => hov(g.dataset.id!));
-    g.addEventListener('click', () => { const n = by[g.dataset.id!]; if (n.type !== 'rec') return; const r = R.find((x) => x.no === n.id)!; if (r.href && pinned === n.id) { location.href = r.href; return; } pinned = pinned === n.id ? null : n.id; focus(n.id); });
+    if (canHover) g.addEventListener('mouseenter', () => hov(g.dataset.id!));
+    g.addEventListener('focus', () => hov(g.dataset.id!));
+    g.addEventListener('click', () => { const n = by[g.dataset.id!]; if (n.type !== 'rec') { hov(n.id); keepInView(); return; } keepInView(); const r = R.find((x) => x.no === n.id)!; if (r.href && pinned === n.id) { location.href = r.href; return; } pinned = pinned === n.id ? null : n.id; focus(n.id); });
   });
   svg.addEventListener('mouseleave', rest);
+  svg.addEventListener('click', (e) => { if (!canHover && !(e.target as Element).closest('g.n')) { pinned = null; focus(null); } });
+
+  // ---- phone: zoom and move the graph. The view always matches the box's shape, so a
+  // screen point maps straight to a graph point.
+  const zoomBar = document.getElementById('zoom')!;
+  let vb = { x: 0, y: 0, w: W, h: H }, full = { ...vb };
+  const setView = () => {
+    const r = svg.getBoundingClientRect(); if (!r.width) return;
+    ku = vb.w / r.width;
+    svg.setAttribute('viewBox', `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+    svg.style.setProperty('--u', ku.toFixed(3));
+    const zoomed = vb.w < full.w - 1;
+    svg.classList.toggle('near', vb.w < full.w * .6); zoomBar.classList.toggle('zoomed', zoomed);
+    (svg as unknown as HTMLElement).style.touchAction = zoomed ? 'none' : 'pan-y';
+    sizeMarks(); paint();
+  };
+  const fit = () => {
+    if (!ph.matches) { ku = 1; svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.removeProperty('--u'); svg.classList.remove('near'); sizeMarks(); paint(); return; }
+    // the graph sits centred in the space above the zoom buttons
+    const r = svg.getBoundingClientRect(), h = W * r.height / r.width, bar = 48 * W / r.width;
+    full = { x: 0, y: H / 2 - (h - bar) / 2, w: W, h }; vb = { ...full }; setView();
+  };
+  const clampView = () => {
+    vb.w = Math.min(full.w, Math.max(full.w / 5, vb.w)); vb.h = vb.w * full.h / full.w;
+    vb.x = Math.min(full.x + full.w - vb.w, Math.max(full.x, vb.x)); vb.y = Math.min(full.y + full.h - vb.h, Math.max(full.y, vb.y));
+  };
+  const zoomAt = (k: number, cx: number, cy: number) => { // k > 1 zooms in, around a graph point
+    const nw = vb.w / k; vb.x = cx - (cx - vb.x) / k; vb.y = cy - (cy - vb.y) / k; vb.w = nw; clampView(); setView();
+  };
+  const toGraph = (x: number, y: number) => { const r = svg.getBoundingClientRect(); return [vb.x + (x - r.left) * ku, vb.y + (y - r.top) * ku]; };
+  zoomBar.querySelectorAll<HTMLButtonElement>('[data-z]').forEach((b) => b.addEventListener('click', () => {
+    const z = b.dataset.z; if (z === 'fit') { vb = { ...full }; setView(); return; }
+    zoomAt(z === 'in' ? 1.6 : 1 / 1.6, vb.x + vb.w / 2, vb.y + vb.h / 2);
+  }));
+  let g0: { d: number; p: number[]; vb: typeof vb; x: number; y: number } | null = null, moved = false;
+  const mid = (t: TouchList) => [(t[0].clientX + t[1].clientX) / 2, (t[0].clientY + t[1].clientY) / 2];
+  const dist = (t: TouchList) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  svg.addEventListener('touchstart', (e) => {
+    if (!ph.matches) return;
+    if (e.touches.length === 2) { e.preventDefault(); const m = mid(e.touches); g0 = { d: dist(e.touches), p: toGraph(m[0], m[1]), vb: { ...vb }, x: m[0], y: m[1] }; moved = true; }
+    else if (e.touches.length === 1) { moved = false; g0 = { d: 0, p: [], vb: { ...vb }, x: e.touches[0].clientX, y: e.touches[0].clientY }; }
+  }, { passive: false });
+  svg.addEventListener('touchmove', (e) => {
+    if (!ph.matches || !g0) return;
+    const r = svg.getBoundingClientRect();
+    if (e.touches.length === 2 && g0.d) {
+      e.preventDefault();
+      const m = mid(e.touches), u0 = g0.vb.w / r.width, nu = Math.min(full.w, Math.max(full.w / 5, g0.vb.w * g0.d / dist(e.touches))) / r.width;
+      vb.w = nu * r.width; vb.x = g0.p[0] - (m[0] - r.left) * nu; vb.y = g0.p[1] - (m[1] - r.top) * nu; void u0;
+      clampView(); setView();
+    } else if (e.touches.length === 1 && vb.w < full.w - 1) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - g0.x, dy = e.touches[0].clientY - g0.y;
+      if (Math.hypot(dx, dy) > 6) moved = true;
+      vb.x = g0.vb.x - dx * ku; vb.y = g0.vb.y - dy * ku; clampView(); setView();
+    } else if (e.touches.length === 1) { if (Math.hypot(e.touches[0].clientX - g0.x, e.touches[0].clientY - g0.y) > 6) moved = true; }
+  }, { passive: false });
+  svg.addEventListener('touchend', (e) => { if (e.touches.length === 0) g0 = null; else if (e.touches.length === 1) g0 = { d: 0, p: [], vb: { ...vb }, x: e.touches[0].clientX, y: e.touches[0].clientY }; });
+  svg.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+  svg.addEventListener('gesturestart', (e) => e.preventDefault());
+  fit();
+  let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = window.setTimeout(fit, 150); });
 
   // ---- a dot grid behind the graph that leans toward the pointer
   const host = document.getElementById('gcell')!, ctx = cv.getContext('2d')!; let px = -999, py = -999;
