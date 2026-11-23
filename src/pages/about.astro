@@ -3,14 +3,14 @@ import Base from '../layouts/Base.astro';
 // About: a wall of four photos with the About text in three small cells between them.
 // These four photos are used nowhere else on the site (Belal's rule, 18 Nov).
 const sent = [
-  'I’m in my second year of MSci Pharmacology at King’s, and I split my time between London, Dubai and Egypt.',
+  'I’m in my second year of MSci Pharmacology at King’s, and I split my time between London and Dubai.',
   'Most of my work is on drug-safety data, looking for where the obvious analysis gives the wrong answer, and outside the degree I build the tools I use to run my week.',
   'I train most evenings, I’m setting up LIFTKCL as a beginner-friendly gym society at King’s, and I take photos wherever I am.',
 ];
 const ph = { work: '50% 40%', night: '52% 50%', coffee: '40% 45%', sky: '50% 48%' } as const;
 const alt = { work: 'Me at my laptop at night, in headphones and orange-tinted glasses', night: 'A low-angle selfie at night in a black puffer jacket', coffee: 'Looking down at an iced coffee in my hand, black puffer and jeans', sky: 'A low-angle shot of me against a grey sky, earphones in' } as const;
 const meta = [
-  { k: 'based', v: 'London | Dubai | Egypt' }, { k: 'studying', v: 'msci pharmacology' }, { k: 'training', v: 'most evenings' },
+  { k: 'based', v: 'London | Dubai' }, { k: 'studying', v: 'msci pharmacology' }, { k: 'training', v: 'most evenings' },
   { k: 'looking for', v: '2027/28 placement, pharma' }, { k: 'cv', v: 'pdf', href: '/Belal-Zaky-CV.pdf' }, { k: 'email', v: 'hello@belalzaky.uk', href: 'mailto:hello@belalzaky.uk' },
 ];
 const P = (k: keyof typeof ph, col: string, row: string, o: number, cls = '') => ({ k, style: `grid-column:${col};grid-row:${row};--o:${o}`, cls });
@@ -22,7 +22,7 @@ const texts = [
 ];
 ---
 
-<Base title="About · Belal Zaky" description="Second-year MSci Pharmacology at King's, between London, Dubai and Egypt. Drug-safety data, tools I build, lifting and photos." shape="screen" current="about" meta={meta}>
+<Base title="About · Belal Zaky" description="Second-year MSci Pharmacology at King's, between London and Dubai. Drug-safety data, tools I build, lifting and photos." shape="screen" current="about" meta={meta}>
   <main class="main wall in-anim" id="wall">
     <h1 class="sr-only">About me</h1>
     {photos.map((p) => (

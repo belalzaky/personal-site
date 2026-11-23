@@ -18,6 +18,6 @@ export const words: Word[] = [
     meta: [['word', 'tech'], ['field', 'drug-safety data'], ['projects', '9 data projects'], ['featured', 'causal safety, pv intake, adr reader'], ['methods', 'causal inference, nlp, sql'], ['more', 'work', '/projects']] },
   { w: 'Build', sub: 'mission control, notch', href: '/builds', go: 'builds', photos: ['build-1', 'build-2'],
     meta: [['word', 'build'], ['apps', 'mission control, notch'], ['runs on', 'my mac'], ['built in', 'electron, swift'], ['code', 'private'], ['more', 'builds', '/builds']] },
-  { w: 'Lifestyle', sub: 'London | Dubai | Egypt', href: '/about', go: 'about', photos: ['lifestyle-1', 'lifestyle-4', 'lifestyle-2', 'lifestyle-3'],
-    meta: [['word', 'lifestyle'], ['based', 'London | Dubai | Egypt'], ['shot on', 'iphone 17 pro'], ['instagram', '@belalzakyuk', 'https://instagram.com/belalzakyuk'], ['looking for', '2027/28 placement, pharma'], ['email', 'hello@belalzaky.uk', 'mailto:hello@belalzaky.uk']] },
+  { w: 'Lifestyle', sub: 'London | Dubai', href: '/about', go: 'about', photos: ['lifestyle-1', 'lifestyle-4', 'lifestyle-2', 'lifestyle-3'],
+    meta: [['word', 'lifestyle'], ['based', 'London | Dubai'], ['shot on', 'iphone 17 pro'], ['instagram', '@belalzakyuk', 'https://instagram.com/belalzakyuk'], ['looking for', '2027/28 placement, pharma'], ['email', 'hello@belalzaky.uk', 'mailto:hello@belalzaky.uk']] },
 ];
