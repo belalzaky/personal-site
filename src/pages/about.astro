@@ -1,24 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
-// About: a wall of four photos with the About text in three small cells between them.
-// These four photos are used nowhere else on the site (Belal's rule, 18 Nov).
+// About: a wall of eight square photos with the About text in three small cells between them.
+// These photos are used nowhere else on the site (Belal's rule, 18 Nov; his picks, 23 Nov).
 const sent = [
   'I’m in my second year of MSci Pharmacology at King’s, and I split my time between London and Dubai.',
   'Most of my work is on drug-safety data, looking for where the obvious analysis gives the wrong answer, and outside the degree I build the tools I use to run my week.',
   'I train most evenings, I’m setting up LIFTKCL as a beginner-friendly gym society at King’s, and I take photos wherever I am.',
 ];
-const ph = { work: '50% 40%', night: '52% 50%', coffee: '40% 45%', sky: '50% 48%' } as const;
-const alt = { work: 'Me at my laptop at night, in headphones and orange-tinted glasses', night: 'A low-angle selfie at night in a black puffer jacket', coffee: 'Looking down at an iced coffee in my hand, black puffer and jeans', sky: 'A low-angle shot of me against a grey sky, earphones in' } as const;
+const alt = {
+  walk: 'Walking into the mountains, seen from behind with a black backpack',
+  night: 'A low-angle selfie at night in a black puffer jacket',
+  coffee: 'Looking down at an iced coffee in my hand, black puffer and jeans',
+  drive: 'Driving through the mountains at night, the dashboard lit',
+  radio: 'A radio and a pack on the bonnet at sunset',
+  flag: 'The UAE flag on a rocky summit against a blue sky',
+  f150: 'My F-150 parked below the mountains',
+  cove: 'A rocky cove and beach in black and white',
+} as const;
 const meta = [
   { k: 'based', v: 'London | Dubai' }, { k: 'studying', v: 'msci pharmacology' }, { k: 'training', v: 'most evenings' },
   { k: 'looking for', v: '2027/28 placement, pharma' }, { k: 'cv', v: 'pdf', href: '/Belal-Zaky-CV.pdf' }, { k: 'email', v: 'hello@belalzaky.uk', href: 'mailto:hello@belalzaky.uk' },
 ];
-const P = (k: keyof typeof ph, col: string, row: string, o: number, cls = '') => ({ k, style: `grid-column:${col};grid-row:${row};--o:${o}`, cls });
-const photos = [P('work', '1 / 3', '1 / 4', 0, 'tall'), P('night', '3', '1 / 3', 1, 'half'), P('coffee', '4', '2 / 4', 1, 'half'), P('sky', '5 / 7', '1 / 3', 3, 'tall')];
+const P = (k: keyof typeof alt, col: string, row: string, o: number, cls = '') => ({ k, style: `grid-column:${col};grid-row:${row};--o:${o}`, cls });
+const photos = [
+  P('walk', '1', '1', 0), P('night', '2', '1', 2), P('coffee', '4 / 6', '1 / 3', 3, 'big'), P('drive', '6', '1', 5),
+  P('radio', '1 / 3', '2 / 4', 6, 'big'), P('flag', '6', '2', 7), P('f150', '3', '3', 9), P('cove', '5', '3', 10),
+];
 const texts = [
-  { i: 0, l: 'degree', style: 'grid-column:3;grid-row:3;--o:2' },
-  { i: 1, l: 'work', style: 'grid-column:4;grid-row:1;--o:2' },
-  { i: 2, l: 'outside', style: 'grid-column:5;grid-row:3;--o:4' },
+  { i: 0, l: 'degree', style: 'grid-column:3;grid-row:1;--o:1' },
+  { i: 1, l: 'work', style: 'grid-column:3;grid-row:2;--o:4' },
+  { i: 2, l: 'outside', style: 'grid-column:4;grid-row:3;--o:8' },
 ];
 ---
 
@@ -27,14 +38,14 @@ const texts = [
     <h1 class="sr-only">About me</h1>
     {photos.map((p) => (
       <div class:list={['c', 'pad0', 'ph2', p.cls]} style={p.style} data-ph={p.k} tabindex="0">
-        <img src={`/photos/about/${p.k}.jpg`} style={`object-position:${ph[p.k]}`} alt={alt[p.k]} loading="eager" decoding="async" />
+        <img src={`/photos/about/${p.k}.jpg`} alt={alt[p.k]} loading="eager" decoding="async" />
         <span class="lbl">{p.k}.jpg</span>
       </div>
     ))}
     {texts.map((t) => (
       <div class="c txt" style={t.style}><span class="lbl top">0{t.i + 1} · {t.l}</span><p>{sent[t.i]}</p></div>
     ))}
-    <div class="c contact" style="grid-column:6;grid-row:3;--o:5">
+    <div class="c contact" style="grid-column:6;grid-row:3;--o:11">
       <span class="lbl top">contact</span>
       <a class="go" href="mailto:hello@belalzaky.uk">hello@belalzaky.uk</a>
       <a class="go" href="/Belal-Zaky-CV.pdf">cv (pdf) <span class="arr">→</span></a>
@@ -53,7 +64,7 @@ const texts = [
   .txt p { font-size: 14px; line-height: 1.4; margin: 0; }
   @media (max-width: 700px) {
     .wall > .c { order: var(--o, 0); }
-    .ph2 { aspect-ratio: 3 / 4; }
+    .ph2 { aspect-ratio: 1; }
   }
   @media (max-width: 700px) {
     .contact { gap: 0; padding: 14px 16px 6px; }

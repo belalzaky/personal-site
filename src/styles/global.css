@@ -94,7 +94,7 @@ a:hover .arr, button:hover .arr { transform: translateX(3px); }
 /* ---------- the frame ---------- */
 .scr { display: grid; grid-template-rows: 42px minmax(0, 1fr) auto; gap: 1px; min-height: 100vh; min-height: 100dvh; }
 .scr--screen { height: 100vh; height: 100dvh; min-height: 640px; }
-.navrow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; position: sticky; top: 0; z-index: 20; background: var(--gap); }
+.navrow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; position: sticky; top: 0; z-index: 20; background: var(--gap); }
 .navrow > * { background: var(--cell); display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 14px; min-width: 0; overflow: hidden; white-space: nowrap; transition: background .18s ease, color .18s ease; }
 .navrow a:hover, .navrow button:hover { background: var(--cell2); }
 .navrow [aria-current="page"], .navrow a[aria-current="page"]:hover { background: var(--inv); color: var(--invfg); }
@@ -213,7 +213,7 @@ a:hover .arrow { transform: translateX(3px); }
   .menu:not([hidden]) { display: flex; flex-direction: column; gap: 1px; position: fixed; inset: calc(49px + env(safe-area-inset-top, 0px)) 0 0; z-index: 19; background: var(--gap); overflow: auto; animation: menuin .35s var(--out) both; }
   @keyframes menuin { from { opacity: 0; transform: translateY(-8px); } }
   .menu a { background: var(--cell); display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px)); font-size: 15vw; font-weight: 560; letter-spacing: -.045em; line-height: 1; }
-  .menu a .lbl { letter-spacing: 0; padding-bottom: 6px; }
+  .menu a .lbl { letter-spacing: 0; padding-bottom: 6px; white-space: nowrap; }
   .menu a[aria-current="page"] { background: var(--inv); color: var(--invfg); }
   .menu a[aria-current="page"] .lbl { color: var(--invfg); opacity: .7; }
   .menu .mode2 { flex: 1 0 auto; background: var(--cell); display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; min-height: 64px; padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); font-family: var(--mono); font-size: 13px; color: var(--mute); }

@@ -1,0 +1,170 @@
+---
+import Base from '../layouts/Base.astro';
+import { roll } from '../data/camera-roll';
+// Camera roll: one endless wall of photos you drag in any direction. It wraps, so it never
+// ends; clicking a photo opens it full size. Idea from Infinite Drag Scroll on 21st.dev
+// (@rylenlobo, no licence listed), written from scratch in the site's own grid.
+const meta = [
+  { k: 'photos', v: String(roll.length) }, { k: 'drag', v: 'any direction' }, { k: 'open', v: 'click a photo' },
+  { k: 'shot on', v: 'iphone 17 pro' }, { k: 'based', v: 'London | Dubai' }, { k: 'instagram', v: '@belalzakyuk', href: 'https://instagram.com/belalzakyuk' },
+];
+---
+
+<Base title="Camera roll · Belal Zaky" description="Photos from London, Dubai and the mountains, on one wall you can drag around." shape="screen" current="camera-roll" meta={meta}>
+  <main class="main main--col" id="roll-main">
+    <h1 class="sr-only">Camera roll</h1>
+    <div class="c pad0 wallc" id="wallc" tabindex="0" aria-label="A wall of photos. Drag, scroll or use the arrow keys to move; Tab to the photos and press Enter to open one." data-roll={JSON.stringify(roll)}>
+      <div class="plane" id="plane"></div>
+      <span class="lbl hint">drag in any direction</span>
+    </div>
+  </main>
+  <div class="view" id="view" role="dialog" aria-modal="true" aria-label="Photo" hidden>
+    <div class="vtop"><span class="lbl" id="vwhere"></span><button type="button" class="vbtn" id="vx">close · esc</button></div>
+    <div class="vmain"><img id="vimg" alt="" /><button type="button" class="vbtn vpv" id="vpv" aria-label="Previous photo">←</button><button type="button" class="vbtn vnx" id="vnx" aria-label="Next photo">→</button></div>
+  </div>
+</Base>
+
+<style>
+  .main--col { min-height: 0; }
+  .wallc { flex: 1; overflow: hidden; cursor: grab; touch-action: none; outline: none; }
+  .wallc.drag { cursor: grabbing; }
+  .wallc:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); }
+  .plane { position: absolute; inset: 0; }
+  .plane :global(.tile) { all: unset; position: absolute; left: 0; top: 0; background: var(--photo); cursor: inherit; will-change: transform; }
+  .plane :global(.tile img) { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; transition: opacity .5s ease; }
+  .plane :global(.tile img:not([data-in])) { opacity: 0; }
+  .plane :global(.tile:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .hint { position: absolute; left: 12px; bottom: 12px; background: var(--cell); color: var(--ink); padding: 2px 8px; pointer-events: none; transition: opacity .4s ease; }
+  .wallc.moved .hint { opacity: 0; }
+
+  .view { position: fixed; inset: 0; z-index: 40; background: var(--cell); display: grid; grid-template-rows: auto minmax(0, 1fr); }
+  .view[hidden] { display: none; }
+  .vtop { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: calc(8px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--gap); }
+  .vtop .lbl { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vbtn { font-family: var(--mono); font-size: 12px; padding: 8px 12px; background: var(--cell); color: var(--ink); border: 1px solid var(--gap); cursor: pointer; }
+  .vbtn:hover { background: var(--inv); color: var(--invfg); }
+  .vmain { position: relative; display: grid; place-items: center; padding: 16px 64px calc(16px + env(safe-area-inset-bottom, 0px)); min-height: 0; }
+  .vmain img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; animation: vin .45s var(--out) both; }
+  @keyframes vin { from { opacity: 0; transform: scale(.97); } }
+  .vpv, .vnx { position: absolute; top: 50%; transform: translateY(-50%); }
+  .vpv { left: 12px; } .vnx { right: 12px; }
+  @media (max-width: 700px) {
+    .wallc { height: calc(100dvh - 49px - 140px); min-height: 420px; flex: none; }
+    .vmain { padding: 12px 8px calc(64px + env(safe-area-inset-bottom, 0px)); }
+    .vpv, .vnx { top: auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .vmain img, .plane :global(.tile img) { animation: none; transition: none; } }
+</style>
+
+<script>
+  import { setMeta, resetMeta } from '../scripts/site';
+  type Shot = { id: string; cap: string; w: number; h: number };
+  const box = document.getElementById('wallc')!;
+  const plane = document.getElementById('plane')!;
+  const shots: Shot[] = JSON.parse(box.dataset.roll || '[]');
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  // One block of the wall: the photos in a few columns, each column dropped a little so the
+  // rows don't line up. The block repeats in both directions to cover the screen and wraps.
+  let tiles: { el: HTMLButtonElement; x: number; y: number; w: number; h: number }[] = [];
+  let TW = 0, TH = 0, ox = 0, oy = 0, raf = 0;
+  const mod = (a: number, m: number) => ((a % m) + m) % m;
+
+  function build() {
+    const vw = box.clientWidth, vh = box.clientHeight;
+    const phone = vw < 700;
+    const CW = phone ? 150 : 250, G = phone ? 14 : 24, COLS = 3;
+    const colH = Array.from({ length: COLS }, (_, c) => (c % 2) * CW * 0.45);
+    const block = shots.map((s, i) => {
+      const c = colH.indexOf(Math.min(...colH)), h = Math.round(CW * s.h / s.w);
+      const t = { i, x: c * (CW + G) + G, y: colH[c] + G, w: CW, h };
+      colH[c] += h + G; return t;
+    });
+    const BW = COLS * (CW + G) + G, BH = Math.max(...colH) + G;
+    const nx = Math.ceil(vw / BW) + 1, ny = Math.ceil(vh / BH) + 1;
+    TW = nx * BW; TH = ny * BH;
+    plane.innerHTML = ''; tiles = [];
+    for (let a = 0; a < nx; a++) for (let b = 0; b < ny; b++) block.forEach((t) => {
+      const s = shots[t.i], first = a === 0 && b === 0;
+      const el = document.createElement('button');
+      el.type = 'button'; el.className = 'tile'; el.dataset.i = String(t.i);
+      el.style.width = t.w + 'px'; el.style.height = t.h + 'px';
+      if (first) el.setAttribute('aria-label', 'Open ' + s.cap); else { el.tabIndex = -1; el.setAttribute('aria-hidden', 'true'); }
+      const img = document.createElement('img');
+      img.alt = ''; img.decoding = 'async'; img.src = '/photos/roll/' + s.id + '-s.jpg';
+      const shown = () => img.setAttribute('data-in', '');
+      img.complete ? shown() : img.addEventListener('load', shown, { once: true });
+      el.appendChild(img); plane.appendChild(el);
+      tiles.push({ el, x: t.x + a * BW, y: t.y + b * BH, w: t.w, h: t.h });
+    });
+    draw();
+  }
+  function draw() {
+    raf = 0;
+    for (const t of tiles) {
+      const x = mod(t.x + ox + t.w, TW) - t.w, y = mod(t.y + oy + t.h, TH) - t.h;
+      t.el.style.transform = `translate3d(${x}px,${y}px,0)`;
+    }
+  }
+  const req = () => { if (!raf) raf = requestAnimationFrame(draw); };
+  const moved = () => box.classList.add('moved');
+
+  let drag: { x: number; y: number; ox: number; oy: number; d: number } | null = null;
+  box.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    drag = { x: e.clientX, y: e.clientY, ox, oy, d: 0 };
+    box.setPointerCapture(e.pointerId); box.classList.add('drag');
+  });
+  box.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    drag.d = Math.max(drag.d, Math.abs(dx) + Math.abs(dy));
+    ox = drag.ox + dx; oy = drag.oy + dy; req(); if (drag.d > 6) moved();
+  });
+  box.addEventListener('pointerup', (e) => {
+    box.classList.remove('drag');
+    if (drag && drag.d < 6) {
+      box.releasePointerCapture(e.pointerId);
+      const hit = document.elementsFromPoint(e.clientX, e.clientY).find((n) => (n as HTMLElement).classList?.contains('tile')) as HTMLElement | undefined;
+      if (hit) open(Number(hit.dataset.i));
+    }
+    drag = null;
+  });
+  box.addEventListener('pointercancel', () => { drag = null; box.classList.remove('drag'); });
+  box.addEventListener('wheel', (e) => { e.preventDefault(); ox -= e.deltaX; oy -= e.deltaY; req(); moved(); }, { passive: false });
+  box.addEventListener('keydown', (e) => {
+    const k: Record<string, [number, number]> = { ArrowLeft: [80, 0], ArrowRight: [-80, 0], ArrowUp: [0, 80], ArrowDown: [0, -80] };
+    if (k[e.key] && (e.target === box || (e.target as HTMLElement).classList.contains('tile'))) { e.preventDefault(); ox += k[e.key][0]; oy += k[e.key][1]; req(); moved(); }
+    if (e.key === 'Enter' && (e.target as HTMLElement).classList.contains('tile')) { e.preventDefault(); open(Number((e.target as HTMLElement).dataset.i)); }
+  });
+  // a photo tabbed to off-screen is pulled into view
+  plane.addEventListener('focusin', (e) => {
+    const el = e.target as HTMLElement, r = el.getBoundingClientRect(), b = box.getBoundingClientRect();
+    if (r.left < b.left || r.right > b.right) ox += b.left + b.width / 2 - (r.left + r.width / 2);
+    if (r.top < b.top || r.bottom > b.bottom) oy += b.top + b.height / 2 - (r.top + r.height / 2);
+    req();
+  });
+  new ResizeObserver(build).observe(box);
+
+  // the viewer
+  const view = document.getElementById('view')!, vimg = document.getElementById('vimg') as HTMLImageElement, vwhere = document.getElementById('vwhere')!;
+  let at = 0, from: HTMLElement | null = null;
+  function show(i: number) {
+    at = (i + shots.length) % shots.length; const s = shots[at];
+    vimg.style.animation = 'none'; void vimg.offsetWidth; vimg.style.animation = '';
+    vimg.src = '/photos/roll/' + s.id + '.jpg'; vimg.alt = s.cap;
+    vwhere.textContent = pad(at + 1) + ' / ' + pad(shots.length) + ' · ' + s.cap;
+    setMeta([['photo', pad(at + 1) + ' of ' + pad(shots.length)], ['caption', s.cap.toLowerCase()], ['keys', '← → and esc']]);
+  }
+  function open(i: number) { from = document.activeElement as HTMLElement; view.hidden = false; document.documentElement.style.overflow = 'hidden'; show(i); document.getElementById('vx')!.focus(); }
+  function close() { view.hidden = true; document.documentElement.style.overflow = ''; resetMeta(); (from && from !== document.body ? from : box).focus(); }
+  document.getElementById('vx')!.addEventListener('click', close);
+  document.getElementById('vpv')!.addEventListener('click', () => show(at - 1));
+  document.getElementById('vnx')!.addEventListener('click', () => show(at + 1));
+  view.addEventListener('click', (e) => { if (e.target === view || (e.target as HTMLElement).classList.contains('vmain')) close(); });
+  document.addEventListener('keydown', (e) => {
+    if (view.hidden) return;
+    if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') show(at + 1); else if (e.key === 'ArrowLeft') show(at - 1);
+    else if (e.key === 'Tab') { const f = [...view.querySelectorAll<HTMLElement>('button')]; const k = f.indexOf(document.activeElement as HTMLElement); if (e.shiftKey ? k <= 0 : k === f.length - 1) { e.preventDefault(); f[e.shiftKey ? f.length - 1 : 0].focus(); } }
+  });
+</script>
