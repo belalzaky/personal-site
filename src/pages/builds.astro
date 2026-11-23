@@ -25,7 +25,7 @@ const tabs = (k: string) => ['home', 'music', 'up next', 'focus', 'calendar'].ma
     {apps.map((a, i) => (
       <section class:list={['arow', 'anim', { on: i === 0 }]} id={a.k} data-app={a.k} data-meta={JSON.stringify(a.meta)} aria-labelledby={`h-${a.k}`}>
         <button type="button" class="ahead" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`b-${a.k}`}>
-          <span class="lbl">0{i + 1} · {a.kind}</span><span class="w" id={`h-${a.k}`}>{a.name}.</span><span class="lbl st">{i === 0 ? 'playing' : 'open →'}</span>
+          <span class="lbl">0{i + 1} · {a.kind}</span><span class="w" id={`h-${a.k}`}>{a.name}</span><span class="lbl st">{i === 0 ? 'playing' : 'open →'}</span>
         </button>
         <div class="abody" id={`b-${a.k}`}>
           <div>

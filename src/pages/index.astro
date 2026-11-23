@@ -8,10 +8,10 @@ const first = words[0];
 <Base title="Belal Zaky" shape="screen" current="index"
   meta={first.meta.map(([k, v, href]) => ({ k, v, href }))}>
   <main class="main main--col idx">
-    <h1 class="sr-only">Belal Zaky: health, tech, build, lifestyle. London | Dubai.</h1>
+    <h1 class="sr-only">Belal Zaky: health, tech, build, lifestyle. London | Dubai | Egypt.</h1>
     <div class="info in-anim">
       {now.map((r) => (
-        <div class="c half"><span class="lbl top">now · {r.k}</span><p class="small">{r.v}</p></div>
+        <div class="c half"><span class="lbl top">now · {r.k}</span><p class="small now-v">{r.v}</p></div>
       ))}
       <div class="c wide" data-cd={placementStart}>
         <span class="lbl top">until the placement year starts · sep 2027</span>
@@ -30,7 +30,7 @@ const first = words[0];
             ))}
           </span>
           <span class="lbl sub">0{i + 1} · {w.sub}</span>
-          <span class="w" aria-hidden="true">{[...(w.w + '.')].map((x, j) => <span class="ch" style={`--i:${j}`} data-c={x}>{x}</span>)}</span>
+          <span class="w" aria-hidden="true">{[...w.w].map((x, j) => <span class="ch" style={`--i:${j}`} data-c={x}>{x}</span>)}</span>
           <span class="sr-only">{w.w}: {w.sub}. Go to {w.go}.</span>
           <span class="lbl gol">{w.go} <span class="arr">→</span></span>
           <span class="lbl cap"></span>
@@ -57,10 +57,12 @@ const first = words[0];
   .wrow.on .bg { opacity: 1; }
   .wrow > .lbl, .w { position: relative; z-index: 1; transition: color .3s ease; }
   .w { font-size: clamp(30px, 4.4vw, 64px); font-weight: 560; letter-spacing: -.045em; line-height: 1.14; display: flex; overflow: hidden; height: 1.14em; white-space: nowrap; }
-  .ch { display: inline-block; position: relative; transition: transform .55s var(--out); transition-delay: calc(var(--i) * 22ms); }
+  .ch { display: inline-block; position: relative; transition: transform 1.2s var(--out); transition-delay: calc(var(--i) * 30ms); }
   .ch::after { content: attr(data-c); position: absolute; left: 0; top: 100%; }
   .wrow.on .ch { transform: translateY(-100%); }
   .wrow.on .w, .wrow.on > .lbl { color: var(--onph); }
+  .now-v { white-space: pre-line; }
+  .wrow > .sub { text-transform: none; }
   .wrow > .cap { position: absolute; right: 12px; bottom: 10px; z-index: 1; opacity: 0; transition: opacity .3s ease; }
   .wrow.on > .cap { opacity: .85; }
   .wrow:focus-visible { outline-offset: -3px; }

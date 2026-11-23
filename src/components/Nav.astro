@@ -22,7 +22,7 @@ const links = [
 </nav>
 <div class="menu" id="menu" hidden>
   {links.slice(1).map((l) => (
-    <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.key === 'cv' ? 'CV' : l.label[0].toUpperCase() + l.label.slice(1)}.<span class="lbl">{l.href}</span></a>
+    <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.key === 'cv' ? 'CV' : l.label[0].toUpperCase() + l.label.slice(1)}<span class="lbl">{l.href}</span></a>
   ))}
   <button type="button" class="mode2" data-mode aria-label="Switch between light and dark"><span>mode</span><b data-mode-v>(light)</b></button>
 </div>
