@@ -20,7 +20,7 @@ export const roll: Shot[] = [
   { id: 'n12', cap: 'The cove from above', w: 2000, h: 1126 },
   { id: 'n19', cap: 'Regent Street at dusk', w: 1126, h: 2000 },
   { id: 'n07', cap: 'Flag on the summit', w: 1126, h: 2000 },
-  { id: 'n02', cap: 'Sunset over the sea', w: 2000, h: 1126 },
+  { id: 'n02', cap: 'Sunrise over the sea', w: 2000, h: 1126 },
   { id: 'n05', cap: 'Snake in the rocks', w: 1500, h: 2000 },
   { id: 'a-coffee', cap: 'Coffee on the way in', w: 1126, h: 2000 },
   { id: 'n16', cap: 'Walking into the mountains', w: 1179, h: 664 },
