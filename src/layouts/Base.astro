@@ -12,7 +12,8 @@ interface Props {
   /** 'screen' fits one screen on desktop (index, work, builds, about); 'page' scrolls. */
   shape?: 'screen' | 'page';
   current?: string;
-  meta?: MetaRow[];
+  /** the info bar along the bottom; false leaves it out (the camera roll) */
+  meta?: MetaRow[] | false;
 }
 
 const DEFAULT_META: MetaRow[] = [
@@ -91,7 +92,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE);
     <div class:list={['scr', { 'scr--screen': shape === 'screen' }]}>
       <Nav current={current} />
       <slot />
-      <Meta rows={meta} />
+      {meta && <Meta rows={meta} />}
     </div>
     <Analytics />
     <script>

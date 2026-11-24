@@ -3,19 +3,15 @@ import Base from '../layouts/Base.astro';
 import { roll } from '../data/camera-roll';
 // Camera roll: one endless wall of photos you drag in any direction. It wraps, so it never
 // ends; clicking a photo opens it full size. Idea from Infinite Drag Scroll on 21st.dev
-// (@rylenlobo, no licence listed), written from scratch in the site's own grid.
-const meta = [
-  { k: 'photos', v: String(roll.length) }, { k: 'drag', v: 'any direction' }, { k: 'open', v: 'click a photo' },
-  { k: 'shot on', v: 'iphone 17 pro' }, { k: 'based', v: 'London | Dubai' }, { k: 'instagram', v: '@belalzakyuk', href: 'https://instagram.com/belalzakyuk' },
-];
+// (@rylenlobo, no licence listed), written from scratch in the site's own grid. No info bar
+// and no hint label here: Belal wanted the photos to fill the screen (24 Nov).
 ---
 
-<Base title="Camera roll · Belal Zaky" description="Photos from London, Dubai and the mountains, on one wall you can drag around." shape="screen" current="camera-roll" meta={meta}>
+<Base title="Camera roll · Belal Zaky" description="Photos from London, Dubai and the mountains, on one wall you can drag around." shape="screen" current="camera-roll" meta={false}>
   <main class="main main--col" id="roll-main">
     <h1 class="sr-only">Camera roll</h1>
     <div class="c pad0 wallc" id="wallc" tabindex="0" aria-label="A wall of photos. Drag, scroll or use the arrow keys to move; Tab to the photos and press Enter to open one." data-roll={JSON.stringify(roll)}>
       <div class="plane" id="plane"></div>
-      <span class="lbl hint">drag in any direction</span>
     </div>
   </main>
   <div class="view" id="view" role="dialog" aria-modal="true" aria-label="Photo" hidden>
@@ -34,8 +30,6 @@ const meta = [
   .plane :global(.tile img) { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; transition: opacity .5s ease; }
   .plane :global(.tile img:not([data-in])) { opacity: 0; }
   .plane :global(.tile:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
-  .hint { position: absolute; left: 12px; bottom: 12px; background: var(--cell); color: var(--ink); padding: 2px 8px; pointer-events: none; transition: opacity .4s ease; }
-  .wallc.moved .hint { opacity: 0; }
 
   .view { position: fixed; inset: 0; z-index: 40; background: var(--cell); display: grid; grid-template-rows: auto minmax(0, 1fr); }
   .view[hidden] { display: none; }
@@ -49,7 +43,7 @@ const meta = [
   .vpv, .vnx { position: absolute; top: 50%; transform: translateY(-50%); }
   .vpv { left: 12px; } .vnx { right: 12px; }
   @media (max-width: 700px) {
-    .wallc { height: calc(100dvh - 49px - 140px); min-height: 420px; flex: none; }
+    .wallc { height: calc(100dvh - 49px - env(safe-area-inset-top, 0px)); min-height: 420px; flex: none; }
     .vmain { padding: 12px 8px calc(64px + env(safe-area-inset-bottom, 0px)); }
     .vpv, .vnx { top: auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); transform: none; }
   }
@@ -57,8 +51,7 @@ const meta = [
 </style>
 
 <script>
-  import { setMeta, resetMeta } from '../scripts/site';
-  type Shot = { id: string; cap: string; w: number; h: number };
+    type Shot = { id: string; cap: string; w: number; h: number };
   const box = document.getElementById('wallc')!;
   const plane = document.getElementById('plane')!;
   const shots: Shot[] = JSON.parse(box.dataset.roll || '[]');
@@ -108,7 +101,6 @@ const meta = [
     }
   }
   const req = () => { if (!raf) raf = requestAnimationFrame(draw); };
-  const moved = () => box.classList.add('moved');
 
   let drag: { x: number; y: number; ox: number; oy: number; d: number } | null = null;
   box.addEventListener('pointerdown', (e) => {
@@ -120,7 +112,7 @@ const meta = [
     if (!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
     drag.d = Math.max(drag.d, Math.abs(dx) + Math.abs(dy));
-    ox = drag.ox + dx; oy = drag.oy + dy; req(); if (drag.d > 6) moved();
+    ox = drag.ox + dx; oy = drag.oy + dy; req();
   });
   box.addEventListener('pointerup', (e) => {
     box.classList.remove('drag');
@@ -132,10 +124,10 @@ const meta = [
     drag = null;
   });
   box.addEventListener('pointercancel', () => { drag = null; box.classList.remove('drag'); });
-  box.addEventListener('wheel', (e) => { e.preventDefault(); ox -= e.deltaX; oy -= e.deltaY; req(); moved(); }, { passive: false });
+  box.addEventListener('wheel', (e) => { e.preventDefault(); ox -= e.deltaX; oy -= e.deltaY; req(); }, { passive: false });
   box.addEventListener('keydown', (e) => {
     const k: Record<string, [number, number]> = { ArrowLeft: [80, 0], ArrowRight: [-80, 0], ArrowUp: [0, 80], ArrowDown: [0, -80] };
-    if (k[e.key] && (e.target === box || (e.target as HTMLElement).classList.contains('tile'))) { e.preventDefault(); ox += k[e.key][0]; oy += k[e.key][1]; req(); moved(); }
+    if (k[e.key] && (e.target === box || (e.target as HTMLElement).classList.contains('tile'))) { e.preventDefault(); ox += k[e.key][0]; oy += k[e.key][1]; req(); }
     if (e.key === 'Enter' && (e.target as HTMLElement).classList.contains('tile')) { e.preventDefault(); open(Number((e.target as HTMLElement).dataset.i)); }
   });
   // a photo tabbed to off-screen is pulled into view
@@ -159,10 +151,9 @@ const meta = [
     full.onload = () => { if (at === want && !view.hidden) vimg.src = full.src; };
     full.src = '/photos/roll/' + s.id + '.jpg';
     vwhere.textContent = pad(at + 1) + ' / ' + pad(shots.length) + ' · ' + s.cap;
-    setMeta([['photo', pad(at + 1) + ' of ' + pad(shots.length)], ['caption', s.cap.toLowerCase()], ['keys', '← → and esc']]);
   }
   function open(i: number) { from = document.activeElement as HTMLElement; view.hidden = false; document.documentElement.style.overflow = 'hidden'; show(i); document.getElementById('vx')!.focus(); }
-  function close() { view.hidden = true; document.documentElement.style.overflow = ''; resetMeta(); (from && from !== document.body ? from : box).focus(); }
+  function close() { view.hidden = true; document.documentElement.style.overflow = ''; (from && from !== document.body ? from : box).focus(); }
   document.getElementById('vx')!.addEventListener('click', close);
   document.getElementById('vpv')!.addEventListener('click', () => show(at - 1));
   document.getElementById('vnx')!.addEventListener('click', () => show(at + 1));
