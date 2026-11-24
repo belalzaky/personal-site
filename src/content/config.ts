@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { hobbySlugs } from '../data/letters';
 
 const projects = defineCollection({
   type: 'content',
@@ -26,4 +27,17 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { projects, posts };
+// Letters: Belal's own words, dictated and written down word for word. A tag outside the
+// nine hobbies fails the build rather than dropping the letter from its tile.
+const letters = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    summary: z.string(),
+    tags: z.array(z.enum(hobbySlugs)).min(1),
+    image: z.string().optional(),
+  }),
+});
+
+export const collections = { projects, posts, letters };

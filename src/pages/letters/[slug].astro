@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { hobbies, minutes } from '../../data/letters';
+// One letter: a wide, quiet reading column in the site's type. His words exactly as written
+// down; the page adds only the date, the hobby tags (back to /letters#tag) and older/newer.
+
+export async function getStaticPaths() {
+  const all = (await getCollection('letters')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return all.map((entry, i) => {
+    // /letters/<hobby> would read like a tile, so a letter can't take a hobby's name
+    if (hobbies.some((h) => h.slug === entry.slug)) throw new Error(`letters/${entry.slug}: a letter can't share a name with a hobby`);
+    const s = (e?: (typeof all)[number]) => (e ? { title: e.data.title, href: `/letters/${e.slug}` } : undefined);
+    return { params: { slug: entry.slug }, props: { entry, newer: s(all[i - 1]), older: s(all[i + 1]) } };
+  });
+}
+
+const { entry, newer, older } = Astro.props;
+const { Content } = await entry.render();
+const date = entry.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const min = minutes(entry.body);
+const tags = entry.data.tags.map((t) => hobbies.find((h) => h.slug === t)!);
+const meta = [
+  { k: 'letter', v: date.toLowerCase() }, { k: 'reading', v: `${min} min` }, { k: 'about', v: tags.map((t) => t.label.toLowerCase()).join(', ') },
+  { k: 'all letters', v: 'letters', href: '/letters' }, { k: 'based', v: 'London | Dubai' }, { k: 'instagram', v: '@belalzakyuk', href: 'https://instagram.com/belalzakyuk' },
+];
+---
+
+<Base title={`${entry.data.title} · Belal Zaky`} description={entry.data.summary} ogType="article" current="letters" meta={meta}>
+  <main class="sheet">
+    <article class="wrap letter">
+      <header class="page-head">
+        <p class="label"><a href="/letters">letters</a> · {date.toLowerCase()} · {min} min</p>
+        <h1 class="page-h1">{entry.data.title}</h1>
+        <p class="lead muted">{entry.data.summary}</p>
+        <p class="tags">{tags.map((t) => <a class="go" href={`/letters#${t.slug}`}>{t.label.toLowerCase()}</a>)}</p>
+      </header>
+      {entry.data.image && <img class="hero" src={entry.data.image} alt="" />}
+      <div class="prose body"><Content /></div>
+      <nav class="more" aria-label="More letters">
+        {newer ? <a href={newer.href}><span class="lbl">newer</span><span>{newer.title}</span></a> : <span />}
+        {older ? <a href={older.href} class="r"><span class="lbl">older</span><span>{older.title}</span></a> : <a href="/letters" class="r"><span class="lbl">back to</span><span>all letters</span></a>}
+      </nav>
+    </article>
+  </main>
+</Base>
+
+<style>
+  .letter { max-width: 820px; padding-bottom: var(--sect); }
+  .letter .page-h1 { max-width: 20ch; }
+  .letter .lead { margin-top: 12px; }
+  .label a { text-decoration: underline; text-underline-offset: .2em; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 16px; }
+  .hero { width: 100%; max-height: 70vh; object-fit: cover; margin-bottom: 36px; background: var(--photo); }
+  .body { font-size: 18px; line-height: 1.7; max-width: 64ch; }
+  .body :global(p) { max-width: none; }
+  .body :global(strong) { font-weight: 600; }
+  .more { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--gap); border: 1px solid var(--gap); margin-top: 56px; }
+  .more > * { background: var(--cell); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .more a:hover { background: var(--cell2); }
+  .more .r { text-align: right; align-items: flex-end; }
+  @media (max-width: 700px) { .body { font-size: 17px; } .hero { max-height: 50vh; margin-bottom: 24px; } }
+</style>

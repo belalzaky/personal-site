@@ -94,13 +94,19 @@ a:hover .arr, button:hover .arr { transform: translateX(3px); }
 /* ---------- the frame ---------- */
 .scr { display: grid; grid-template-rows: 42px minmax(0, 1fr) auto; gap: 1px; min-height: 100vh; min-height: 100dvh; }
 .scr--screen { height: 100vh; height: 100dvh; min-height: 640px; }
-.navrow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; position: sticky; top: 0; z-index: 20; background: var(--gap); }
+.navrow { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 1px; position: sticky; top: 0; z-index: 20; background: var(--gap); }
 .navrow > * { background: var(--cell); display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 14px; min-width: 0; overflow: hidden; white-space: nowrap; transition: background .18s ease, color .18s ease; }
 .navrow a:hover, .navrow button:hover { background: var(--cell2); }
 .navrow [aria-current="page"], .navrow a[aria-current="page"]:hover { background: var(--inv); color: var(--invfg); }
 .navrow .me { font-weight: 600; }
 .navrow .mode { justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--mute); }
 .navrow .mode b { font-weight: 400; color: var(--ink); }
+/* eight cells get tight below 1000px: cells take their own width first, and the mode cell drops its word */
+@media (max-width: 1000px) and (min-width: 701px) {
+  .navrow { grid-template-columns: repeat(8, minmax(max-content, 1fr)); }
+  .navrow > * { padding: 0 9px; font-size: 13px; }
+  .navrow .mode > span { display: none; }
+}
 .main { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 1px; min-height: 0; }
 .main--col { display: flex; flex-direction: column; }
 .meta { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; min-height: 46px; }

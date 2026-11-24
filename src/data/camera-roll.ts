@@ -34,4 +34,7 @@ export const roll: Shot[] = [
   { id: 'c-lab', cap: 'Lab bench', w: 1126, h: 2000 },
   { id: 'n08', cap: 'The truck in the hills', w: 1500, h: 2000 },
   { id: 'n15', cap: 'Hilltop at night, black and white', w: 2000, h: 1124 },
+  { id: 'k-guys', cap: 'Guy’s Campus at night', w: 1126, h: 2000 },
+  { id: 'k-jacket', cap: 'King’s jacket', w: 2000, h: 1612 },
+  { id: 'k-labcoat', cap: 'Lab coat', w: 1126, h: 2000 },
 ];

@@ -1,0 +1,122 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { hobbies, minutes } from '../../data/letters';
+// Letters: long pieces in Belal's own words, one idea each, about what he does outside the
+// degree. Nine hobby tiles on top; picking one opens its counts and its letters underneath
+// (his round-2 picks, 24 Nov). The tile is the hash, so /letters#lifting opens on lifting;
+// no hash shows every letter with no tile picked.
+const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).toLowerCase();
+const letters = (await getCollection('letters'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((l) => ({ slug: l.slug, title: l.data.title, summary: l.data.summary, tags: l.data.tags as string[], date: fmt(l.data.date), min: minutes(l.body) }));
+const count = (k: string) => letters.filter((l) => l.tags.includes(k)).length;
+const meta = [
+  { k: 'letters', v: String(letters.length) }, { k: 'hobbies', v: String(hobbies.length) }, { k: 'latest', v: letters[0]?.date ?? 'none yet' },
+  { k: 'written', v: 'in my own words' }, { k: 'based', v: 'London | Dubai' }, { k: 'instagram', v: '@belalzakyuk', href: 'https://instagram.com/belalzakyuk' },
+];
+---
+
+<Base title="Letters · Belal Zaky" description="Letters on hiking, lifting, photos, driving and life at King's, in my own words." current="letters" meta={meta}>
+  <main class="sheet">
+    <section class="wrap page-head">
+      <p class="label">letters</p>
+      <h1 class="page-h1">Letters <span class="muted">from outside the degree.</span></h1>
+    </section>
+
+    <section class="wrap lt-sect" aria-label="Letters by hobby">
+      <nav class="hobs" id="hobs" aria-label="Hobbies">
+        {hobbies.map((h) => (
+          <a class="hob" href={`#${h.slug}`} data-k={h.slug}>
+            <span class="im"><img src={`/photos/letters/${h.slug}.jpg`} alt={h.alt} loading="lazy" decoding="async" /></span>
+            <span class="nm">{h.label}<i>{count(h.slug)}</i></span>
+          </a>
+        ))}
+      </nav>
+
+      <div class="panel" id="panel" data-letters={JSON.stringify(letters)} data-hobbies={JSON.stringify(hobbies.map((h) => [h.slug, h.label]))}>
+        <div class="counts">
+          <span class="lbl" id="pk">all letters · counts</span>
+          <div class="stat"><span>letters</span><span id="c-n">{letters.length}</span></div>
+          <div class="stat"><span>last written</span><span id="c-last">{letters[0]?.date ?? '-'}</span></div>
+          <div class="stat"><span>reading time</span><span id="c-min">{letters.reduce((a, l) => a + l.min, 0)} min</span></div>
+          <a class="go clear" id="clear" href="#" hidden>show all letters</a>
+        </div>
+        <div class="list">
+          <span class="lbl" id="pl">all letters</span>
+          <div id="list">
+            {letters.length ? letters.map((l) => (
+              <a class="lt" href={`/letters/${l.slug}`}><span class="lbl">{l.date.replace(/ \d{4}$/, '')}</span><span><span class="t">{l.title}</span><span class="s">{l.summary}</span></span><span class="lbl">{l.min} min</span></a>
+            )) : <p class="empty">No letters yet. The first one is on its way.</p>}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .lt-sect { padding-bottom: var(--sect); }
+  .hobs { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 1px; background: var(--gap); border: 1px solid var(--gap); }
+  .hob { background: var(--cell); min-width: 0; display: grid; }
+  .hob .im { aspect-ratio: 3 / 4; overflow: hidden; background: var(--photo); }
+  .hob img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter .35s ease, transform .8s var(--out); }
+  .hob:hover img, .hob[aria-current] img { filter: none; }
+  .hob:hover img { transform: scale(1.03); }
+  .hob .nm { display: flex; justify-content: space-between; gap: 4px; padding: 8px 9px; font-size: 14px; font-weight: 500; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; transition: background .18s ease, color .18s ease; }
+  .hob .nm i { font-style: normal; font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--mute); }
+  .hob[aria-current] .nm { background: var(--inv); color: var(--invfg); }
+  .hob[aria-current] .nm i { color: var(--invfg); opacity: .7; }
+
+  .panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr); gap: 1px; background: var(--gap); border: 1px solid var(--gap); border-top: 0; }
+  .panel > div { background: var(--cell); padding: 16px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .stat { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--gap); padding: 8px 0; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .stat span:last-child { font-family: var(--mono); font-size: 13px; }
+  .clear { margin-top: 10px; align-self: flex-start; }
+  .list :global(.lt) { display: grid; grid-template-columns: 70px minmax(0, 1fr) auto; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--gap); align-items: baseline; }
+  .list :global(.lt .t) { display: block; font-size: clamp(18px, 1.7vw, 23px); font-weight: 500; letter-spacing: -.025em; line-height: 1.15; }
+  .list :global(.lt .s) { display: block; margin-top: 4px; font-size: 14px; color: var(--mute); }
+  .list :global(.lt:hover .t) { text-decoration: underline; text-underline-offset: .15em; text-decoration-thickness: 1px; }
+  .list :global(.empty) { padding: 14px 0; color: var(--mute); }
+
+  @media (max-width: 1000px) and (min-width: 701px) { .hobs { grid-template-columns: repeat(3, minmax(0, 1fr)); } .hob .im { aspect-ratio: 16 / 9; } }
+  @media (max-width: 700px) {
+    .hobs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel { grid-template-columns: minmax(0, 1fr); }
+    .list :global(.lt) { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
+    .list :global(.lt > .lbl:first-child) { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hob img { transition: none; } }
+</style>
+
+<script>
+  type L = { slug: string; title: string; summary: string; tags: string[]; date: string; min: number };
+  const panel = document.getElementById('panel')!;
+  const letters: L[] = JSON.parse(panel.dataset.letters || '[]');
+  const names = new Map<string, string>(JSON.parse(panel.dataset.hobbies || '[]'));
+  const tiles = [...document.querySelectorAll<HTMLAnchorElement>('.hob')];
+  const $ = (id: string) => document.getElementById(id)!;
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+  function show() {
+    const k = location.hash.slice(1), on = names.has(k) ? k : '';
+    const name = on ? names.get(on)!.toLowerCase() : 'all letters';
+    const mine = on ? letters.filter((l) => l.tags.includes(on)) : letters;
+    tiles.forEach((t) => { if (t.dataset.k === on) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current'); });
+    $('pk').textContent = name + ' · counts';
+    $('pl').textContent = on ? name + ' · letters' : 'all letters';
+    $('c-n').textContent = String(mine.length);
+    $('c-last').textContent = mine[0]?.date ?? '-';
+    $('c-min').textContent = mine.reduce((a, l) => a + l.min, 0) + ' min';
+    $('clear').hidden = !on;
+    $('list').innerHTML = mine.length
+      ? mine.map((l) => `<a class="lt" href="/letters/${l.slug}"><span class="lbl">${esc(l.date.replace(/ \d{4}$/, ''))}</span><span><span class="t">${esc(l.title)}</span><span class="s">${esc(l.summary)}</span></span><span class="lbl">${l.min} min</span></a>`).join('')
+      : `<p class="empty">${on ? 'No ' + esc(name) + ' letters yet.' : 'No letters yet. The first one is on its way.'}</p>`;
+  }
+  // picking a tile sets the hash without jumping the page; picking the open one again closes it
+  const go = (k: string) => { history.replaceState(null, '', k ? '#' + k : location.pathname); show(); };
+  tiles.forEach((t) => t.addEventListener('click', (e) => { e.preventDefault(); go(t.hasAttribute('aria-current') ? '' : t.dataset.k!); }));
+  $('clear').addEventListener('click', (e) => { e.preventDefault(); go(''); });
+  addEventListener('hashchange', show);
+  show();
+</script>
