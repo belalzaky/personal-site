@@ -64,27 +64,28 @@ const meta = [
   const shots: Shot[] = JSON.parse(box.dataset.roll || '[]');
   const pad = (n: number) => String(n).padStart(2, '0');
 
-  // One block of the wall: the photos in a few columns, each column dropped a little so the
-  // rows don't line up. The block repeats in both directions to cover the screen and wraps.
-  let tiles: { el: HTMLButtonElement; x: number; y: number; w: number; h: number }[] = [];
-  let TW = 0, TH = 0, ox = 0, oy = 0, raf = 0;
+  // The wall: the photos in columns, each column dropped a little so the rows don't line up.
+  // Every column repeats down at its own length, so no column runs out early and leaves a
+  // gap; the set of columns repeats across. Both directions wrap.
+  let tiles: { el: HTMLButtonElement; x: number; y: number; w: number; h: number; th: number }[] = [];
+  let TW = 0, ox = 0, oy = 0, raf = 0;
   const mod = (a: number, m: number) => ((a % m) + m) % m;
 
   function build() {
     const vw = box.clientWidth, vh = box.clientHeight;
     const phone = vw < 700;
-    const CW = phone ? 150 : 250, G = phone ? 14 : 24, COLS = 3;
-    const colH = Array.from({ length: COLS }, (_, c) => (c % 2) * CW * 0.45);
+    const CW = phone ? 150 : 250, G = phone ? 14 : 24, COLS = phone ? 3 : 5;
+    const colH = Array.from({ length: COLS }, () => 0);
     const block = shots.map((s, i) => {
       const c = colH.indexOf(Math.min(...colH)), h = Math.round(CW * s.h / s.w);
-      const t = { i, x: c * (CW + G) + G, y: colH[c] + G, w: CW, h };
+      const t = { i, c, x: c * (CW + G) + G, y: colH[c] + G + (c % 2) * CW * 0.45, w: CW, h };
       colH[c] += h + G; return t;
     });
-    const BW = COLS * (CW + G) + G, BH = Math.max(...colH) + G;
-    const nx = Math.ceil(vw / BW) + 1, ny = Math.ceil(vh / BH) + 1;
-    TW = nx * BW; TH = ny * BH;
+    const BW = COLS * (CW + G);
+    const nx = Math.ceil(vw / BW) + 1, ny = colH.map((H) => Math.ceil(vh / H) + 1);
+    TW = nx * BW;
     plane.innerHTML = ''; tiles = [];
-    for (let a = 0; a < nx; a++) for (let b = 0; b < ny; b++) block.forEach((t) => {
+    for (let a = 0; a < nx; a++) block.forEach((t) => { for (let b = 0; b < ny[t.c]; b++) {
       const s = shots[t.i], first = a === 0 && b === 0;
       const el = document.createElement('button');
       el.type = 'button'; el.className = 'tile'; el.dataset.i = String(t.i);
@@ -95,14 +96,14 @@ const meta = [
       const shown = () => img.setAttribute('data-in', '');
       img.complete ? shown() : img.addEventListener('load', shown, { once: true });
       el.appendChild(img); plane.appendChild(el);
-      tiles.push({ el, x: t.x + a * BW, y: t.y + b * BH, w: t.w, h: t.h });
-    });
+      tiles.push({ el, x: t.x + a * BW, y: t.y + b * colH[t.c], w: t.w, h: t.h, th: ny[t.c] * colH[t.c] });
+    } });
     draw();
   }
   function draw() {
     raf = 0;
     for (const t of tiles) {
-      const x = mod(t.x + ox + t.w, TW) - t.w, y = mod(t.y + oy + t.h, TH) - t.h;
+      const x = mod(t.x + ox + t.w, TW) - t.w, y = mod(t.y + oy + t.h, t.th) - t.h;
       t.el.style.transform = `translate3d(${x}px,${y}px,0)`;
     }
   }
