@@ -43,7 +43,7 @@ const meta = [
   .vtop .lbl { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .vbtn { font-family: var(--mono); font-size: 12px; padding: 8px 12px; background: var(--cell); color: var(--ink); border: 1px solid var(--gap); cursor: pointer; }
   .vbtn:hover { background: var(--inv); color: var(--invfg); }
-  .vmain { position: relative; display: grid; place-items: center; padding: 16px 64px calc(16px + env(safe-area-inset-bottom, 0px)); min-height: 0; }
+  .vmain { position: relative; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; padding: 16px 64px calc(16px + env(safe-area-inset-bottom, 0px)); min-height: 0; }
   .vmain img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; animation: vin .45s var(--out) both; }
   @keyframes vin { from { opacity: 0; transform: scale(.97); } }
   .vpv, .vnx { position: absolute; top: 50%; transform: translateY(-50%); }
@@ -153,7 +153,11 @@ const meta = [
   function show(i: number) {
     at = (i + shots.length) % shots.length; const s = shots[at];
     vimg.style.animation = 'none'; void vimg.offsetWidth; vimg.style.animation = '';
-    vimg.src = '/photos/roll/' + s.id + '.jpg'; vimg.alt = s.cap;
+    // the wall's small copy is already cached, so it shows at once; the full size swaps in when loaded
+    vimg.src = '/photos/roll/' + s.id + '-s.jpg'; vimg.alt = s.cap;
+    const full = new Image(), want = at;
+    full.onload = () => { if (at === want && !view.hidden) vimg.src = full.src; };
+    full.src = '/photos/roll/' + s.id + '.jpg';
     vwhere.textContent = pad(at + 1) + ' / ' + pad(shots.length) + ' · ' + s.cap;
     setMeta([['photo', pad(at + 1) + ' of ' + pad(shots.length)], ['caption', s.cap.toLowerCase()], ['keys', '← → and esc']]);
   }
