@@ -134,12 +134,25 @@ const entrySections = [
       ))}
     </div>
   </section>
+
+  <section class="wrap sect cv-actions cv-foot">
+    <div class="btn-row">
+      <a href="/Belal-Zaky-CV.pdf" class="btn btn-primary">Download PDF</a>
+      <a href="mailto:hello@belalzaky.uk" class="btn cv-mail">hello@belalzaky.uk</a>
+    </div>
+  </section>
   </main>
 </Base>
 
 <style>
   .cv-actions {
     margin-top: 28px;
+  }
+
+  /* the buttons again at the foot, on a phone only: the page is seven screens long there */
+  .cv-foot {
+    display: none;
+    margin-top: 0;
   }
 
   .cv-mail {
@@ -185,6 +198,8 @@ const entrySections = [
   }
   @media (max-width: 700px) {
     .cv-more { display: inline-flex; align-items: center; min-height: 44px; margin-top: 12px; }
+    .cv-foot { display: block; }
+    .cv-foot .btn { min-height: 44px; }
   }
 
   /* ---- Print: the public PDF. A4, always light, no nav, footer or buttons. ---- */

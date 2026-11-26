@@ -109,7 +109,8 @@ const meta = [
     .zoom button[data-z="fit"] { font-size: 12px; }
     .zoom .lbl { background: var(--cell); height: 44px; display: flex; align-items: center; padding: 0 12px; }
     .zoom.zoomed .lbl { display: none; }
-    .graphc:has(.tbl:not([hidden])) .zoom { display: none; }
+    /* the table view on a phone is the list of names below; the graph box folds away until asked for */
+    .graphc:has(.tbl:not([hidden])) { display: none; }
     .panel .hd { padding: 14px 16px; min-height: 0; }
     .lst { overflow: visible; }
     .gh { padding: 18px 16px 6px; }
@@ -127,11 +128,12 @@ const meta = [
   const HUBOF: Record<string, string> = JSON.parse(main.dataset.hubs!);
   const det = document.getElementById('det')!, lst = document.getElementById('lst')!;
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
-  let pinned: string | null = null;
+  let pinned: string | null = null, tableMode = false;
   const ph = matchMedia('(max-width: 700px)'), canHover = matchMedia('(hover: hover)').matches;
   let gfocus: (id: string | null) => void = () => {};
   const recMeta = (r: Rec): [string, string, string?][] => [['no.', r.no], ['record', r.name.toLowerCase()], [r.kind === 'role' ? 'role' : r.kind === 'idea' ? 'idea' : 'what', r.what], [r.kind === 'coursework' || r.kind === 'idea' ? 'status' : 'output', r.out], ['kind', r.kind], ['year', r.year ? String(r.year) : 'not built']];
   const showDet = (r: Rec | null) => {
+    if (!r && tableMode && ph.matches) { det.innerHTML = `<p class="big" style="font-size:20px">Tap a name.</p><p class="small" style="color:var(--mute)">Names in italics are ideas I haven’t built, small projects that would join two areas.</p>`; resetMeta(); return; }
     if (!r) { det.innerHTML = canHover ? `<p class="big" style="font-size:20px">Hover a dot or a name.</p><p class="small" style="color:var(--mute)">Hollow dots are ideas I haven’t built, small projects that would join two areas.</p>` : `<p class="big" style="font-size:20px">Tap a dot or a name.</p><p class="small" style="color:var(--mute)">Pinch the graph to zoom in. Hollow dots are ideas I haven’t built, small projects that would join two areas.</p>`; resetMeta(); return; }
     const path = r.areas.map((a) => `${HUBOF[a].toLowerCase()} → ${a}`).join(' · ');
     det.innerHTML = `<span class="lbl">${esc(r.no)} · ${esc(r.kind)}${r.out === r.kind ? '' : ' · ' + esc(r.out)}</span><p class="big" style="font-size:20px">${esc(r.name)}</p><p class="small">${esc(r.what)}</p><span class="lbl">${esc(path)}</span>${r.href ? `<a class="go" href="${esc(r.href)}"${r.href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : ''}>open <span class="arr">→</span></a>` : ''}`;
@@ -168,7 +170,9 @@ const meta = [
     const t = b.dataset.rec === 'table';
     document.querySelectorAll('[data-rec]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     tbl.hidden = !t; (svg as unknown as HTMLElement).style.display = t ? 'none' : ''; cv.style.display = t ? 'none' : '';
-    if (t) drawTable();
+    tableMode = t;
+    if (t) drawTable(); else { fit(); drawGrid(); }
+    if (!pinned) showDet(null);
   }));
 
   // ---- table
@@ -334,4 +338,6 @@ const meta = [
   drawGrid();
   if (!reduced) { host.addEventListener('pointermove', (e) => { const r = host.getBoundingClientRect(); px = e.clientX - r.left; py = e.clientY - r.top; drawGrid(); }); host.addEventListener('pointerleave', () => { px = py = -999; drawGrid(); }); }
   addEventListener('resize', drawGrid); addEventListener('modechange', () => setTimeout(drawGrid, 50));
+  // a phone opens on the list; the graph is one tap away
+  if (ph.matches) document.querySelector<HTMLButtonElement>('[data-rec="table"]')!.click();
 </script>

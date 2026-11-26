@@ -62,9 +62,14 @@ const texts = [
   .ph2.hot img { transform: scale(1.04); }
   .wall.dim .ph2:not(.hot) img { opacity: .28; }
   .txt p { font-size: 14px; line-height: 1.4; margin: 0; }
+  /* phone: the three sentences and contact first, then the photos two to a row */
   @media (max-width: 700px) {
+    .wall { grid-auto-rows: auto; }
     .wall > .c { order: var(--o, 0); }
-    .ph2 { aspect-ratio: 1; }
+    .wall > .txt { order: -2; min-height: 0; padding: 14px 16px 16px; gap: 10px; }
+    .wall > .contact { order: -1; }
+    .wall > .ph2 { grid-column: span 1 !important; aspect-ratio: 1; }
+    .txt p { font-size: 16px; line-height: 1.45; }
   }
   @media (max-width: 700px) {
     .contact { gap: 0; padding: 14px 16px 6px; }

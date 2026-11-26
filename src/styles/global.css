@@ -179,6 +179,7 @@ a:hover .arrow { transform: translateX(3px); }
 .row-link { position: relative; display: block; }
 .row-link:hover .row-title { text-decoration: underline; text-underline-offset: .2em; }
 @media (max-width: 700px) { .row { grid-template-columns: 1fr; gap: 4px; } }
+@media (max-width: 700px) { .page-head { padding-top: 20px; padding-bottom: 24px; } }
 .card { background: var(--cell2); }
 .tile { position: relative; overflow: hidden; background: var(--photo); }
 

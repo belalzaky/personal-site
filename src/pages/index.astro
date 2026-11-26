@@ -9,6 +9,7 @@ const first = words[0];
   meta={first.meta.map(([k, v, href]) => ({ k, v, href }))}>
   <main class="main main--col idx">
     <h1 class="sr-only">Belal Zaky: health, tech, build, lifestyle. London | Dubai.</h1>
+    <div class="c hero" aria-hidden="true"><p class="hn">Belal Zaky</p><p class="small hl">MSci Pharmacology, King’s College London · London | Dubai</p></div>
     <div class="info in-anim">
       {now.map((r) => (
         <div class="c half"><span class="lbl top">now · {r.k}</span><p class="small now-v">{r.v}</p></div>
@@ -66,22 +67,28 @@ const first = words[0];
   .wrow > .cap { position: absolute; right: 12px; bottom: 10px; z-index: 1; opacity: 0; transition: opacity .3s ease; }
   .wrow.on > .cap { opacity: .85; }
   .wrow:focus-visible { outline-offset: -3px; }
-  /* phone: the words come first, each a photo-sized row, and the one in the middle of the
-     screen opens as you scroll past; rows keep their height so nothing jumps */
+  .hero { display: none; }
+  /* phone: the name and one line, then the words. A closed word is one short row and the open
+     one holds the photo, so all four fit on a screen; a tap opens a word, a second tap follows it */
   @media (max-width: 700px) {
+    .hero { display: flex; order: -2; flex: 0 0 auto; gap: 4px; padding: 16px 16px 14px; }
+    .hn { font-size: 9vw; font-weight: 560; letter-spacing: -.045em; line-height: 1; margin: 0; }
+    .hl { color: var(--mute); }
     .words { order: -1; flex: 0 0 auto; }
     .info { grid-template-columns: 1fr 1fr; flex: 0 0 auto; }
     .info .c { min-height: 96px; padding: 14px 16px; }
-    .wrow, .wrow.on { flex: 0 0 auto; height: 75vw; grid-template-columns: 1fr auto; grid-template-rows: 1fr auto auto; gap: 2px 8px; align-items: end; padding: 14px 16px; }
+    .wrow, .wrow.on { flex: 0 0 auto; height: calc(15vw * 1.14 + 16px); grid-template-columns: 1fr auto; grid-template-rows: 1fr auto auto; gap: 2px 8px; align-items: end; padding: 8px 16px; transition: height .6s var(--out); }
+    .wrow.on { height: 62vw; }
     .wrow > .sub { grid-column: 1 / -1; grid-row: 2; }
     .wrow > .w { grid-row: 3; }
     .wrow > .gol { grid-row: 3; align-self: center; }
     .wrow > .cap { top: 14px; bottom: auto; right: 16px; }
-    .bg { top: 0; bottom: 0; transform: none; aspect-ratio: auto; opacity: .1; filter: grayscale(1); transition: opacity .6s ease, filter .6s ease; }
-    .wrow.on .bg { opacity: 1; filter: none; }
+    .wrow:not(.on) > .sub, .wrow:not(.on) > .gol { display: none; }
+    .bg { top: auto; bottom: 0; height: 62vw; transform: none; aspect-ratio: auto; transition: opacity .6s ease; }
     .bg::after { background: linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.18) 45%, rgba(0,0,0,0) 70%); }
-    .w { font-size: 17vw; }
+    .w { font-size: 15vw; }
   }
+  @media (max-width: 700px) and (prefers-reduced-motion: reduce) { .wrow, .wrow.on { transition: none; } }
 </style>
 
 <script>
@@ -100,7 +107,7 @@ const first = words[0];
     tick(); setInterval(tick, 20000);
   }
   // the four words: hover or focus opens a row onto its photos, which fade every 3 s.
-  // On a phone the row in the middle of the screen opens as you scroll, and a tap follows the link.
+  // On a phone a tap opens a closed row, and a tap on the open row follows the link.
   const rows = [...document.querySelectorAll<HTMLAnchorElement>('.wrow')];
   const idx = rows.map(() => 0);
   let open = 0, iv = 0;
@@ -119,8 +126,10 @@ const first = words[0];
     cap(r);
     r.addEventListener('mouseenter', () => { if (!phone.matches && matchMedia('(hover: hover)').matches) activate(r); });
     r.addEventListener('focus', () => activate(r));
+    // read the state before the tap focuses the row, or the first tap would open and follow at once
+    let wasOn = true;
+    r.addEventListener('pointerdown', () => { wasOn = r.classList.contains('on'); });
+    r.addEventListener('click', (e) => { if (phone.matches && !wasOn) { e.preventDefault(); activate(r); } wasOn = true; });
   });
-  const mid = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && phone.matches) activate(e.target as HTMLElement); }), { rootMargin: '-48% 0px -48% 0px' });
-  rows.forEach((r) => mid.observe(r));
   cycle();
 </script>
